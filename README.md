@@ -6,7 +6,7 @@ This is a project which is created for a course in the LUH
 - **None yet**
 
 
-|  |  |
+| 1 | 2 |
 | ------ | ------ |
-|  | |
+| Element | Object |
 
