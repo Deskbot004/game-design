@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public int GetPosition()
     {
-        
+        return 0;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TurnCards()
     {
-        
+
+    }
+
+    public Card GetCard()
+    {
+        return new Card();
     }
 }

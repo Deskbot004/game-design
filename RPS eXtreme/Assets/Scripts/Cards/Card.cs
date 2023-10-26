@@ -4,17 +4,20 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public string cardName;
+    public int cardNumber;
+    public int Class; // 0 Rock 1 Paper 2 Scissors 3 Support
+    public Card[] SupportSlots;
+    public int nrSlots;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Init(int cardNumber)
     {
-        
+        //look up the cardNumber and initialize accordingly
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public int GetValue()
     {
-        
+        return 0;
     }
+
 }

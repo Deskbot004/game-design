@@ -28,7 +28,7 @@ public class Gamelogic : MonoBehaviour
 
         foreach (TablePlayer p in players)
         {
-            p.DrawCard(startDraw);
+            p.DrawCards(startDraw);
         }
         StartTurn();
     }
@@ -43,7 +43,7 @@ public class Gamelogic : MonoBehaviour
         Debug.Log("Turn started");
         foreach (TablePlayer p in players)
         {
-            p.DrawCard(turnDraw);
+            p.DrawCards(turnDraw);
         }
     }
 
