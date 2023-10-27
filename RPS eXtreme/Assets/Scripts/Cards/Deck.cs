@@ -9,10 +9,6 @@ public class Deck : MonoBehaviour
     public int[] undrawnCards; // TODO: Might not be needed, as TablePlayer handles that (?)
     public int[] discardPile; // TODO: See above
 
-    // For Debugging
-    public List<Card> cards;
-
-
     public void schuffleDeck()
     {
         
@@ -21,5 +17,14 @@ public class Deck : MonoBehaviour
     public void schuffleDiscardIntoDeck()
     {
 
+    }
+
+    // For Debugging
+    public List<Card> cards;
+
+    [ContextMenu("Add Cards")]
+    void addCards()
+    {
+        cards = new List<Card>(GetComponentsInChildren<Card>());
     }
 }
