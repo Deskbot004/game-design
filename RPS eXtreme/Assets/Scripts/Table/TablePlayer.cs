@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TablePlayer : MonoBehaviour
+public class TablePlayer : MonoBehaviour//, DefaultDroppable
 {
     public Deck playerDeck;
     public Cardpile drawpile;

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour
+public class Hand : MonoBehaviour, DefaultDroppable
 {
     public float borderDistance = 0.001f;
     public float margin = 0;
@@ -14,6 +14,11 @@ public class Hand : MonoBehaviour
     public Deck deck;
     [System.NonSerialized]
     public List<Card> cards = new List<Card>();
+
+    void Start()
+    {
+        cards = deck.cards;
+    }
 
     public void ArrangeHand()
     {
@@ -81,6 +86,21 @@ public class Hand : MonoBehaviour
         Vector2 b = new Vector2(v2.x, v2.y);
         float dot = Vector2.Dot(a, b);
         return Mathf.Acos(dot / (a.magnitude * b.magnitude)) * 180 / Mathf.PI;
+    }
+
+
+    // Droppable -----------------------------------------------------------------------------------------------
+    public bool OnDrop(Draggable draggedObject)
+    {
+        cards.Add(draggedObject.GetComponent<Card>());
+        ArrangeHand();
+        return true;
+    }
+
+    public void OnLeave(Draggable draggedObject)
+    {
+        cards.Remove(draggedObject.GetComponent<Card>());
+        ArrangeHand();
     }
 
     //--------------------- For Debugging-------------------------------------------------------------------------
