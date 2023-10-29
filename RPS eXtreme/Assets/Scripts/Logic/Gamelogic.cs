@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Gamelogic : MonoBehaviour
@@ -20,6 +21,14 @@ public class Gamelogic : MonoBehaviour
                                  { 1, 1, 0, 0, -1 } };
     // TODO WIP translator of Symbol to Entry number 
     public Dictionary<string, int> symbolToEntry = new Dictionary<string, int>();
+
+
+    // Tests
+    public List<Card> testUser = new List<Card>();
+    public List<Card> testEnemy = new List<Card>();
+
+
+
 
     /* Initialises the Gamelogic for the current game
      * 
@@ -70,8 +79,8 @@ public class Gamelogic : MonoBehaviour
     public void ResolveTurn()
     {
         Debug.Log("Turn resolve started");
-        Slot[] slotsUser = table.GetSlotsPlayer();
-        Slot[] slotsEnemy = table.GetSlotsEnemy();
+        List<Slot> slotsUser = table.GetSlotsPlayer();
+        List<Slot> slotsEnemy = table.GetSlotsEnemy();
 
 
         foreach (Slot slotUser in slotsUser)
@@ -109,21 +118,20 @@ public class Gamelogic : MonoBehaviour
     * Input: cardUser the card(s) played by the user, cardEnemy the card(s) played by the enemy
     * Output: string the Winner of the round or none
     */
-    private string EvaluateCards(Card[] cardsUser, Card[] cardsEnemy)
+    private string EvaluateCards(List<Card> cardsUser, List<Card> cardsEnemy)
     {   
         // if no card was played on either slot
-        if (cardsUser == null && cardsEnemy == null)
+        if (!cardsUser.Any() && !cardsEnemy.Any())
+        {
+            return "none";
+        } else if (!cardsEnemy.Any())
+        {
+            currentLifepoints["enemy"] -= 1;
+            return "user";
+        } else if (!cardsUser.Any())
         {
             currentLifepoints["user"] -= 1;
-            return "none";
-        } else if (cardsEnemy == null)
-        {
-            currentLifepoints["enemy"] -= 1;
-            return "user";
-        } else if (cardsUser == null)
-        {
-            currentLifepoints["enemy"] -= 1;
-            return "user";
+            return "ememy";
         }
 
         int symbolToEntryUser = 0;
@@ -148,13 +156,16 @@ public class Gamelogic : MonoBehaviour
         int attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
         if (attack == -1)
         {
+            Debug.Log("Draw");
             return "none";
         } else if (attack == 1)
         {
+            Debug.Log("UserWon");
             currentLifepoints["enemy"] -= 1;
             return "user";
         } else if (attack == 0)
         {
+            Debug.Log("EnemyWon");
             currentLifepoints["user"] -= 1;
             return "enemy";
         } else
@@ -173,5 +184,28 @@ public class Gamelogic : MonoBehaviour
     {
         Debug.Log("Game ended with winner " + s);
         table.SetWinner(s);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            symbolToEntry.Add("scissors", 0);
+            symbolToEntry.Add("stone", 1);
+            symbolToEntry.Add("paper", 2);
+            symbolToEntry.Add("lizard", 3);
+            symbolToEntry.Add("spock", 4);
+
+            Debug.Log("Test Evaluate");
+            currentLifepoints.Add("user", lifepointMax);
+            currentLifepoints.Add("enemy", lifepointMax);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log(EvaluateCards(testUser, testEnemy));
+            Debug.Log("enemy: " + currentLifepoints["enemy"]);
+            Debug.Log("user: " + currentLifepoints["user"]);
+        }
     }
 }
