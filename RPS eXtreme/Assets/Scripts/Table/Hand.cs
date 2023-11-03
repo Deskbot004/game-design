@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour, DefaultDroppable
+public class Hand : MonoBehaviour//, DefaultDroppable
 {
     public float borderDistance = 0.001f;
     public float margin = 0;
@@ -17,11 +17,14 @@ public class Hand : MonoBehaviour, DefaultDroppable
 
     void Start()
     {
-        cards = deck.cards;
+        cards.Clear();
     }
 
+    // TODO: Currently works with global positions -> change to local
     public void ArrangeHand()
     {
+        if (cards.Count == 0) return;
+
         SetCircle();
 
         // Some general variables
@@ -53,7 +56,7 @@ public class Hand : MonoBehaviour, DefaultDroppable
         Vector3 currentPosition = circleCenter + leftBorder;
         Vector3 rotatedBorder = leftBorder;
         float currentDegree = handDegree / 2;
-        float degreeChange = handDegree / (n - 1);
+        float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
             card.transform.localPosition = currentPosition;
@@ -86,21 +89,6 @@ public class Hand : MonoBehaviour, DefaultDroppable
         Vector2 b = new Vector2(v2.x, v2.y);
         float dot = Vector2.Dot(a, b);
         return Mathf.Acos(dot / (a.magnitude * b.magnitude)) * 180 / Mathf.PI;
-    }
-
-
-    // Droppable -----------------------------------------------------------------------------------------------
-    public bool OnDrop(Draggable draggedObject)
-    {
-        cards.Add(draggedObject.GetComponent<Card>());
-        ArrangeHand();
-        return true;
-    }
-
-    public void OnLeave(Draggable draggedObject)
-    {
-        cards.Remove(draggedObject.GetComponent<Card>());
-        ArrangeHand();
     }
 
     //--------------------- For Debugging-------------------------------------------------------------------------

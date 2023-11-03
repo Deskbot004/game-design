@@ -6,13 +6,25 @@ using UnityEngine;
 
 public class Slot : MonoBehaviour, Droppable
 {
-    public Hand hand;
+    public int slotPosition; // Leftmost is 0
 
 #nullable enable
-    //private Draggable? dragCard;
-    private Card? card;
+    public Card? card;
 #nullable disable
 
+    [Header("For Debugging")]
+    public Card exampleCard;
+
+    // ---------- Slot Functions ----------------------------------------------
+    public Card GetCard()
+    {
+        //Debug.Assert(card != null, "Slot doesn't have a card", this);
+        //return card;
+
+        return card != null ? card : exampleCard;
+    }
+
+    // ---------- Droppable Functions -----------------------------------------
     public bool OnDrop(Draggable draggedObject)
     {
         if (card != null || draggedObject.GetComponent<Card>() == null)
@@ -33,19 +45,14 @@ public class Slot : MonoBehaviour, Droppable
         card = null;
     }
 
-    // TODO ---------------------------------------------------------------
-    public int GetPosition()
+    public Transform GetTransform()
     {
-        return 0;
+        return transform;
     }
 
+    // TODO ---------------------------------------------------------------
     public void TurnCards()
     {
 
-    }
-
-    public Card GetCard()
-    {
-        return new Card();
     }
 }

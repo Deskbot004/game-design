@@ -55,20 +55,20 @@ public class Gamelogic : MonoBehaviour
     public void ResolveTurn()
     {
         Debug.Log("Turn resolve started");
-        Slot[] slotsUser = table.GetSlotsPlayer();
-        Slot[] slotsEnemy = table.GetSlotsEnemy();
+        List<Slot> slotsUser = table.player.slots;
+        List<Slot> slotsEnemy = table.enemy.slots;
 
 
         foreach (Slot slotUser in slotsUser)
         {
             foreach (Slot slotEnemy in slotsEnemy)
             {
-                if(slotUser.GetPosition() == slotEnemy.GetPosition())
+                if(slotUser.slotPosition == slotEnemy.slotPosition)
                 {
                     slotUser.TurnCards();
                     slotEnemy.TurnCards();
                     string winner = EvaluateCards(slotUser.GetCard(), slotEnemy.GetCard());
-                    table.ResolveSlot(slotUser.GetPosition(), winner);
+                    table.ResolveSlot(slotUser.slotPosition, winner);
                 }
             }
         }

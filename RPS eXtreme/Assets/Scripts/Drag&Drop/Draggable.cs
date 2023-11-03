@@ -44,7 +44,7 @@ public class Draggable : MonoBehaviour
     {        
         (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
         Droppable newDroppable;
-        if(colAmount == 0) // Not dropped into a Droppable
+        if(colAmount == 0 || !colliders[0].transform.IsChildOf(defaultDroppable.GetTransform())) // Not dropped into a child-Droppable of Default Droppable
         {
             newDroppable = defaultDroppable;
         }

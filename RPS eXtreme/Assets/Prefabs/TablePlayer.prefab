@@ -530,6 +530,10 @@ PrefabInstance:
       propertyPath: hand
       value: 
       objectReference: {fileID: 5359152525011787420}
+    - target: {fileID: 5885208096696505893, guid: f0cbcf2e81389144cb866df28fba0519, type: 3}
+      propertyPath: slotPosition
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
