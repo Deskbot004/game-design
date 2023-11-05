@@ -133,6 +133,7 @@ MonoBehaviour:
   borderDistance: 0.001
   margin: 0
   deck: {fileID: 0}
+  circle: {fileID: 0}
 --- !u!1 &1560950502338245635
 GameObject:
   m_ObjectHideFlags: 0
@@ -164,9 +165,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2892721508805916756}
-  - {fileID: 9158219396777506532}
   - {fileID: 6394943204082926527}
   - {fileID: 8292216962159656036}
+  - {fileID: 9158219396777506532}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4638668482038669004
@@ -188,6 +189,7 @@ MonoBehaviour:
   slots:
   - {fileID: 0}
   - {fileID: 0}
+  isPlayer: 0
 --- !u!1 &2752946468761825769
 GameObject:
   m_ObjectHideFlags: 0

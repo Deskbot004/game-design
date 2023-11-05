@@ -15,7 +15,7 @@ public class Cardpile : MonoBehaviour
         cards = cards.OrderBy(x => rng.Next()).ToList();
     }
 
-
+    // TODO: Animation
     // ------ Animation Stuff -------------------------------------------------------------------
     // On Mouse Hover darkens the deck
     void OnMouseEnter()

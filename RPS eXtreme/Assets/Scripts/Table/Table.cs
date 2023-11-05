@@ -10,9 +10,12 @@ public class Table : MonoBehaviour
 
     void Start()
     {
+        player.init();
+        enemy.init();
         //logic.init(this);
     }
 
+    // Removes the card from every slot and puts them into the Discard Pile
     public void ClearSlots()
     {
         TablePlayer[] players = { player, enemy };
@@ -27,6 +30,7 @@ public class Table : MonoBehaviour
                     p.discardpile.cards.Add(card);
                 }
                 // TODO: Play animation of card being removed
+                // Something like card.playAnimation
             }
         }
     }
@@ -42,6 +46,13 @@ public class Table : MonoBehaviour
         
     }
 
-    
+
+    // ---------- For Debbuging -----------------------------------------------------------
+    public void startLogic()
+    {
+        logic.init(this);
+    }
+
+
 
 }

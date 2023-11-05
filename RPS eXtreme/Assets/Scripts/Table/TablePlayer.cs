@@ -10,20 +10,10 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public Cardpile discardpile;
     public Hand hand;
     public List<Slot> slots;
+    public bool isPlayer;
 
-    // For Debugging
-    public void resolve()
-    {
-        foreach (Slot slot in slots)
-        {
-            discardpile.cards.Add(slot.card);
-            slot.card.gameObject.SetActive(false);
-            slot.card = null;
-        }
-    }
-
-    // -----Funktionen---------------------------------------------------------------
-    void Start()
+    // ---------- Main Functions ----------------------------------------------------------------------------------
+    public void init()
     {
         drawpile.cards = playerDeck.cards;
         drawpile.Shuffle();
@@ -33,9 +23,10 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
+    // Draws an amount of cards from the Drawpile into the Hand
     public void DrawCards(int amount)
     {
-        // Nicht genug Karten im Draw Pile
+        // Not enough cards in the drawpile
         if (drawpile.cards.Count < amount)
         {
             int amountMissing = amount - drawpile.cards.Count;
@@ -59,7 +50,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
-    // Shuffles all cards in the Discardpile into the Drawpile
+    // Shuffles all cards from the Discardpile into the Drawpile
     public void DiscardToDrawpile()
     {
         drawpile.cards.AddRange(discardpile.cards);
@@ -68,7 +59,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         // TODO: Play animation
     }
 
-    // Droppable -----------------------------------------------------------------------------------------------
+    // ---------- Droppable -------------------------------------------------------------------------------------
     public bool OnDrop(Draggable draggedObject)
     {
         hand.cards.Add(draggedObject.GetComponent<Card>());
@@ -85,5 +76,16 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public Transform GetTransform()
     {
         return transform;
+    }
+
+    // ---------- For Debugging --------------------------------------------------------------------------------
+    public void fakeResolve()
+    {
+        foreach (Slot slot in slots)
+        {
+            discardpile.cards.Add(slot.card);
+            slot.card.gameObject.SetActive(false);
+            slot.card = null;
+        }
     }
 }

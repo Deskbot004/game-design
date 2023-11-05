@@ -8,16 +8,19 @@ public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition; // Leftmost is 0
 
-#nullable enable
+    #nullable enable
     public Card? card;
-#nullable disable
+    #nullable disable
 
     [Header("For Debugging")]
-    public Card exampleCard;
+    public Card exampleCard; // Default card if slot is empty
 
     // ---------- Slot Functions ----------------------------------------------
+    // Returns the current Card in the Slot
     public Card GetCard()
     {
+        // TODO: The object calling GetCard should check whether the returned card isn't null
+        // Since card is public, do we even need this function?
         //Debug.Assert(card != null, "Slot doesn't have a card", this);
         //return card;
 
@@ -27,13 +30,13 @@ public class Slot : MonoBehaviour, Droppable
     // ---------- Droppable Functions -----------------------------------------
     public bool OnDrop(Draggable draggedObject)
     {
-        if (card != null || draggedObject.GetComponent<Card>() == null)
+        // Check whether the Slot is empty and the dropped Object is a Card
+        if (card != null || draggedObject.GetComponent<Card>() == null) // Not the case
         {
             return false;
         }
-        else
+        else // Yes the case
         {
-            //dragCard = draggedObject;
             card = draggedObject.GetComponent<Card>();
             card.transform.position = transform.position;
             return true;

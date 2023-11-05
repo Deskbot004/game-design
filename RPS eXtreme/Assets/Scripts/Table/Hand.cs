@@ -2,25 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour//, DefaultDroppable
+public class Hand : MonoBehaviour
 {
-    public float borderDistance = 0.001f;
-    public float margin = 0;
-
-    private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
-    private float circleRadius;
-
-    // For Debugging
-    public Deck deck;
     [System.NonSerialized]
     public List<Card> cards = new List<Card>();
 
+    public float borderDistance = 0.001f; // Influences the curve of the arranged cards (higher distance = curvier curve)
+    public float margin = 0; // Default Margin between cards
+
+    // Circle on which the cards are aligned
+    private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
+    private float circleRadius;
+
+    [Header("For Debbuging")]
+    public Deck deck;
+
+    // ---------- Main Functions ------------------------------------------------------------------------------
     void Start()
     {
         cards.Clear();
     }
 
-    // TODO: Currently works with global positions -> change to local
+    // ---------- Functions for Hand arrangement --------------------------------------------------------------
+    // Arranges all cards along a curve
     public void ArrangeHand()
     {
         if (cards.Count == 0) return;
@@ -59,7 +63,7 @@ public class Hand : MonoBehaviour//, DefaultDroppable
         float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
-            card.transform.localPosition = currentPosition;
+            card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
             card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
 
             rotatedBorder = Quaternion.Euler(0, 0, -degreeChange) * rotatedBorder;
@@ -79,6 +83,7 @@ public class Hand : MonoBehaviour//, DefaultDroppable
         float m_13 = 2 * a * (Mathf.Pow(a, 2) + Mathf.Pow(b, 2));
 
         circleCenter.y = -m_13 / (2 * m_11);
+        //circleCenter = transform.TransformPoint(circleCenter);
         circleRadius = -circleCenter.y;
     }
 
@@ -98,7 +103,7 @@ public class Hand : MonoBehaviour//, DefaultDroppable
     }
 
     [ContextMenu("Arrange Hand")]
-    public void Test()
+    public void InspectorArrangeHand()
     {
         cards = deck.cards;
         ArrangeHand();
