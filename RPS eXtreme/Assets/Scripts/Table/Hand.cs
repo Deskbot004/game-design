@@ -45,7 +45,7 @@ public class Hand : MonoBehaviour
         float maxHandWidth = circumference * maxHandDegree /360;
 
         // Get Needed Hand Width with given Cards and Margin
-        float cardWidth = 2 * cards[0].GetComponent<BoxCollider2D>().size.x;
+        float cardWidth = cards[0].GetComponent<BoxCollider2D>().size.x; //TODO: Vorher war hier *2, why?
         float handWidth = (cardWidth + margin) * (n - 1);
         handWidth = Mathf.Min(handWidth, maxHandWidth);
 

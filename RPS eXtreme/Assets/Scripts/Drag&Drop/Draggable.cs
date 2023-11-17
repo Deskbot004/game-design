@@ -34,6 +34,7 @@ public class Draggable : MonoBehaviour
     // Is called on Pickup
     void OnMouseDown()
     {
+        if (!enabled) return; //Prevents Dragging when this component is disabled
         SavePosition();
         transform.eulerAngles = new Vector3(0, 0, 0);
     }
@@ -41,6 +42,7 @@ public class Draggable : MonoBehaviour
     // Is called while Dragging
     void OnMouseDrag()
     {
+        if (!enabled) return;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = -1;
         transform.position = mousePos;
@@ -48,7 +50,8 @@ public class Draggable : MonoBehaviour
 
     // Is called on Drop
     void OnMouseUp() 
-    {        
+    {
+        if (!enabled) return;
         (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
         Droppable newDroppable;
 

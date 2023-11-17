@@ -13,6 +13,14 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool isPlayer;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
+    void Awake()
+    {
+        Card card = playerDeck.cards[0];
+        card.gameObject.SetActive(true);
+        drawpile.cardSize = card.GetComponent<BoxCollider2D>().bounds.size;
+        discardpile.cardSize = card.GetComponent<BoxCollider2D>().bounds.size;
+    }
+    
     public void init()
     {
         drawpile.cards = playerDeck.cards;
@@ -21,6 +29,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         {
             card.gameObject.SetActive(false);
         }
+        drawpile.init();
+        discardpile.init();
     }
 
     // Draws an amount of cards from the Drawpile into the Hand
