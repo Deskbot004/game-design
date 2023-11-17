@@ -2,26 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hand : MonoBehaviour, DefaultDroppable
+public class Hand : MonoBehaviour
 {
-    public float borderDistance = 0.001f;
-    public float margin = 0;
-
-    private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
-    private float circleRadius;
-
-    // For Debugging
-    public Deck deck;
     [System.NonSerialized]
     public List<Card> cards = new List<Card>();
 
+    public float borderDistance = 0.001f; // Influences the curve of the arranged cards (higher distance = curvier curve)
+    public float margin = 0; // Default Margin between cards
+
+    // Circle on which the cards are aligned
+    private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
+    private float circleRadius;
+
+    [Header("For Debbuging")]
+    public Deck deck;
+
+    // ---------- Main Functions ------------------------------------------------------------------------------
     void Start()
     {
-        cards = deck.cards;
+        cards.Clear();
     }
 
+    // ---------- Functions for Hand arrangement --------------------------------------------------------------
+    // Arranges all cards along a curve
     public void ArrangeHand()
     {
+        if (cards.Count == 0) return;
+
         SetCircle();
 
         // Some general variables
@@ -38,7 +45,7 @@ public class Hand : MonoBehaviour, DefaultDroppable
         float maxHandWidth = circumference * maxHandDegree /360;
 
         // Get Needed Hand Width with given Cards and Margin
-        float cardWidth = 2 * cards[0].GetComponent<BoxCollider2D>().size.x;
+        float cardWidth = cards[0].GetComponent<BoxCollider2D>().size.x; //TODO: Vorher war hier *2, why?
         float handWidth = (cardWidth + margin) * (n - 1);
         handWidth = Mathf.Min(handWidth, maxHandWidth);
 
@@ -53,10 +60,10 @@ public class Hand : MonoBehaviour, DefaultDroppable
         Vector3 currentPosition = circleCenter + leftBorder;
         Vector3 rotatedBorder = leftBorder;
         float currentDegree = handDegree / 2;
-        float degreeChange = handDegree / (n - 1);
+        float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
-            card.transform.localPosition = currentPosition;
+            card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
             card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
 
             rotatedBorder = Quaternion.Euler(0, 0, -degreeChange) * rotatedBorder;
@@ -76,6 +83,7 @@ public class Hand : MonoBehaviour, DefaultDroppable
         float m_13 = 2 * a * (Mathf.Pow(a, 2) + Mathf.Pow(b, 2));
 
         circleCenter.y = -m_13 / (2 * m_11);
+        //circleCenter = transform.TransformPoint(circleCenter);
         circleRadius = -circleCenter.y;
     }
 
@@ -88,21 +96,6 @@ public class Hand : MonoBehaviour, DefaultDroppable
         return Mathf.Acos(dot / (a.magnitude * b.magnitude)) * 180 / Mathf.PI;
     }
 
-
-    // Droppable -----------------------------------------------------------------------------------------------
-    public bool OnDrop(Draggable draggedObject)
-    {
-        cards.Add(draggedObject.GetComponent<Card>());
-        ArrangeHand();
-        return true;
-    }
-
-    public void OnLeave(Draggable draggedObject)
-    {
-        cards.Remove(draggedObject.GetComponent<Card>());
-        ArrangeHand();
-    }
-
     //--------------------- For Debugging-------------------------------------------------------------------------
     public void LogHand()
     {
@@ -110,7 +103,7 @@ public class Hand : MonoBehaviour, DefaultDroppable
     }
 
     [ContextMenu("Arrange Hand")]
-    public void Test()
+    public void InspectorArrangeHand()
     {
         cards = deck.cards;
         ArrangeHand();

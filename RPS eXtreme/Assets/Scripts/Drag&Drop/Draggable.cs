@@ -8,9 +8,11 @@ public class Draggable : MonoBehaviour
 
     private Vector3 startPosition;
     private Vector3 startRotation;
-    public Droppable currentDroppable; // The Droppable Object it's currently in
-    public Droppable defaultDroppable; // Handles drops, when this Draggable isn't in a Droppable
+    private Droppable currentDroppable; // The Droppable Object it's currently in
+    private Droppable defaultDroppable; // Handles drops, when this Draggable isn't in a Droppable
 
+
+    // ---------- Main Functions -------------------------------------------------------------------------------------------
     void Start()
     {
         // Make sure that the draggable Object has a Box Collider 
@@ -20,44 +22,50 @@ public class Draggable : MonoBehaviour
         defaultDroppable = GetComponentInParent<DefaultDroppable>();
         Debug.Assert(defaultDroppable != null, "Couldn't find default Droppable", this);
 
-        // Check whether Object is inside a Droppable
+        // Check whether Object is already inside a Droppable
         (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
         Debug.Assert(colAmount < 2, "Multiple Start-Droppables found", this);
-        if (colAmount > 0) currentDroppable = colliders[0].GetComponent<Droppable>();
-        else currentDroppable = defaultDroppable;
+        if (colAmount > 0)
+            currentDroppable = colliders[0].GetComponent<Droppable>();
+        else
+            currentDroppable = defaultDroppable;
     }
 
+    // Is called on Pickup
     void OnMouseDown()
     {
+        if (!enabled) return; //Prevents Dragging when this component is disabled
         SavePosition();
         transform.eulerAngles = new Vector3(0, 0, 0);
     }
 
+    // Is called while Dragging
     void OnMouseDrag()
     {
+        if (!enabled) return;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = -1;
         transform.position = mousePos;
     }
 
+    // Is called on Drop
     void OnMouseUp() 
-    {        
+    {
+        if (!enabled) return;
         (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
         Droppable newDroppable;
-        if(colAmount == 0) // Not dropped into a Droppable
-        {
+
+        // Check whether it was dropped inside a Droppable that's a child of the default Droppable
+        if(colAmount == 0 || !colliders[0].transform.IsChildOf(defaultDroppable.GetTransform())) // Not the case
             newDroppable = defaultDroppable;
-        }
-        else
+        else // Yes the case
         {
             Debug.Assert(colliders[0].GetComponent<Droppable>() != null, "Destination Object doesn't have Droppable Component", colliders[0]);
             newDroppable = colliders[0].GetComponent<Droppable>();
         }
 
-        if (newDroppable == currentDroppable)
-        {
-            RestorePosition();
-        }
+        // Handle the drop itself
+        if (newDroppable == currentDroppable) RestorePosition();
         else
         {
             if (newDroppable.OnDrop(this))
@@ -65,25 +73,26 @@ public class Draggable : MonoBehaviour
                 currentDroppable.OnLeave(this);
                 currentDroppable = newDroppable;
             }
-            else
-            {
-                RestorePosition();
-            }
+            else RestorePosition();
         }
     }
 
+    // ---------- Helper Functions -------------------------------------------------------------------------------------------
+    // Saves the current global position to the startPosition/Rotation Variables
     public void SavePosition()
     {
         startPosition = transform.position;
         startRotation = transform.eulerAngles;
     }
 
+    // Restores the position from the startPosition/Rotation Variables
     public void RestorePosition()
     {
         transform.position = startPosition;
         transform.eulerAngles = startRotation;
     }
 
+    // Returns all Droppable Components on the "Droppable" Layer, that collide with this Draggable
     public (int, Collider2D[]) GetOverlappedDroppable()
     {
         // Create Mask to Filter items that aren't on layer "Droppable"
