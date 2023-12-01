@@ -1,29 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Card : MonoBehaviour
 {
-    public int cardNumber;
-    public int Class; // 0 Rock 1 Paper 2 Scissors 3 Support
-    public Card[] SupportSlots;
-    public int nrSlots;
-    public string Symbol;
+    private string symbol;
+    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock" };
 
-    public void Init(int cardNumber, string Symbol)
+
+    public int GetValue()
     {
-        //look up the cardNumber and initialize accordingly
-        this.Symbol = Symbol;
+        return 0;
+    }
+
+    public virtual bool IsBasic()
+    {
+        return false;
     }
 
     public string GetSymbol()
     {
-        return Symbol;
+        return this.symbol;
     }
 
-    public bool isBasic()
+    public int SetSymbol(string newSymbol)
     {
-        return true;
+        if(Array.Exists(viableStrings,element => element == newSymbol))
+        {
+            this.symbol = newSymbol;
+            return 0;
+        }
+        else
+        {
+            Debug.Log("The given symbol is not a viable symbol");
+            return -1;
+        }
     }
-
 }
