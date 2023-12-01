@@ -5,7 +5,7 @@ using System;
 
 public class Card : MonoBehaviour
 {
-    private string symbol;
+    public string symbol;
     private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock" };
 
 
@@ -16,7 +16,7 @@ public class Card : MonoBehaviour
 
     public virtual bool IsBasic()
     {
-        return false;
+        return true;
     }
 
     public string GetSymbol()

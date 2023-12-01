@@ -8,9 +8,10 @@ public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition; // Leftmost is 0
 
-    #nullable enable
+            #nullable enable
     public Card? card;
-    #nullable disable
+#nullable disable
+    private List<Card> cards = new List<Card>();
 
     [Header("For Debugging")]
     public Card exampleCard; // Default card if slot is empty
@@ -38,6 +39,7 @@ public class Slot : MonoBehaviour, Droppable
         else // Yes the case
         {
             card = draggedObject.GetComponent<Card>();
+            cards.Add(card);
             card.transform.position = transform.position;
             return true;
         }
@@ -57,5 +59,15 @@ public class Slot : MonoBehaviour, Droppable
     public void TurnCards()
     {
 
+    }
+
+    public int GetSlotPosition()
+    {
+        return slotPosition;
+    }
+
+    public List<Card> GetCards()
+    {
+        return cards;
     }
 }

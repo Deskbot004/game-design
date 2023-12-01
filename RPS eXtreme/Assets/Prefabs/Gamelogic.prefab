@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6466380028084947432}
-  - component: {fileID: 111766368940299528}
+  - component: {fileID: 785538469352973617}
   m_Layer: 0
   m_Name: Gamelogic
   m_TagString: Untagged
@@ -32,7 +32,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &111766368940299528
+--- !u!114 &785538469352973617
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 383b9f42e71dfb949a4580cceca55a8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startDraw: 5
-  turnDraw: 2
-  lifepointMax: 10
+  startDraw: 0
+  turnDraw: 0
+  lifepointMax: 0
   table: {fileID: 0}

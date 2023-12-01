@@ -98,4 +98,9 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             slot.card = null;
         }
     }
+
+    public List<Slot> GetSlots()
+    {
+        return slots;
+    }
 }

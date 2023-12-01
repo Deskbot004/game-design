@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Android;
 
 public class Table : MonoBehaviour
 {
@@ -55,6 +56,14 @@ public class Table : MonoBehaviour
         logic.init(this);
     }
 
+    public List<Slot> GetSlotsPlayer()
+    {
+        return player.GetSlots();
+    }
 
+    public List<Slot> GetSlotsEnemy()
+    {
+        return enemy.GetSlots();
+    }
 
 }

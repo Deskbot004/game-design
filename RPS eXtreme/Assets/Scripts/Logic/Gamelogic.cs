@@ -44,11 +44,11 @@ public class Gamelogic : MonoBehaviour
     public void init(Table table)
     {
         // rework?
-        symbolToEntry.Add("Scissors", 0);
-        symbolToEntry.Add("Stone", 1);
-        symbolToEntry.Add("Paper", 2);
-        symbolToEntry.Add("Lizard", 3);
-        symbolToEntry.Add("Spock", 4);
+        symbolToEntry.Add("scissors", 0);
+        symbolToEntry.Add("stone", 1);
+        symbolToEntry.Add("paper", 2);
+        symbolToEntry.Add("lizard", 3);
+        symbolToEntry.Add("spock", 4);
 
         // Load Libs
         libAR = GetComponent<LibAR>();
@@ -96,12 +96,12 @@ public class Gamelogic : MonoBehaviour
         {
             foreach (Slot slotEnemy in slotsEnemy)
             {
-                if(slotUser.GetPosition() == slotEnemy.GetPosition())
+                if(slotUser.GetSlotPosition() == slotEnemy.GetSlotPosition())
                 {
                     slotUser.TurnCards();
                     slotEnemy.TurnCards();
                     string winner = EvaluateCards(slotUser.GetCards(), slotEnemy.GetCards());
-                    table.ResolveSlot(slotUser.GetPosition(), winner);
+                    table.ResolveSlot(slotUser.GetSlotPosition(), winner);
                 }
             }
         }
@@ -151,23 +151,29 @@ public class Gamelogic : MonoBehaviour
 
         foreach (Card card in cardsUser)
         {
-            if (card.isBasic())
+            if (card.IsBasic())
             {
                 symbolToEntryUser = symbolToEntry[card.GetSymbol()];
+                Debug.Log(card.GetSymbol());
             }
         }
 
         foreach (Card card in cardsEnemy)
         {
-            if (card.isBasic())
+            if (card.IsBasic())
             {
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
+                Debug.Log(card.GetSymbol());
             }
             // TODO: Read effects here -> Translate to Functions
         }
 
         attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
-        
+        Debug.Log(symbolToEntryUser);
+        Debug.Log(symbolToEntryEnemy);
+
+
+
     AR:
         /* TODO: How to implement the call of the functions
             A Card should know its function plus its intensity -> How? Dictionary?
