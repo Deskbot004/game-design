@@ -173,6 +173,8 @@ public class Gamelogic : MonoBehaviour
             A Card should know its function plus its intensity -> How? Dictionary?
             This gets translated into a function -> How? IDK help
             The Resulting list gets executed -> Problem Timing, Variable accessibility
+            
+            Save Dictionary with function -> Input parameter
         */
         if (attack == -1)
         {
@@ -253,51 +255,51 @@ public class Gamelogic : MonoBehaviour
     }
 
     // Start of various getter stuff -------------------------------------------------------------------------------------------------
-    void SetStartDraw(int startDraw)
+    public void SetStartDraw(int startDraw)
     {
         this.startDraw = startDraw;
     }
 
-    void SetTurnDraw(int turnDraw)
+    public void SetTurnDraw(int turnDraw)
     {
         this.turnDraw = turnDraw;
     }
-    void SetlifepointMax(int lifepointMax)
+    public void SetlifepointMax(int lifepointMax)
     {
         this.lifepointMax = lifepointMax;
     }
 
-    void SetdmgOnLoss(int dmgOnLoss)
+    public void SetdmgOnLoss(int dmgOnLoss)
     {
         this.dmgOnLoss = dmgOnLoss;
     }
 
-    void SetwinMatrix(int[,] winMatrix)
+    public void SetwinMatrix(int[,] winMatrix)
     {
         this.winMatrix = winMatrix;
     }
 
     // Start of various setter stuff -------------------------------------------------------------------------------------------------
-    int GetStartDraw()
+    public int GetStartDraw()
     {
         return this.startDraw;
     }
 
-    int GetTurnDraw()
+    public int GetTurnDraw()
     {
         return this.turnDraw;
     }
-    int GetlifepointMax()
+    public int GetlifepointMax()
     {
         return this.lifepointMax;
     }
 
-    int GetdmgOnLoss()
+    public int GetdmgOnLoss()
     {
         return this.dmgOnLoss;
     }
 
-    int[,] GetwinMatrix()
+    public int[,] GetwinMatrix()
     {
         return this.winMatrix;
     }

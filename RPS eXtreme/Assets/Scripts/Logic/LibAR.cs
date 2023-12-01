@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class LibAR : MonoBehaviour
 {
-    void RunAllAR(List<Func<Gamelogic, String, Card, int>> actions, Gamelogic logic, String caller, Card played)
+    void RunAllAR(List<Func<Gamelogic, String, int>> actions, Gamelogic logic, String caller)
     {
-        foreach (Func<Gamelogic, String, Card, int> func in actions)
+        foreach (Func<Gamelogic, String, int> func in actions)
         {
-            func(logic, caller, played);
+            func(logic, caller);
         }
     }
 
@@ -30,6 +30,11 @@ public class LibAR : MonoBehaviour
     public int AdditionalDamage(Gamelogic logic, String caller, Card played)
     {
         return 1;
+    }
+
+    public void ResetDamage(Gamelogic logic, int value)
+    {
+        logic.SetdmgOnLoss(value);
     }
 
     public int DrawCards(Gamelogic logic, String caller, Card played)
