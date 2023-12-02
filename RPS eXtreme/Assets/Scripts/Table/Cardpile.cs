@@ -6,12 +6,12 @@ using UnityEngine;
 public class Cardpile : MonoBehaviour
 {
     public GameObject openedPile;
-    public Collider2D background;
+    public Collider2D background; // Background of the opened card pile
     public double outerMargin; // Margin between cards and edge of background
     public double cardMargin; // Margin between cards
 
-    [System.NonSerialized] public List<Card> cards = new List<Card>();
-    [System.NonSerialized] public Vector3 cardSize;
+    private List<Card> cards = new List<Card>(); // Cards currently in the pile
+    private Vector3 cardSize; // size of the Collider of a Card
 
     private Vector3 backgroundSize;
     private int cardsPerRow;
@@ -21,7 +21,7 @@ public class Cardpile : MonoBehaviour
     public void Awake()
     {
         openedPile.SetActive(true);
-        backgroundSize = background.bounds.size;
+        backgroundSize = background.bounds.size; // To get the background size, the background needs to be enabled
         openedPile.SetActive(false);
     }
 
@@ -46,6 +46,7 @@ public class Cardpile : MonoBehaviour
     // Shows all the cards in the pile on screen
     public void openPile()
     {
+        // TODO: Close all other opened Cardpiles
         openedPile.SetActive(true);
 
         // Create a new temporary sorted list of cards in drawpile
@@ -108,4 +109,15 @@ public class Cardpile : MonoBehaviour
         else closePile();
         GetComponent<SpriteRenderer>().color = Color.gray;
     }
+
+    // ------ Getter und Setter -------------------------------------------------------------------
+    public List<Card> GetCards() { return cards; }
+    public Vector3 GetCardSize() { return cardSize; }
+
+    public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
+    { 
+        cards.Clear();
+        cards.AddRange(newCards);
+    }
+    public void SetCardSize(Vector3 newSize) { cardSize = newSize; }
 }
