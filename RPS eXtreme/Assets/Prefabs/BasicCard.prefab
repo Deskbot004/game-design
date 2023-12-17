@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 8793236003124066896}
   - component: {fileID: 1366858783941080249}
   - component: {fileID: 3954539545758581877}
-  - component: {fileID: 1833190843800385847}
   - component: {fileID: 2784101924343999038}
+  - component: {fileID: 3251097903975639861}
+  - component: {fileID: 7394685142577548252}
   m_Layer: 0
   m_Name: BasicCard
   m_TagString: Untagged
@@ -138,19 +139,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.14, y: 2.96}
   m_EdgeRadius: 0
---- !u!114 &1833190843800385847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1003988081768242810}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e9628e6111cb4594b9e74d0b758c600a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  symbol: 
 --- !u!114 &2784101924343999038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +151,72 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d759ee2898297f459e43b57c1d4f615, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3251097903975639861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003988081768242810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f143db7f3c6f6549be3370ed72674da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  symbol: 
+  topSlot: 0
+  bottomSlot: 0
+--- !u!114 &7394685142577548252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003988081768242810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d6600aa5ebdfeb43b8e3c5c2bea4311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  symbolSprites:
+    keys:
+    - rock
+    - paper
+    - scissors
+    values:
+    - {fileID: 21300000, guid: 01ed7339b0401914a9e4cd3adcc2cff0, type: 3}
+    - {fileID: 21300000, guid: 5895837e033689b478699b09c0f72ca1, type: 3}
+    - {fileID: 21300000, guid: 258440a53dcece74682e636a54da56bc, type: 3}
+  supportWindowSprites:
+    keys:
+    - miku
+    - saki
+    - airi
+    - an
+    - rui
+    - mizuki
+    values:
+    - {fileID: 21300000, guid: d2d405e662276d840bc48690bde128fd, type: 3}
+    - {fileID: 21300000, guid: 04f9254e430872942972aaf6f7695740, type: 3}
+    - {fileID: 21300000, guid: 8bbeaf8857aecac49a3ca0570e85a75a, type: 3}
+    - {fileID: 21300000, guid: b5825b89d00b10040a6eb6135ce7cb9e, type: 3}
+    - {fileID: 21300000, guid: 09b332a0627aefa41a722be9ac046e5c, type: 3}
+    - {fileID: 21300000, guid: 1eefc8f83d9a2fa478364537bea20fa2, type: 3}
+  supportIconSprites:
+    keys:
+    - miku_icon
+    - saki_icon
+    - airi_icon
+    - an_icon
+    - rui_icon
+    - mizuki_icon
+    values:
+    - {fileID: 21300000, guid: 2e283aac12952c346b683c95b89180d9, type: 3}
+    - {fileID: 21300000, guid: 81b0976c963beb34997f6f8244e9bdeb, type: 3}
+    - {fileID: 21300000, guid: ea3215d39cd2fb24bbd3701f4e04073a, type: 3}
+    - {fileID: 21300000, guid: 37e2dafd057a292418cb0c0cf30aba3c, type: 3}
+    - {fileID: 21300000, guid: 065502ec6bbbaec47a5e9615419299ba, type: 3}
+    - {fileID: 21300000, guid: 53127397d738dc642a404ef766e9beab, type: 3}
 --- !u!1 &1430910484930697977
 GameObject:
   m_ObjectHideFlags: 0
@@ -754,7 +808,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8691177801977951574
 Transform:
   m_ObjectHideFlags: 0
@@ -871,7 +925,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3390750961591313773
 Transform:
   m_ObjectHideFlags: 0
@@ -1125,7 +1179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Scissors
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
