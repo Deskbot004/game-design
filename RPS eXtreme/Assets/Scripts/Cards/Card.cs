@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[Serializable]
 public class Card : MonoBehaviour
 {
-    public string symbol;
-    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock" };
+    private string symbol;
+    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
 
 
     public int GetValue()
@@ -16,7 +17,7 @@ public class Card : MonoBehaviour
 
     public virtual bool IsBasic()
     {
-        return true;
+        return false;
     }
 
     public string GetSymbol()

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 
 public class Constructor : MonoBehaviour
 {
@@ -9,50 +12,69 @@ public class Constructor : MonoBehaviour
     public GameObject SupportCard;
     public GameObject Deck;
     
-    public NormalCard CreateNormalCard()
+    public NormalCard CreateEmptyNormalCard()
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
         return cardObject.GetComponent<NormalCard>();
 
     }
 
-    public SupportCard CreateSupportCard()
+    public NormalCard CreateNormalCard(string symbol)
     {
-        GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
-        return cardObject.GetComponent<SupportCard>();
+        GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
+        NormalCard card = cardObject.GetComponent<NormalCard>();
+        card.SetSymbol(symbol);
+        return card;
     }
 
-    public Deck CreateDeck()
+    public SupportCard CreateEmptySupportCard()
+    {
+        GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
+        SupportCard card = cardObject.GetComponent<SupportCard>();
+        card.SetSymbol("support");
+        return card;
+    }
+
+    public Deck CreateEmptyDeck()
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
         return deckObject.GetComponent<Deck>();
     }
+    public Deck CreateDeck(List<Card> cards, string deckname)
+    {
+        GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
+        Deck deck = deckObject.GetComponent<Deck>();
+        deck.AddCardDeck(cards);
+        deck.SetDeckName(deckname);
+        return deck;
+    }
 
-    [ContextMenu("Creation")]
+    [ContextMenu("Create tryout Deck")]
     void Creation()
     {
         List<Card> cards = new List<Card>();
-        NormalCard card1 = CreateNormalCard();
-        SupportCard card2 = CreateSupportCard();
-        cards.Add(card1);
-        Deck deck = CreateDeck();
-        deck.AddCardDeck(cards);
-        deck.AddCard(card2);
-        List<Card> tryout = deck.GetCards();
-        foreach(Card card in tryout)
+        for(int i = 0; i < 1; i++)
         {
-            if (card.IsBasic())
-            {
-                Debug.Log("Found Normal Card" + card);
-            }
-            else
-            {
-                Debug.Log("Found Support Card" + card);
-            }
+            NormalCard card0 = CreateNormalCard("scissors");
+            cards.Add(card0);
+            NormalCard card1 = CreateNormalCard("stone");
+            cards.Add(card1);
+            NormalCard card2 = CreateNormalCard("paper");
+            cards.Add(card2);
+            NormalCard card3 = CreateNormalCard("lizard");
+            cards.Add(card3);
+            NormalCard card4 = CreateNormalCard("spock");
+            cards.Add(card4);
+            SupportCard card5 = CreateEmptySupportCard();
+            cards.Add(card5);
         }
-        card1.SetSymbol("stone");
-        Debug.Log(card1.GetSymbol());
-         
+        Deck deck = CreateDeck(cards, "tryout");
+
+        List<Card> deckCards = deck.GetCards();
+
+        deck.SaveDeck();
+
+        deck.LoadDeck("tryout");
 
     }
 }
