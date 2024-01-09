@@ -15,6 +15,10 @@ public class Card : MonoBehaviour
         return 0;
     }
 
+    /*
+     * Checks, if the card is a SupportCard or a NormalCard. false = Support, true = Normal.
+     */
+
     public virtual bool IsBasic()
     {
         return false;

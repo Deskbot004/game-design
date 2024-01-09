@@ -5,6 +5,9 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+/*
+ * A class to generate new cards and decks using the prefabs
+ */
 
 public class Constructor : MonoBehaviour
 {
@@ -12,12 +15,20 @@ public class Constructor : MonoBehaviour
     public GameObject SupportCard;
     public GameObject Deck;
     
+    /*
+     *  Creates a NormalCard but doesn't initialize it
+     */
+
     public NormalCard CreateEmptyNormalCard()
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
         return cardObject.GetComponent<NormalCard>();
 
     }
+
+    /*
+     *  Creates a NormalCard and initializes it
+     */
 
     public NormalCard CreateNormalCard(string symbol)
     {
@@ -27,6 +38,10 @@ public class Constructor : MonoBehaviour
         return card;
     }
 
+    /*
+     *  Creates a SupportCard but doesn't initialize it,except for its symbol
+     */
+
     public SupportCard CreateEmptySupportCard()
     {
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
@@ -35,11 +50,20 @@ public class Constructor : MonoBehaviour
         return card;
     }
 
+    /*
+     *  Creates a Deck but doesn't initialize it
+     */
+
     public Deck CreateEmptyDeck()
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
         return deckObject.GetComponent<Deck>();
     }
+
+    /*
+     *  Creates a Deck and initializes it
+     */
+
     public Deck CreateDeck(List<Card> cards, string deckname)
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
@@ -48,6 +72,8 @@ public class Constructor : MonoBehaviour
         deck.SetDeckName(deckname);
         return deck;
     }
+
+    
 
     [ContextMenu("Create tryout Deck")]
     void Creation()

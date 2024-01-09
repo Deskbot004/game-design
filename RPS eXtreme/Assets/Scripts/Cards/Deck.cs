@@ -33,6 +33,10 @@ public class Deck : MonoBehaviour
         return this.cards;
     }
 
+    /*
+     * Saves the Deck into a text file using Json and a DeckManager.
+     */
+
     public void SaveDeck()
     {
         string filename_location = Path.Combine(Application.persistentDataPath, this.deckName);
@@ -63,8 +67,13 @@ public class Deck : MonoBehaviour
 
     }
 
+    /*
+     * Loads the Deck from a text file using Json and a DeckManager.
+     */
+
     public void LoadDeck(string filename)
     {
+        //Read text from file and convert it into a DeckManager
         string filename_location = Path.Combine(Application.persistentDataPath, filename);
         string savedDeck = "";
         if (File.Exists(filename_location))
@@ -85,13 +94,14 @@ public class Deck : MonoBehaviour
             Debug.Log("Something went wrong while saving the deck. The lists do not have the same length and can't be decoded.");
             return;
         }
+
         //Remove old Cards starting with last Element
         int count = this.cards.Count;
         for (int i = count; i > 0; i--)
         {
             Card card = cards[i - 1];
             cards.RemoveAt(i - 1);
-            DestroyImmediate(card.gameObject);
+            Destroy(card.gameObject);
         }
 
         //Add new Cards
