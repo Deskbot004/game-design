@@ -30,11 +30,12 @@ public class Constructor : MonoBehaviour
      *  Creates a NormalCard and initializes it
      */
 
-    public NormalCard CreateNormalCard(string symbol)
+    public NormalCard CreateNormalCard(string symbol, int type)
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
         NormalCard card = cardObject.GetComponent<NormalCard>();
         card.SetSymbol(symbol);
+        card.SetSlotType(type);
         return card;
     }
 
@@ -47,6 +48,19 @@ public class Constructor : MonoBehaviour
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
+        return card;
+    }
+
+    /*
+     *  Creates a SupportCard and initializes it
+     */
+
+    public SupportCard CreateSupportCard(int type)
+    {
+        GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
+        SupportCard card = cardObject.GetComponent<SupportCard>();
+        card.SetSymbol("support");
+        card.SetSlotType(type);
         return card;
     }
 
@@ -79,28 +93,28 @@ public class Constructor : MonoBehaviour
     void Creation()
     {
         List<Card> cards = new List<Card>();
-        for(int i = 0; i < 1; i++)
+        for(int i = 0; i < 4; i++)
         {
-            NormalCard card0 = CreateNormalCard("scissors");
+            NormalCard card0 = CreateNormalCard("scissors", i);
             cards.Add(card0);
-            NormalCard card1 = CreateNormalCard("stone");
+            NormalCard card1 = CreateNormalCard("stone", i);
             cards.Add(card1);
-            NormalCard card2 = CreateNormalCard("paper");
+            NormalCard card2 = CreateNormalCard("paper", i);
             cards.Add(card2);
-            NormalCard card3 = CreateNormalCard("lizard");
+            NormalCard card3 = CreateNormalCard("lizard", i);
             cards.Add(card3);
-            NormalCard card4 = CreateNormalCard("spock");
+            NormalCard card4 = CreateNormalCard("spock", i);
             cards.Add(card4);
-            SupportCard card5 = CreateEmptySupportCard();
+            SupportCard card5 = CreateSupportCard(i % 2);
             cards.Add(card5);
         }
-        Deck deck = CreateDeck(cards, "tryout");
+        Deck deck = CreateDeck(cards, "PlayerTryoutDeck");
 
         List<Card> deckCards = deck.GetCards();
 
         deck.SaveDeck();
 
-        deck.LoadDeck("tryout");
+        //deck.LoadDeck("tryout");
 
     }
 }

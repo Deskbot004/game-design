@@ -11,8 +11,9 @@ using UnityEngine;
 public class DeckManager 
 {
 
-    public List<string> CardSymbols = new List<string>();
-    public List<bool> types = new List<bool>();
+    public List<string> cardSymbols = new List<string>();
+    public List<int> cardTypes = new List<int>();
+    public List<int> slotTypes = new List<int>();
     public List<string> functions = new List<string>();
 
 }

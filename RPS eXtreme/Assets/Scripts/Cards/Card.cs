@@ -8,6 +8,7 @@ public class Card : MonoBehaviour
 {
     private string symbol;
     private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
+    protected int slotType = -1;
 
 
     public int GetValue()
@@ -41,5 +42,16 @@ public class Card : MonoBehaviour
             Debug.Log("The given symbol is not a viable symbol");
             return -1;
         }
+    }
+
+    public int GetSlotType()
+    {
+        return this.slotType;
+    }
+
+    public virtual int SetSlotType(int type)
+    {
+        this.slotType = type;
+        return 0;
     }
 }

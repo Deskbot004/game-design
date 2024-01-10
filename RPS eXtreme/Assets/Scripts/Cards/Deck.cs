@@ -10,6 +10,7 @@ public class Deck : MonoBehaviour
 {
     public GameObject NormalCard;
     public GameObject SupportCard;
+    public GameObject Constructor;
     public List<Card> cards = new List<Card>();
     private string deckName;
 
@@ -46,17 +47,19 @@ public class Deck : MonoBehaviour
             if (this.cards[i].IsBasic()) // card is a NormalCard
             {
                 NormalCard card = (NormalCard)this.cards[i];
-                save.CardSymbols.Add(card.GetSymbol());
-                save.types.Add(true);
+                save.cardSymbols.Add(card.GetSymbol());
+                save.cardTypes.Add(0);
                 save.functions.Add("");
+                save.slotTypes.Add(card.GetSlotType());
             }
             else
             {
                 SupportCard card = (SupportCard)this.cards[i];
-                save.CardSymbols.Add(card.GetSymbol());
-                save.types.Add(false);
+                save.cardSymbols.Add(card.GetSymbol());
+                save.cardTypes.Add(1);
                 string functionString = ""; //TODO: Convert functions into a string 
                 save.functions.Add(functionString);
+                save.slotTypes.Add(card.GetSlotType());
             }
         }
         string savedDeck = JsonUtility.ToJson(save);
@@ -89,7 +92,7 @@ public class Deck : MonoBehaviour
         Debug.Log("Loaded String: " + savedDeck);
 
         DeckManager save = JsonUtility.FromJson<DeckManager>(savedDeck);
-        if (save.CardSymbols.Count != save.types.Count || save.CardSymbols.Count != save.functions.Count || save.types.Count != save.functions.Count)
+        if (!(save.cardSymbols.Count == save.cardTypes.Count && save.cardSymbols.Count == save.functions.Count && save.cardSymbols.Count == save.slotTypes.Count))
         {
             Debug.Log("Something went wrong while saving the deck. The lists do not have the same length and can't be decoded.");
             return;
@@ -105,20 +108,22 @@ public class Deck : MonoBehaviour
         }
 
         //Add new Cards
-        for (int i = 0; i < save.CardSymbols.Count; i++)
+        for (int i = 0; i < save.cardSymbols.Count; i++)
         {
-            if (save.types[i]) // saved Card at index i was a NormalCard
+            if (save.cardTypes[i] == 0) // saved Card at index i was a NormalCard
             {
                 GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
                 NormalCard card = cardObject.GetComponent<NormalCard>();
-                card.SetSymbol(save.CardSymbols[i]);
+                card.SetSymbol(save.cardSymbols[i]);
+                card.SetSlotType(save.slotTypes[i]);
                 this.AddCard(card);
             }
             else
             {
                 GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
                 SupportCard card = cardObject.GetComponent<SupportCard>();
-                card.SetSymbol(save.CardSymbols[i]);
+                card.SetSymbol(save.cardSymbols[i]);
+                card.SetSlotType(save.slotTypes[i]);
                 //TODO: convert string back into functions
                 this.AddCard(card);
             }
