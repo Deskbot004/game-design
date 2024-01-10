@@ -44,4 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c58ea426aa2ceca48b36890d9f6b8902, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  NormalCard: {fileID: 1035841229192701943, guid: 5457312cfcf5ce349947b870af19a33c, type: 3}
+  SupportCard: {fileID: 8222774776693554697, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+  Constructor: {fileID: 1594845359462597487, guid: e2951b94409a6314da97baf698d09c03, type: 3}
   cards: []
