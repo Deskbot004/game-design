@@ -9,11 +9,14 @@ public class Table : MonoBehaviour
     public TablePlayer player;
     public TablePlayer enemy;
 
+    [Header("Visual Stuff")]
+    public SpriteRenderer dim;
+
     void Start()
     {
-        player.init();
-        enemy.init();
-        //logic.init(this);
+        player.init(this);
+        enemy.init(this);
+        //logic.init(this); // TODO: Remove for final version
     }
 
     // Removes the card from every slot and puts them into the Discard Pile
@@ -23,7 +26,7 @@ public class Table : MonoBehaviour
         TablePlayer[] players = { player, enemy };
         foreach (TablePlayer p in players)
         {
-            // TODO: Überarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
+            // TODO: Ãœberarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
             foreach (Slot slot in p.slots)
             {
                 Card card = slot.GetCard();

@@ -11,6 +11,7 @@ public class Hand : MonoBehaviour
     private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
     private float circleRadius;
 
+    private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>();
 
     [Header("For Debbuging")]
@@ -20,6 +21,11 @@ public class Hand : MonoBehaviour
     void Start()
     {
         cards.Clear();
+    }
+
+    public void init(TablePlayer tablePlayer) 
+    {
+        this.tablePlayer = tablePlayer;
     }
 
     // ---------- Functions for Hand arrangement --------------------------------------------------------------
@@ -100,8 +106,21 @@ public class Hand : MonoBehaviour
     public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
     { 
         cards.Clear();
-        cards.AddRange(newCards);
+        AddCards(newCards);
     }
+    public void AddCards(List<Card> newCards)
+    {
+        cards.AddRange(newCards);
+        foreach (Card card in newCards) 
+        {
+            card.SetStatus(1);
+        }
+    }
+    public void RemoveCard(Card cardToBeRemoved)
+    {
+        cards.Remove(cardToBeRemoved);
+    }
+    public TablePlayer GetTablePlayer() {return tablePlayer;}
 
 
     //--------------------- For Debugging-------------------------------------------------------------------------

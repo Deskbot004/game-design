@@ -10,6 +10,7 @@ public class Cardpile : MonoBehaviour
     public double outerMargin; // Margin between cards and edge of background
     public double cardMargin; // Margin between cards
 
+    private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>(); // Cards currently in the pile
     private Vector3 cardSize; // size of the Collider of a Card
 
@@ -25,8 +26,10 @@ public class Cardpile : MonoBehaviour
         openedPile.SetActive(false);
     }
 
-    public void init()
+    public void init(TablePlayer tablePlayer)
     {
+        this.tablePlayer = tablePlayer;
+
         // Calculate cardsPerRow
         double outerWidth = backgroundSize.x;
         double innerWidth = backgroundSize.x - 2 * outerMargin; // Width without outer margin
@@ -42,7 +45,7 @@ public class Cardpile : MonoBehaviour
         cards = cards.OrderBy(x => rng.Next()).ToList();
     }
 
-    // TODO: Überarbeiten, sobald wir die Assets haben
+    // TODO: Ãœberarbeiten, sobald wir die Assets haben
     // Shows all the cards in the pile on screen
     public void openPile()
     {
@@ -118,6 +121,11 @@ public class Cardpile : MonoBehaviour
     { 
         cards.Clear();
         cards.AddRange(newCards);
+        foreach (Card card in newCards) 
+        {
+            card.SetStatus(0);
+        }
     }
     public void SetCardSize(Vector3 newSize) { cardSize = newSize; }
+    public TablePlayer GetTablePlayer() {return tablePlayer;}
 }

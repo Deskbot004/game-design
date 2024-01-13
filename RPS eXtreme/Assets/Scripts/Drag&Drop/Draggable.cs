@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Draggable : MonoBehaviour
@@ -10,6 +11,8 @@ public class Draggable : MonoBehaviour
     private Vector3 startRotation;
     private Droppable currentDroppable; // The Droppable Object it's currently in
     private Droppable defaultDroppable; // Handles drops, when this Draggable isn't in a Droppable
+
+    //TODO: In Unity, layer the card properly
 
 
     // ---------- Main Functions -------------------------------------------------------------------------------------------
@@ -57,7 +60,9 @@ public class Draggable : MonoBehaviour
 
         // Check whether it was dropped inside a Droppable that's a child of the default Droppable
         if(colAmount == 0 || !colliders[0].transform.IsChildOf(defaultDroppable.GetTransform())) // Not the case
+        {
             newDroppable = defaultDroppable;
+        }
         else // Yes the case
         {
             Debug.Assert(colliders[0].GetComponent<Droppable>() != null, "Destination Object doesn't have Droppable Component", colliders[0]);
@@ -105,6 +110,11 @@ public class Draggable : MonoBehaviour
         contactFilter.SetLayerMask(layerMask);
         Collider2D[] colliders = new Collider2D[maxCollidors];
         int collidersAmount = GetComponent<Collider2D>().OverlapCollider(contactFilter, colliders);
+
+        // Filter out null entries and inactive droppables
+        colliders = colliders.Where(c => c != null).ToArray();
+        if (collidersAmount > 0) colliders = colliders.Where(c => c.GetComponent<Droppable>().DropActive).ToArray(); //Filter out inactive droppables
+        collidersAmount = colliders.Length;
 
         return (collidersAmount, colliders);
     }
