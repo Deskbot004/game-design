@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[Serializable]
 public class Card : MonoBehaviour
 {
-    public string symbol;
-    public bool topSlot;
-    public bool bottomSlot;
+    private string symbol;
+    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
+    protected int slotType = -1;
 
     private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock" };
     private CardSprites cardSprites;
@@ -17,9 +18,13 @@ public class Card : MonoBehaviour
         return 0;
     }
 
+    /*
+     * Checks, if the card is a SupportCard or a NormalCard. false = Support, true = Normal.
+     */
+
     public virtual bool IsBasic()
     {
-        return true;
+        return false;
     }
 
     public string GetSymbol()
@@ -39,6 +44,17 @@ public class Card : MonoBehaviour
             //Debug.Log("The given symbol is not a viable symbol");
             return -1;
         }
+    }
+
+    public int GetSlotType()
+    {
+        return this.slotType;
+    }
+
+    public virtual int SetSlotType(int type)
+    {
+        this.slotType = type;
+        return 0;
     }
 
     public CardSprites GetCardSprites() { return cardSprites; }
