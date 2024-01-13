@@ -6,11 +6,11 @@ using System;
 [Serializable]
 public class Card : MonoBehaviour
 {
-    private string symbol;
-    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
-    protected int slotType = -1;
-
-    private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock" };
+    //private string symbol;
+    public string symbol; //For Debugging
+    private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock", "support" };
+    //protected int slotType = -1;
+    public int slotType = -1; // For Debugging
     private CardSprites cardSprites;
 
     public int GetValue()
@@ -59,7 +59,10 @@ public class Card : MonoBehaviour
 
     public CardSprites GetCardSprites() { return cardSprites; }
 
-    public virtual void SetSprite() { }
+    public virtual void SetSprite()
+    { 
+        cardSprites = transform.GetComponent<CardSprites>();
+    }
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
@@ -68,7 +71,6 @@ public class Card : MonoBehaviour
     public void _OnValidate()
     {
         if (this == null) return;
-        cardSprites = transform.GetComponent<CardSprites>();
         SetSprite();
         //if (SetSymbol(symbol) < 0) { return; }
         //else { SetSprite(); }

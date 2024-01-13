@@ -36,6 +36,7 @@ public class Constructor : MonoBehaviour
         NormalCard card = cardObject.GetComponent<NormalCard>();
         card.SetSymbol(symbol);
         card.SetSlotType(type);
+        card.SetSprite();
         return card;
     }
 
@@ -48,6 +49,7 @@ public class Constructor : MonoBehaviour
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
+        card.SetSprite();
         return card;
     }
 
@@ -61,6 +63,7 @@ public class Constructor : MonoBehaviour
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
         card.SetSlotType(type);
+        card.SetSprite();
         return card;
     }
 
