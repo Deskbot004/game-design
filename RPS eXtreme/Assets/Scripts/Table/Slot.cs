@@ -8,13 +8,20 @@ public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition; // Leftmost is 0
 
+    private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>();
+    private bool dropActive = true;
 
     [Header("For Debugging")]
     public Card exampleCard; // Default card if slot is empty
 #nullable enable
     private Card? card; // While combining cards isn't implemented
 #nullable disable
+
+    public void init(TablePlayer tablePlayer) 
+    {
+        this.tablePlayer = tablePlayer;
+    }
 
     // ---------- Slot Functions ----------------------------------------------
     // TODO
@@ -24,11 +31,17 @@ public class Slot : MonoBehaviour, Droppable
     }
 
     // ---------- Droppable Functions -----------------------------------------
-    // TODO: Alle Droppables Überarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
+    public bool DropActive
+    {
+        get {return dropActive;}
+        set {dropActive = value;}
+    }
+    
+    // TODO: Alle Droppables ï¿½berarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
     public bool OnDrop(Draggable draggedObject)
     {
-        // Check whether the Slot is empty and the dropped Object is a Card
-        if (card != null || draggedObject.GetComponent<Card>() == null) // Not the case
+        // Check whether the Slot is empty and the dropped Object is a Basic Card
+        if (card != null || draggedObject.GetComponent<NormalCard>() == null) // Not the case
         {
             return false;
         }
@@ -76,6 +89,7 @@ public class Slot : MonoBehaviour, Droppable
         cards.Add(newCard);
         card = newCard; // For Debugging
     }
+    public TablePlayer GetTablePlayer() {return tablePlayer;}
 
     // ------ For Debugging -------------------------------------------------------------------
     public Card GetCard() { return card; }

@@ -13,6 +13,16 @@ public class Deck : MonoBehaviour
     public GameObject Constructor;
     public List<Card> cards = new List<Card>();
     private string deckName;
+    private TablePlayer tablePlayer;
+
+    public void init(TablePlayer tablePlayer) 
+    {
+        this.tablePlayer = tablePlayer;
+        foreach (Card card in cards) 
+        {
+            card.init(this);
+        }
+    }
 
     public void AddCard(Card card)
     {
@@ -140,6 +150,8 @@ public class Deck : MonoBehaviour
     {
         this.deckName = name;
     }
+
+    public TablePlayer GetTablePlayer() {return tablePlayer;}
 
     [ContextMenu("Add Cards")]
     void AddCards()

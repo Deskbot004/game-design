@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Cardpile : MonoBehaviour
 {
-    public GameObject openedPile;
     public Collider2D background; // Background of the opened card pile
     public double outerMargin; // Margin between cards and edge of background
     public double cardMargin; // Margin between cards
 
+    private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>(); // Cards currently in the pile
     private Vector3 cardSize; // size of the Collider of a Card
 
@@ -20,13 +20,15 @@ public class Cardpile : MonoBehaviour
 
     public void Awake()
     {
-        openedPile.SetActive(true);
+        background.gameObject.SetActive(true);
         backgroundSize = background.bounds.size; // To get the background size, the background needs to be enabled
-        openedPile.SetActive(false);
+        background.gameObject.SetActive(false);
     }
 
-    public void init()
+    public void init(TablePlayer tablePlayer)
     {
+        this.tablePlayer = tablePlayer;
+
         // Calculate cardsPerRow
         double outerWidth = backgroundSize.x;
         double innerWidth = backgroundSize.x - 2 * outerMargin; // Width without outer margin
@@ -42,12 +44,13 @@ public class Cardpile : MonoBehaviour
         cards = cards.OrderBy(x => rng.Next()).ToList();
     }
 
-    // TODO: Überarbeiten, sobald wir die Assets haben
+    // TODO: Ãœberarbeiten, sobald wir die Assets haben
     // Shows all the cards in the pile on screen
     public void openPile()
     {
         // TODO: Close all other opened Cardpiles
-        openedPile.SetActive(true);
+        tablePlayer.GetTable().dim.gameObject.SetActive(true);
+        background.gameObject.SetActive(true);
 
         // Create a new temporary sorted list of cards in drawpile
         sortedCards.Clear();
@@ -73,7 +76,8 @@ public class Cardpile : MonoBehaviour
 
     public void closePile()
     {
-        openedPile.SetActive(false);
+        tablePlayer.GetTable().dim.gameObject.SetActive(true);
+        background.gameObject.SetActive(false);
         foreach (Card card in sortedCards)
         {
             card.gameObject.SetActive(false);
@@ -118,6 +122,11 @@ public class Cardpile : MonoBehaviour
     { 
         cards.Clear();
         cards.AddRange(newCards);
+        foreach (Card card in newCards) 
+        {
+            card.SetStatus(0);
+        }
     }
     public void SetCardSize(Vector3 newSize) { cardSize = newSize; }
+    public TablePlayer GetTablePlayer() {return tablePlayer;}
 }

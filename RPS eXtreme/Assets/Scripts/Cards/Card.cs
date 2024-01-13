@@ -6,12 +6,33 @@ using System;
 [Serializable]
 public class Card : MonoBehaviour
 {
-    private string symbol;
-    private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
-    protected int slotType = -1;
-
-    private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock" };
+    //private string symbol;
+    public string symbol; // Set to public for Debugging
+    private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock", "support" };
+    //protected int slotType = -1;
+    public int slotType = -1; // Set to public for Debugging
+    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot
     private CardSprites cardSprites;
+    protected Deck deck;
+
+    public void init(Deck deck)
+    {
+        this.deck = deck;
+        SetSprite();
+    }
+
+    void OnMouseOver () {
+        if(Input.GetMouseButtonDown(1))
+        {
+            if(status == 1) 
+            {
+                OnRightClickInHand();
+            }
+        }
+    }
+
+    public virtual void OnRightClickInHand() {}
+
 
     public int GetValue()
     {
@@ -59,7 +80,13 @@ public class Card : MonoBehaviour
 
     public CardSprites GetCardSprites() { return cardSprites; }
 
-    public virtual void SetSprite() { }
+    public virtual void SetSprite()
+    { 
+        cardSprites = transform.GetComponent<CardSprites>();
+    }
+
+    public void SetStatus(int status) {this.status = status;}
+    public int GetStatus() {return status;}
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
@@ -68,7 +95,7 @@ public class Card : MonoBehaviour
     public void _OnValidate()
     {
         if (this == null) return;
-        cardSprites = transform.GetComponent<CardSprites>();
+        else if (gameObject.scene.name == null) return;
         SetSprite();
         //if (SetSymbol(symbol) < 0) { return; }
         //else { SetSprite(); }
