@@ -10,6 +10,8 @@ public class Card : MonoBehaviour
     private string[] viableStrings = { "scissors", "stone", "paper", "lizard", "spock", "support" };
     protected int slotType = -1;
 
+    private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock" };
+    private CardSprites cardSprites;
 
     public int GetValue()
     {
@@ -39,7 +41,7 @@ public class Card : MonoBehaviour
         }
         else
         {
-            Debug.Log("The given symbol is not a viable symbol");
+            //Debug.Log("The given symbol is not a viable symbol");
             return -1;
         }
     }
@@ -54,4 +56,22 @@ public class Card : MonoBehaviour
         this.slotType = type;
         return 0;
     }
+
+    public CardSprites GetCardSprites() { return cardSprites; }
+
+    public virtual void SetSprite() { }
+
+    //[ContextMenu("Init Card")]
+    // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
+#if UNITY_EDITOR
+    void OnValidate() { UnityEditor.EditorApplication.delayCall += _OnValidate; }
+    public void _OnValidate()
+    {
+        if (this == null) return;
+        cardSprites = transform.GetComponent<CardSprites>();
+        SetSprite();
+        //if (SetSymbol(symbol) < 0) { return; }
+        //else { SetSprite(); }
+    }
+#endif
 }

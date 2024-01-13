@@ -4,15 +4,14 @@ using UnityEngine;
 
 public class Hand : MonoBehaviour
 {
-    [System.NonSerialized]
-    public List<Card> cards = new List<Card>();
-
     public float borderDistance = 0.001f; // Influences the curve of the arranged cards (higher distance = curvier curve)
     public float margin = 0; // Default Margin between cards
 
     // Circle on which the cards are aligned
     private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
     private float circleRadius;
+
+    private List<Card> cards = new List<Card>();
 
     [Header("For Debbuging")]
     public Deck deck;
@@ -95,6 +94,15 @@ public class Hand : MonoBehaviour
         float dot = Vector2.Dot(a, b);
         return Mathf.Acos(dot / (a.magnitude * b.magnitude)) * 180 / Mathf.PI;
     }
+
+    // ------ Getter und Setter -------------------------------------------------------------------
+    public List<Card> GetCards() { return cards; }
+    public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
+    { 
+        cards.Clear();
+        cards.AddRange(newCards);
+    }
+
 
     //--------------------- For Debugging-------------------------------------------------------------------------
     public void LogHand()

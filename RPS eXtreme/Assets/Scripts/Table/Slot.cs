@@ -8,27 +8,23 @@ public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition; // Leftmost is 0
 
-            #nullable enable
-    public Card? card;
-#nullable disable
     private List<Card> cards = new List<Card>();
 
     [Header("For Debugging")]
     public Card exampleCard; // Default card if slot is empty
+#nullable enable
+    private Card? card; // While combining cards isn't implemented
+#nullable disable
 
     // ---------- Slot Functions ----------------------------------------------
-    // Returns the current Card in the Slot
-    public Card GetCard()
+    // TODO
+    public void TurnCards()
     {
-        // TODO: The object calling GetCard should check whether the returned card isn't null
-        // Since card is public, do we even need this function?
-        //Debug.Assert(card != null, "Slot doesn't have a card", this);
-        //return card;
 
-        return card != null ? card : exampleCard;
     }
 
     // ---------- Droppable Functions -----------------------------------------
+    // TODO: Alle Droppables Überarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
     public bool OnDrop(Draggable draggedObject)
     {
         // Check whether the Slot is empty and the dropped Object is a Card
@@ -55,19 +51,37 @@ public class Slot : MonoBehaviour, Droppable
         return transform;
     }
 
-    // TODO ---------------------------------------------------------------
-    public void TurnCards()
-    {
-
-    }
-
-    public int GetSlotPosition()
-    {
-        return slotPosition;
-    }
-
+    // ------ Getter und Setter -------------------------------------------------------------------
+    public int GetSlotPosition() { return slotPosition; }
     public List<Card> GetCards()
     {
+        // This check is only for Debugging
+        // Once we have Empty Cards, cards can't be empty on resolve
+        if (cards.Count == 0) {
+            List<Card> emptyCard = new List<Card>();
+            emptyCard.Add(exampleCard);
+            return emptyCard;
+        }
         return cards;
+    }
+    public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
+    {
+        cards.Clear();
+        cards.AddRange(newCards);
+        card = newCards[0]; // For Debugging
+    }
+    public void SetCards(Card newCard)
+    {
+        cards.Clear();
+        cards.Add(newCard);
+        card = newCard; // For Debugging
+    }
+
+    // ------ For Debugging -------------------------------------------------------------------
+    public Card GetCard() { return card; }
+    public void ClearCard()
+    {
+        card = null;
+        cards.Clear();
     }
 }
