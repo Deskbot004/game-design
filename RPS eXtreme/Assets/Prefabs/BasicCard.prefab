@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8793236003124066896}
   - component: {fileID: 1366858783941080249}
+  - component: {fileID: 4884618397289013254}
   - component: {fileID: 3954539545758581877}
   - component: {fileID: 2784101924343999038}
   - component: {fileID: 3251097903975639861}
@@ -94,6 +95,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 2
   m_SpriteSortPoint: 0
+--- !u!210 &4884618397289013254
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1003988081768242810}
+  m_Enabled: 1
+  m_SortingLayerID: -877961163
+  m_SortingLayer: 1
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!61 &3954539545758581877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1178,7 +1191,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Title
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

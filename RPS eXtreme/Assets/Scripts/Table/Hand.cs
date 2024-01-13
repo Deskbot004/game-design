@@ -8,7 +8,7 @@ public class Hand : MonoBehaviour
     public float margin = 0; // Default Margin between cards
 
     // Circle on which the cards are aligned
-    private Vector3 circleCenter = new Vector3(0f, 0f, -1f);
+    private Vector3 circleCenter = new Vector3(0f, 0f, 0f);
     private float circleRadius;
 
     private TablePlayer tablePlayer;
@@ -68,6 +68,7 @@ public class Hand : MonoBehaviour
         float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
+            currentPosition.z = card.transform.localPosition.z;
             card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
             card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
 

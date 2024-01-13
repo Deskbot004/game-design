@@ -47,7 +47,7 @@ public class Draggable : MonoBehaviour
     {
         if (!enabled) return;
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = -1;
+        mousePos.z = -7;
         transform.position = mousePos;
     }
 

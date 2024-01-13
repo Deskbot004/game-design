@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Cardpile : MonoBehaviour
 {
-    public GameObject openedPile;
     public Collider2D background; // Background of the opened card pile
     public double outerMargin; // Margin between cards and edge of background
     public double cardMargin; // Margin between cards
@@ -21,9 +20,9 @@ public class Cardpile : MonoBehaviour
 
     public void Awake()
     {
-        openedPile.SetActive(true);
+        background.gameObject.SetActive(true);
         backgroundSize = background.bounds.size; // To get the background size, the background needs to be enabled
-        openedPile.SetActive(false);
+        background.gameObject.SetActive(false);
     }
 
     public void init(TablePlayer tablePlayer)
@@ -50,7 +49,8 @@ public class Cardpile : MonoBehaviour
     public void openPile()
     {
         // TODO: Close all other opened Cardpiles
-        openedPile.SetActive(true);
+        tablePlayer.GetTable().dim.gameObject.SetActive(true);
+        background.gameObject.SetActive(true);
 
         // Create a new temporary sorted list of cards in drawpile
         sortedCards.Clear();
@@ -76,7 +76,8 @@ public class Cardpile : MonoBehaviour
 
     public void closePile()
     {
-        openedPile.SetActive(false);
+        tablePlayer.GetTable().dim.gameObject.SetActive(true);
+        background.gameObject.SetActive(false);
         foreach (Card card in sortedCards)
         {
             card.gameObject.SetActive(false);

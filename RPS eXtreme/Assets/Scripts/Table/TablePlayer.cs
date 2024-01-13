@@ -82,7 +82,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         List<Card> cardsInHand = hand.GetCards();
         foreach (Card card in cardsInHand)
         {
-            card.transform.localPosition += new Vector3 (0, 0, -3.5f);
+            //Debug.Log(card.gameObject + ": " + card.transform.localPosition);
             if(card == baseCard)
             {
                 //card.GetComponent<Draggable>().SavePosition();
@@ -90,16 +90,21 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
                 baseCard.transform.eulerAngles = new Vector3(0, 0, 0);
                 baseCard.GetComponent<Draggable>().enabled = false;
                 baseCard.DropActive = true;
-                hand.RemoveCard(baseCard);
-                hand.ArrangeHand();
             }
             else if(card is NormalCard)
             {
-                card.GetComponent<SpriteRenderer>().color = Color.black;
                 card.GetComponent<Draggable>().enabled = false;
+            }
+            else
+            {
+                Vector3 oldPosition = card.transform.localPosition;
+                oldPosition.z = -3.5f;
+                card.transform.localPosition = oldPosition;
             }
             //Later: card.GetComponent<Draggable>().RestorePosition();
         }
+        hand.RemoveCard(baseCard);
+        hand.ArrangeHand();
     }
 
     // Shuffles all cards from the Discardpile into the Drawpile
@@ -138,6 +143,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Slot> GetSlots() { return slots; }
+    public Table GetTable() {return table;}
 
     // ---------- For Debugging --------------------------------------------------------------------------------
     public void fakeResolve()
