@@ -27,7 +27,7 @@ public class Deck : MonoBehaviour
     public void AddCard(Card card)
     {
         this.cards.Add(card);
-        card.gameObject.transform.parent = this.gameObject.transform;
+        card.gameObject.transform.SetParent(gameObject.transform);
     }
 
     public void AddCardDeck(List<Card> deck)
@@ -35,7 +35,7 @@ public class Deck : MonoBehaviour
         this.cards = deck;
         foreach(Card card in this.cards)
         {
-            card.gameObject.transform.parent = this.gameObject.transform;
+            card.gameObject.transform.SetParent(gameObject.transform);
         }
     }
 

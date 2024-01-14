@@ -20,8 +20,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     {
         Card card = playerDeck.GetCards()[0];
         card.gameObject.SetActive(true);
-        drawpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
-        discardpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
+        //drawpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
+        //discardpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
     }
     
     public void init(Table table)

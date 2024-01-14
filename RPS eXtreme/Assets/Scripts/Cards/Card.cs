@@ -87,6 +87,7 @@ public class Card : MonoBehaviour
 
     public void SetStatus(int status) {this.status = status;}
     public int GetStatus() {return status;}
+    public Deck GetDeck() {return deck;}
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/

@@ -120,4 +120,9 @@ public class Constructor : MonoBehaviour
         //deck.LoadDeck("tryout");
 
     }
+
+    public void Test()
+    {
+        Debug.Log("Hello");
+    }
 }
