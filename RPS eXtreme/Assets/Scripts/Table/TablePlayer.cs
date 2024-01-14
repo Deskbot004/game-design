@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class TablePlayer : MonoBehaviour, DefaultDroppable
 {
@@ -82,12 +83,13 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         List<Card> cardsInHand = hand.GetCards();
         foreach (Card card in cardsInHand)
         {
-            //Debug.Log(card.gameObject + ": " + card.transform.localPosition);
             if(card == baseCard)
             {
-                //card.GetComponent<Draggable>().SavePosition();
-                baseCard.transform.localPosition = new Vector3 (9f, 2.5f, -3.6f);
+                baseCard.transform.SetParent(transform);
+                baseCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
+                baseCard.transform.SetParent(playerDeck.transform);
                 baseCard.transform.eulerAngles = new Vector3(0, 0, 0);
+                baseCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
                 baseCard.GetComponent<Draggable>().enabled = false;
                 baseCard.DropActive = true;
             }
@@ -97,11 +99,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             }
             else
             {
-                Vector3 oldPosition = card.transform.localPosition;
-                oldPosition.z = -3.5f;
-                card.transform.localPosition = oldPosition;
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
             }
-            //Later: card.GetComponent<Draggable>().RestorePosition();
         }
         hand.RemoveCard(baseCard);
         hand.ArrangeHand();
@@ -126,6 +125,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool OnDrop(Draggable draggedObject)
     {
         hand.GetCards().Add(draggedObject.GetComponent<Card>());
+        draggedObject.transform.localPosition = hand.transform.localPosition;
         hand.ArrangeHand();
         return true;
     }

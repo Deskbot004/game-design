@@ -14,10 +14,16 @@ public class CardSprites : MonoBehaviour
     [UDictionary.Split(30, 70)]
     public UDictionary1 supportIconSprites;
 
+    [UDictionary.Split(30, 70)]
+    public UDictionary2 colors;
+
 
 
     [Serializable]
     public class UDictionary1 : UDictionary<string, Sprite> { }
+
+    [Serializable]
+    public class UDictionary2 : UDictionary<string, Color> { }
 
     //public Dictionary<string, Sprite> symbolSprites;
 }

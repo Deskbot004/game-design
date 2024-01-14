@@ -81,8 +81,23 @@ public class Card : MonoBehaviour
     public CardSprites GetCardSprites() { return cardSprites; }
 
     public virtual void SetSprite()
-    { 
+    {
         cardSprites = transform.GetComponent<CardSprites>();
+        if (GetCardSprites().colors.ContainsKey(GetSymbol()))
+            transform.Find("Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
+
+        if(deck != null && !deck.GetTablePlayer().isPlayer)
+        {
+            transform.Find("Cardback").gameObject.SetActive(true);
+            transform.Find("Upper Effect").gameObject.SetActive(false);
+            transform.Find("Lower Effect").gameObject.SetActive(false);
+            return;
+        }
+    }
+
+    public void flipCard()
+    {
+        transform.Find("Cardback").gameObject.SetActive(!transform.Find("Cardback").gameObject.activeSelf);
     }
 
     public void SetStatus(int status) {this.status = status;}

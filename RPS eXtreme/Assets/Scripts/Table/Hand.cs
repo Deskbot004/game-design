@@ -63,12 +63,15 @@ public class Hand : MonoBehaviour
 
         // Setup foreach loop
         Vector3 currentPosition = circleCenter + leftBorder;
+        float currentZ = 0;
         Vector3 rotatedBorder = leftBorder;
         float currentDegree = handDegree / 2;
+        if (!tablePlayer.isPlayer) currentDegree += 180;
         float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
-            currentPosition.z = card.transform.localPosition.z;
+            currentPosition.z = card.transform.localPosition.z + currentZ;
+            currentZ += 0.001f;
             card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
             card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
 

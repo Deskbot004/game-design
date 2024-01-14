@@ -158,4 +158,14 @@ public class Deck : MonoBehaviour
     {
         this.cards = new List<Card>(GetComponentsInChildren<Card>());
     }
+
+    [ContextMenu("Reset Card Positions")]
+    void resetCardPositions()
+    {
+        foreach (Card card in cards)
+        {
+            card.transform.localPosition = new Vector3(0f,0f,0f);
+            card.transform.eulerAngles = new Vector3(0f,0f,0f);
+        }
+    }
 }

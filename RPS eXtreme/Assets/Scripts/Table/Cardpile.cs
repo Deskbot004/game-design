@@ -3,17 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Cardpile : MonoBehaviour
 {
     public GameObject scrollview; // Scrollview object to be activated when opening the cardpile
     public Transform content; // Content object of the Scrollview
 
+    [Header("Visual Stuff")]
+    public Color baseColor;
+    public Color hoverColor;
+    public Color clickColor;
+
     private List<Card> sortedCards = new List<Card>(); // Cards shown in the Scrollview
     private bool open = false; // is the scrollview open?
 
     private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>(); // Cards currently in the pile
+
+
     
     public void init(TablePlayer tablePlayer)
     {
@@ -43,7 +51,7 @@ public class Cardpile : MonoBehaviour
         foreach (Card card in sortedCards)
         {
             card.transform.SetParent(content);
-            card.transform.localPosition = new Vector3(0f, 0f, 0f);
+            card.GetComponent<SortingGroup>().sortingLayerName = "UI";
             card.gameObject.SetActive(true);
             card.GetComponent<Draggable>().enabled = false;
         }
@@ -56,7 +64,7 @@ public class Cardpile : MonoBehaviour
         foreach (Card card in sortedCards)
         {
             card.transform.SetParent(card.GetDeck().transform);
-            card.transform.localPosition = new Vector3(0f, 0f, 0f);
+            card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             card.gameObject.SetActive(false);
             card.GetComponent<Draggable>().enabled = true;
         }
@@ -68,19 +76,18 @@ public class Cardpile : MonoBehaviour
     // On Mouse Hover darkens the deck
     void OnMouseEnter()
     {
-        //GetComponent<SpriteRenderer>().color = new Color(204, 204, 204, 255);
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = hoverColor;
     }
 
     void OnMouseExit()
     {
         //GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 255);
-        GetComponent<SpriteRenderer>().color = Color.white;
+        GetComponent<SpriteRenderer>().color = baseColor;
     }
 
     void OnMouseDown()
     {
-        GetComponent<SpriteRenderer>().color = Color.black;
+        GetComponent<SpriteRenderer>().color = clickColor;
     }
 
     // Displays the cards on the screen
@@ -88,7 +95,7 @@ public class Cardpile : MonoBehaviour
     {
         if (!open) openPile();
         else closePile();
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = hoverColor;
     }
 
     // ------ Getter und Setter -------------------------------------------------------------------

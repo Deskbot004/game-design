@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
+using UnityEngine.Rendering;
 
 [Serializable]
 public class NormalCard : Card, Droppable
@@ -109,13 +110,12 @@ public class NormalCard : Card, Droppable
         // Set slots
         transform.Find("Upper Effect").gameObject.SetActive(hasSlot("top"));
         transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
-        
     }
 
     public override void OnRightClickInHand()
     {
         base.OnRightClickInHand();
-        this.deck.GetTablePlayer().startAttach(this);
+        deck.GetTablePlayer().startAttach(this);
     }
 
 
@@ -140,10 +140,10 @@ public class NormalCard : Card, Droppable
     {
         if (AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
         {
-            Debug.Log("Attach successfull");
-            draggedObject.transform.localPosition = transform.localPosition;
-            draggedObject.transform.localPosition += new Vector3 (0, 0, 0.5f);
-            draggedObject.transform.eulerAngles = transform.eulerAngles;
+            draggedObject.transform.SetParent(transform);
+            draggedObject.transform.localPosition = new Vector3 (0, 0, 0.5f);
+            draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
+            draggedObject.GetComponent<SortingGroup>().sortingLayerName = "Cards Background";
             return true;
         }
         return false;
