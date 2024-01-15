@@ -10,10 +10,15 @@ public class Deck : MonoBehaviour
 {
     public GameObject NormalCard;
     public GameObject SupportCard;
-    public GameObject Constructor;
+    private Constructor constructor;
     public List<Card> cards = new List<Card>();
-    private string deckName;
+    public string deckName;
     private TablePlayer tablePlayer;
+
+    public void Awake()
+    {
+        this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+    }
 
     public void init(TablePlayer tablePlayer) 
     {
@@ -56,7 +61,7 @@ public class Deck : MonoBehaviour
         {
             if (this.cards[i].IsBasic()) // card is a NormalCard
             {
-                NormalCard card = (NormalCard)this.cards[i];
+                NormalCard card = (NormalCard) this.cards[i];
                 save.cardSymbols.Add(card.GetSymbol());
                 save.cardTypes.Add(0);
                 save.functions.Add("");
@@ -67,7 +72,15 @@ public class Deck : MonoBehaviour
                 SupportCard card = (SupportCard)this.cards[i];
                 save.cardSymbols.Add(card.GetSymbol());
                 save.cardTypes.Add(1);
-                string functionString = ""; //TODO: Convert functions into a string 
+                List<string> functionnames = card.GetFunctionNames();
+                string functionString = functionnames[0];
+                foreach(string name in functionnames)
+                {
+                    if(name != functionnames[0])
+                    {
+                        functionString += ";" + name;
+                    }
+                }
                 save.functions.Add(functionString);
                 save.slotTypes.Add(card.GetSlotType());
             }
@@ -112,8 +125,8 @@ public class Deck : MonoBehaviour
         int count = this.cards.Count;
         for (int i = count; i > 0; i--)
         {
-            Card card = cards[i - 1];
-            cards.RemoveAt(i - 1);
+            Card card = this.cards[i - 1];
+            this.cards.RemoveAt(i - 1);
             Destroy(card.gameObject);
         }
 
@@ -122,19 +135,14 @@ public class Deck : MonoBehaviour
         {
             if (save.cardTypes[i] == 0) // saved Card at index i was a NormalCard
             {
-                GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
-                NormalCard card = cardObject.GetComponent<NormalCard>();
-                card.SetSymbol(save.cardSymbols[i]);
-                card.SetSlotType(save.slotTypes[i]);
+                NormalCard card = this.constructor.CreateNormalCard(save.cardSymbols[i], save.slotTypes[i]);
                 this.AddCard(card);
             }
             else
             {
-                GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
-                SupportCard card = cardObject.GetComponent<SupportCard>();
-                card.SetSymbol(save.cardSymbols[i]);
-                card.SetSlotType(save.slotTypes[i]);
-                //TODO: convert string back into functions
+                string[] namesArray = save.functions[i].Split(";");
+                List<string> names = new List<string>(namesArray);
+                SupportCard card = this.constructor.CreateSupportCard(save.slotTypes[i], names);
                 this.AddCard(card);
             }
         }

@@ -11,10 +11,23 @@ public class NormalCard : Card, Droppable
     private int[] viableSlotTypes = { 0, 1, 2 , 3 }; // 0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
     private bool dropActive = false;
 
+    public void Awake()
+    {
+        if(this.GetSlotType() != -1)
+        {
+            this.SetSlotType(this.GetSlotType());
+        }
+
+    }
+
     public override bool IsBasic()
     {
         return true;
     }
+
+    /*
+     * Sets the SlotType of the card according to the given integer and adds the corresponding slot-keys into the slot-dictionary
+     */
 
     public override int SetSlotType(int type)
     {
@@ -24,14 +37,14 @@ public class NormalCard : Card, Droppable
             switch (this.slotType) //Add the keys corresponding to the slottype to the dictionary
             {
                 case 3:
-                    supportCards["Top"] = null;
-                    supportCards["Bottom"] = null;
+                    this.supportCards["Top"] = null;
+                    this.supportCards["Bottom"] = null;
                     break;
                 case 2:
-                    supportCards["Bottom"] = null;
+                    this.supportCards["Bottom"] = null;
                     break;
                 case 1:
-                    supportCards["Top"] = null;
+                    this.supportCards["Top"] = null;
                     break;
                 default: //no keys need to be added to the dictionary
                     break;
@@ -46,7 +59,13 @@ public class NormalCard : Card, Droppable
         }
     }
 
-    //TODO: Check, if there is already a card attached and handle that
+    /*
+     * Checks, if the type of the SupportCard matches any of the slots of the NormalCard.
+     * If that is not the case, the function returns 1.
+     * Otherwise it assigns the SupportCard to its matching slot.
+     * Any SupportCards already in that slot will be removed.
+     */
+
     public int AttachSupportCard(SupportCard card)
     {
         int type = card.GetSlotType();
@@ -63,13 +82,18 @@ public class NormalCard : Card, Droppable
                 Debug.Log("SupportCard, to be attached, has invalid type!");
                 return -1;
         }
-        // TODO: Quick Error fix. For some reason, the supportCards dict isn't initated properly -Julia
-        SetSlotType(slotType);
 
-        if (supportCards.ContainsKey(slot))
+        if (this.supportCards.ContainsKey(slot))
         {
-            supportCards[slot] = card; //TODO: Visual Effects of the attachment
-            card.SetAttachmentStatus(card);
+            if(this.supportCards[slot] != null) //detach previously attached card
+            {
+                if(this.DetachSupportCard(this.supportCards[slot], slot) == -1)
+                {
+                    Debug.Log("Called DetachSupportCard with unknown SlotName in AttachSupportCard");
+                }
+            }
+            this.supportCards[slot] = card; //TODO: Visual Effects of the attachment
+            card.SetAttachmentStatus(true);
             return 0;
         }
         else
@@ -79,14 +103,45 @@ public class NormalCard : Card, Droppable
         }
     }
 
+    /*
+     * Checks, if any of the attached cards in the slot match the given SupportCard.
+     * If the slot containing the card is already known, its key can be given in the parameter slotName and this check will be skipped.
+     * The SupportCard is then removed from the slot.
+     */
+
+    public int DetachSupportCard(SupportCard card, string slotName = "Unknown") 
+    {
+        if(slotName == "Unknown")
+        {
+            foreach(string slot in this.supportCards.Keys)
+            {
+                if(this.supportCards[slot] == card)
+                {
+                    slotName = slot;
+                }
+            }
+        }
+
+        if (!this.supportCards.ContainsKey(slotName))
+        {
+            Debug.Log("DetachCard called with wrong SlotName");
+            return -1;
+        }
+
+        this.supportCards[slotName] = null;
+        card.SetAttachmentStatus(false);
+        return 0;
+
+    }
+
     public bool hasSlot(string slot)
     {
         switch(slot) 
         {
             case "top":
-                return GetSlotType() == 1 || GetSlotType() == 3;
+                return this.GetSlotType() == 1 || this.GetSlotType() == 3;
             case "bottom":
-                return GetSlotType() == 2 || GetSlotType() == 3;
+                return this.GetSlotType() == 2 || this.GetSlotType() == 3;
             default:
                 return false;
         }
@@ -100,15 +155,15 @@ public class NormalCard : Card, Droppable
         string upperCaseSymbol = "";
         if (GetSymbol().Length > 0)
             upperCaseSymbol = string.Concat(GetSymbol()[0].ToString().ToUpper(), GetSymbol().Substring(1));
-        transform.Find("Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
+        this.transform.Find("Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
 
         // Set Window Icon
         if (GetCardSprites().symbolSprites.ContainsKey(GetSymbol()))
-            transform.Find("Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().symbolSprites[GetSymbol()];
+            this.transform.Find("Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().symbolSprites[GetSymbol()];
 
         // Set slots
-        transform.Find("Upper Effect").gameObject.SetActive(hasSlot("top"));
-        transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
+        this.transform.Find("Upper Effect").gameObject.SetActive(hasSlot("top"));
+        this.transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
         
     }
 
@@ -127,18 +182,18 @@ public class NormalCard : Card, Droppable
             dropActive = value;
             if(value)
             {
-                gameObject.layer = LayerMask.NameToLayer("Droppable");
+                this.gameObject.layer = LayerMask.NameToLayer("Droppable");
             }
             else
             {
-                gameObject.layer = LayerMask.NameToLayer("Default");
+                this.gameObject.layer = LayerMask.NameToLayer("Default");
             }
         }
     }
 
     public bool OnDrop(Draggable draggedObject)
     {
-        if (AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
+        if (this.AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
         {
             Debug.Log("Attach successfull");
             draggedObject.transform.localPosition = transform.localPosition;
@@ -151,11 +206,14 @@ public class NormalCard : Card, Droppable
 
     public void OnLeave(Draggable draggedObject)
     {
-        //card.Detach()
+        if(this.DetachSupportCard(draggedObject.GetComponent<SupportCard>()) != 0)
+        {
+            Debug.Log("Detachment unsuccessfull");
+        }
     }
 
     public Transform GetTransform()
     {
-        return transform;
+        return this.transform;
     }
 }
