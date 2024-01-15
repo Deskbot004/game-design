@@ -9,11 +9,14 @@ public class Table : MonoBehaviour
     public TablePlayer player;
     public TablePlayer enemy;
 
+    [Header("Visual Stuff")]
+    public SpriteRenderer dim;
+
     void Start()
     {
-        player.init();
-        enemy.init();
-        //logic.init(this);
+        player.init(this);
+        enemy.init(this);
+        //logic.init(this); // TODO: Remove for final version
     }
 
     // Removes the card from every slot and puts them into the Discard Pile
@@ -23,13 +26,14 @@ public class Table : MonoBehaviour
         TablePlayer[] players = { player, enemy };
         foreach (TablePlayer p in players)
         {
-            foreach(Slot slot in p.slots)
+            // TODO: Überarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
+            foreach (Slot slot in p.slots)
             {
-                Card card = slot.card;
-                slot.card = null;
+                Card card = slot.GetCard();
+                slot.ClearCard();
                 if (true) // TODO: Check that card is not an empty card
                 {
-                    p.discardpile.cards.Add(card);
+                    p.discardpile.GetCards().Add(card);
                 }
                 card.gameObject.SetActive(false);
                 // TODO: Play animation of card being removed
@@ -49,21 +53,14 @@ public class Table : MonoBehaviour
         
     }
 
+    // ------ Getter und Setter -------------------------------------------------------------------
+    public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
+    public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
 
     // ---------- For Debbuging -----------------------------------------------------------
     public void startLogic()
     {
         logic.init(this);
-    }
-
-    public List<Slot> GetSlotsPlayer()
-    {
-        return player.GetSlots();
-    }
-
-    public List<Slot> GetSlotsEnemy()
-    {
-        return enemy.GetSlots();
     }
 
 }
