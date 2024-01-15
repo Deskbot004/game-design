@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ public class Table : MonoBehaviour
     {
         player.init(this);
         enemy.init(this);
-        //logic.init(this); // TODO: Remove for final version
+        logic.init(this);
     }
 
     // Removes the card from every slot and puts them into the Discard Pile

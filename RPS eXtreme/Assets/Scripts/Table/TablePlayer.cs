@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,18 +14,14 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public List<Slot> slots;
     public bool isPlayer;
 
+    [Header("UI Connections")]
+    public GameObject attachDoneButton;
+
     private Table table;
     private bool dropActive = true;
+    private NormalCard attachCard;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
-    void Awake()
-    {
-        Card card = playerDeck.GetCards()[0];
-        card.gameObject.SetActive(true);
-        //drawpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
-        //discardpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
-    }
-    
     public void init(Table table)
     {
         this.table = table;
@@ -71,8 +68,25 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
+    // Shuffles all cards from the Discardpile into the Drawpile
+    public void DiscardToDrawpile()
+    {
+        drawpile.GetCards().AddRange(discardpile.GetCards());
+        discardpile.GetCards().Clear();
+        drawpile.Shuffle();
+        // TODO: Play animation
+    }
+
+    // ---------- Attaching Cards ----------------------------------------------------------------------------------
+
     public void startAttach(NormalCard baseCard)
     {
+        if(attachCard != null)
+        {
+            hand.AddCard(attachCard);
+            attachCard.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+        }
+
         // Disable all other droppables
         foreach (Slot slot in slots) 
         {
@@ -104,16 +118,28 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
         hand.RemoveCard(baseCard);
         hand.ArrangeHand();
+        attachCard = baseCard;
+        attachDoneButton.SetActive(true);
     }
 
-    // Shuffles all cards from the Discardpile into the Drawpile
-    public void DiscardToDrawpile()
+    public void finishAttach()
     {
-        drawpile.GetCards().AddRange(discardpile.GetCards());
-        discardpile.GetCards().Clear();
-        drawpile.Shuffle();
-        // TODO: Play animation
+        foreach (Slot slot in slots) 
+        {
+            slot.DropActive = true;
+        }
+        table.dim.gameObject.SetActive(false);
+        hand.AddCard(attachCard);
+        foreach(Card card in hand.GetCards())
+        {
+            card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            card.GetComponent<Draggable>().enabled = true;
+        }
+        hand.ArrangeHand();
+        attachCard = null;
+        attachDoneButton.SetActive(false);
     }
+    
 
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive

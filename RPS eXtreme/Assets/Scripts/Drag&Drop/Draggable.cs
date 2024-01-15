@@ -57,7 +57,6 @@ public class Draggable : MonoBehaviour
         if (!enabled) return;
         (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
         Droppable newDroppable;
-        foreach(Collider2D col in colliders) Debug.Log(col);
 
         // Check whether it was dropped inside a Droppable that's a child of the default Droppable
         if(colAmount == 0) // Not the case

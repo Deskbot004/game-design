@@ -18,11 +18,6 @@ public class Hand : MonoBehaviour
     public Deck deck;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
-    void Start()
-    {
-        cards.Clear();
-    }
-
     public void init(TablePlayer tablePlayer) 
     {
         this.tablePlayer = tablePlayer;
@@ -111,6 +106,11 @@ public class Hand : MonoBehaviour
     { 
         cards.Clear();
         AddCards(newCards);
+    }
+    public void AddCard(Card newCard)
+    {
+        cards.Add(newCard);
+        newCard.SetStatus(1);
     }
     public void AddCards(List<Card> newCards)
     {
