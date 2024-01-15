@@ -28,6 +28,13 @@ public class Gamelogic : MonoBehaviour
     public Dictionary<string, int> symbolToEntry = new Dictionary<string, int>();
 
 
+    // Shitty implementation of reset function
+    public Dictionary<string, Action<Gamelogic, object>> stringToFunc = new Dictionary<string, Action<Gamelogic, object>>();
+    public Dictionary<string, object> stringToInput = new Dictionary<string, object>();
+    //public Dictionary<string, Action<Gamelogic, object>> stringToFunc;
+    //public Dictionary<string, object> stringToInput;
+    public int TestVar = 2020;
+
     // Tests
     public List<Card> testUser = new List<Card>();
     public List<Card> testEnemy = new List<Card>();
@@ -244,20 +251,55 @@ public class Gamelogic : MonoBehaviour
         // Proof of Concept calling function list with "F"
         if (Input.GetKeyDown(KeyCode.F))
         {
-            List<Action> actions = new List<Action>();
+            libAR = GetComponent<LibAR>();
+            List<Action<Gamelogic, String>> actions = new List<Action<Gamelogic, String>>();
             actions.Add(libAR.Test);
-            libAR.RunTest(actions);
+            libAR.RunTest(actions, this);
+            Debug.Log(TestVar);
+        }
+
+        // Proof of Concept Reset
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            foreach (var item in stringToInput) {
+                Action<Gamelogic,object> func = stringToFunc[item.Key];
+                func(this, item.Value);
+                Debug.Log(TestVar);
+                stringToFunc.Remove(item.Key);
+                stringToInput.Remove(item.Key);
+            }
         }
     }
 
-    void DamageUser(int dmg)
+    public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
     }
 
-    void DamageEnemy(int dmg)
+    public void DamageEnemy(int dmg)
     {
         currentLifepoints["enemy"] -= dmg;
+    }
+
+    public void UserDraw(int amount)
+    {
+        foreach (TablePlayer p in players)
+        {
+            if (p.isPlayer) {
+                p.DrawCards(amount);
+            }
+        }
+    }
+
+    public void EnemyDraw(int amount)
+    {
+        foreach (TablePlayer p in players)
+        {
+            if (p.isPlayer)
+            {
+                p.DrawCards(amount);
+            }
+        }
     }
 
     // Start of various getter stuff -------------------------------------------------------------------------------------------------
