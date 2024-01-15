@@ -24,7 +24,7 @@ public class Card : MonoBehaviour
     void OnMouseOver () {
         if(Input.GetMouseButtonDown(1))
         {
-            if(status == 1) 
+            if(this.status == 1) 
             {
                 OnRightClickInHand();
             }
@@ -78,15 +78,15 @@ public class Card : MonoBehaviour
         return 0;
     }
 
-    public CardSprites GetCardSprites() { return cardSprites; }
+    public CardSprites GetCardSprites() { return this.cardSprites; }
 
     public virtual void SetSprite()
-    { 
-        cardSprites = transform.GetComponent<CardSprites>();
+    {
+        this.cardSprites = transform.GetComponent<CardSprites>();
     }
 
     public void SetStatus(int status) {this.status = status;}
-    public int GetStatus() {return status;}
+    public int GetStatus() {return this.status;}
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
