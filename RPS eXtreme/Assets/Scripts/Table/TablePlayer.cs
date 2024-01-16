@@ -15,6 +15,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool isPlayer;
 
     [Header("UI Connections")]
+    public GameObject endTurnButton;
     public GameObject attachDoneButton;
 
     private Table table;
@@ -119,6 +120,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         hand.RemoveCard(baseCard);
         hand.ArrangeHand();
         attachCard = baseCard;
+        endTurnButton.SetActive(false);
         attachDoneButton.SetActive(true);
     }
 
@@ -137,9 +139,10 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
         hand.ArrangeHand();
         attachCard = null;
+        endTurnButton.SetActive(true);
         attachDoneButton.SetActive(false);
     }
-    
+
 
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive

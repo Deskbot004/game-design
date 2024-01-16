@@ -55,6 +55,7 @@ public class Cardpile : MonoBehaviour
             card.gameObject.SetActive(true);
             card.GetComponent<Draggable>().enabled = false;
         }
+        // TODO: Also disable draggable for cards in hand
         open = true;
     }
 
