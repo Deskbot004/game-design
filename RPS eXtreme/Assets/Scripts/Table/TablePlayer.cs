@@ -18,17 +18,17 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public GameObject endTurnButton;
     public GameObject attachDoneButton;
 
-    private Table table;
+    protected Table table;
     private bool dropActive = true;
     private NormalCard attachCard;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
-    public void init(Table table)
+    public virtual void init(Table table)
     {
         this.table = table;
-        drawpile.SetCards(playerDeck.cards);
+        drawpile.SetCards(playerDeck.GetCards());
         drawpile.Shuffle();
-        foreach (Card card in playerDeck.cards)
+        foreach (Card card in playerDeck.GetCards())
         {
             card.gameObject.SetActive(false);
         }
@@ -146,6 +146,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     //TODO: Allow empty slots on resolve
 
+    public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
+
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive
     {
@@ -193,4 +195,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     }
 
     
+
+
+
 }

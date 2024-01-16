@@ -9,13 +9,13 @@ public class Slot : MonoBehaviour, Droppable
     public int slotPosition; // Leftmost is 0
 
     private TablePlayer tablePlayer;
-    private List<Card> cards = new List<Card>();
+    public List<Card> cards = new List<Card>();
     private bool dropActive = true;
 
     [Header("For Debugging")]
     public Card exampleCard; // Default card if slot is empty
 #nullable enable
-    private Card? card; // While combining cards isn't implemented
+    public Card? card; // While combining cards isn't implemented
 #nullable disable
 
     public void init(TablePlayer tablePlayer) 
@@ -70,11 +70,11 @@ public class Slot : MonoBehaviour, Droppable
     {
         // This check is only for Debugging
         // Once we have Empty Cards, cards can't be empty on resolve
-        if (cards.Count == 0) {
-            List<Card> emptyCard = new List<Card>();
-            emptyCard.Add(exampleCard);
-            return emptyCard;
-        }
+        //if (cards.Count == 0) {
+        //    List<Card> emptyCard = new List<Card>();
+        //    emptyCard.Add(exampleCard);
+        //    return emptyCard;
+        //}
         return cards;
     }
     public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
@@ -84,9 +84,11 @@ public class Slot : MonoBehaviour, Droppable
         card = newCards[0]; // For Debugging
     }
     public void SetCards(Card newCard)
-    {
+    { 
         cards.Clear();
         cards.Add(newCard);
+        newCard.SetSupposedPosition(this.transform.position);
+        newCard.SetMoveSpeed(Vector3.Distance(newCard.transform.position, this.transform.position) / this.tablePlayer.GetTable().GetCardMoveTime());
         card = newCard; // For Debugging
     }
     public TablePlayer GetTablePlayer() {return tablePlayer;}

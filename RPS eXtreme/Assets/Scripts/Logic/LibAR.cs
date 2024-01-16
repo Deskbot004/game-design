@@ -5,45 +5,84 @@ using UnityEngine;
 
 public class LibAR : MonoBehaviour
 {
-    void RunAllAR(List<Func<Gamelogic, String, int>> actions, Gamelogic logic, String caller)
+    void RunAllAR(List<Action<Gamelogic, String, object>> actions, Gamelogic logic, String caller, object input)
     {
-        foreach (Func<Gamelogic, String, int> func in actions)
+        foreach (Action<Gamelogic, String, object> func in actions)
         {
-            func(logic, caller);
+            func(logic, caller, input);
         }
     }
 
-    public void RunTest(List<Action> actions)
+    public void RunTest(List<Action<Gamelogic, String>> actions, Gamelogic logic)
     {
-        foreach (Action action in actions)
+        foreach (Action<Gamelogic, String> action in actions)
         {
-            action();
+            action(logic, "test");
         }
     }
 
 
-    /* Function to notify the table if the game ended.
-     * 
-     * Input: 
-     * Output: none
+    /* 
+     * Multiply damage dealt.
      */
-    public int AdditionalDamage(Gamelogic logic, String caller, Card played)
+    public void AdditionalDamage(Gamelogic logic, String caller, object value)
     {
-        return 1;
+
+        logic.stringToFunc["Dmg"] = ResetDamage;
+        logic.stringToInput["Dmg"] = logic.GetdmgOnLoss();
+        var damage = Convert.ToInt32(value);
+        logic.SetdmgOnLoss(damage);
     }
 
-    public void ResetDamage(Gamelogic logic, int value)
+    public void ResetDamage(Gamelogic logic, object value)
     {
-        logic.SetdmgOnLoss(value);
+        var resetT = Convert.ToInt32(value);
+        logic.SetdmgOnLoss(resetT);
     }
 
-    public int DrawCards(Gamelogic logic, String caller, Card played)
+    /* 
+     * Draw additional cards.
+     */
+    public void DrawCards(Gamelogic logic, String caller, object value)
     {
-        return 1;
+        var amount = Convert.ToInt32(value);
+        if (caller == "player")
+        {
+            logic.UserDraw(amount);
+        }
+        if (caller == "enemy")
+        {
+            logic.EnemyDraw(amount);
+        }
     }
 
-    public void Test()
+    /* 
+     * Draw additional cards.
+     */
+    public void Lifesteal(Gamelogic logic, String caller, object value)
     {
-        Debug.Log("Jep this works!");
+        var amount = Convert.ToInt32(value);
+        var damage = logic.GetdmgOnLoss() * amount;
+        if (caller == "player")
+        {
+            logic.DamageUser((-1)*amount);
+        }
+        if (caller == "enemy")
+        {
+            logic.DamageEnemy((-1) * amount);
+        }
+    }
+
+    public void Test(Gamelogic logic, String caller)
+    {
+        logic.stringToFunc["Test"] = ResetTest;
+        logic.stringToInput["Test"] = logic.TestVar;
+        logic.TestVar = 9000;
+    }
+
+    public void ResetTest(Gamelogic logic, object reset)
+    {
+        var resetT = Convert.ToInt32(reset);
+        logic.TestVar = resetT;
     }
 }
