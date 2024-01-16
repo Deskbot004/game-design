@@ -5,10 +5,12 @@ using UnityEngine;
 
 public class LibAR : MonoBehaviour
 {
-    void RunAllAR(List<Action<Gamelogic, String, object>> actions, Gamelogic logic, String caller, object input)
+    public void RunAllAR(List<(Action<Gamelogic, String, object>,object)> actions, Gamelogic logic, String caller)
     {
-        foreach (Action<Gamelogic, String, object> func in actions)
+        foreach (var entry in actions)
         {
+            Action<Gamelogic, String, object> func = entry.Item1;
+            object input = entry.Item2;
             func(logic, caller, input);
         }
     }

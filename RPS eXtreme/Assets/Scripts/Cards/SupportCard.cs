@@ -11,7 +11,7 @@ public class SupportCard : Card
     private bool isAttached;
     public List<string> functionNames; // The entries should match one of the patterns nameofFunction:functionValue or nameOfFunction.
     private List<object> functionValues = new List<object>();
-    private List<Action<Gamelogic, object>> functions = new List<Action<Gamelogic, object>>(); //Hat aktuell immer nur eine Funktion
+    private List<(Action<Gamelogic, object>,object)> functions = new List<Action<Gamelogic, object>>(); //Hat aktuell immer nur eine Funktion
     private int[] viableSlotTypes = { 0, 1 }; // 0: fits in top slot, 1: fits in bottom slot
     private LibAR libAR;
     private LibBR libBR;

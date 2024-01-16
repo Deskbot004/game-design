@@ -54,8 +54,8 @@ public class Gamelogic : MonoBehaviour
         symbolToEntry.Add("scissors", 0);
         symbolToEntry.Add("rock", 1);
         symbolToEntry.Add("paper", 2);
-        symbolToEntry.Add("lizard", 3);
-        symbolToEntry.Add("spock", 4);
+        symbolToEntry.Add("spock", 3);
+        symbolToEntry.Add("lizard", 4);
 
         // Load Libs
         libAR = GetComponent<LibAR>();
@@ -142,21 +142,6 @@ public class Gamelogic : MonoBehaviour
     {
         int attack = -1;
 
-        // if no card was played on either slot
-        if (!cardsUser.Any() && !cardsEnemy.Any())
-        {
-            return "none";
-        } else if (!cardsEnemy.Any())
-        {
-            // TODO: NOOOOO cant skip every BR function FUCK
-            attack = 1;
-            goto AR;
-        } else if (!cardsUser.Any())
-        {
-            attack = 0;
-            goto AR;
-        }
-
         int symbolToEntryUser = 0;
         int symbolToEntryEnemy = 0;
 
@@ -176,12 +161,16 @@ public class Gamelogic : MonoBehaviour
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
                 Debug.Log(card.GetSymbol());
             }
-            // TODO: Read effects here -> Translate to Functions
+            else
+            {
+                libAR.RunAllAR(card.GetFunctionsAR(), "enemy");
+            }
         }
 
         attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
         Debug.Log(symbolToEntryUser);
         Debug.Log(symbolToEntryEnemy);
+        Debug.Log(winMatrix[symbolToEntryUser, symbolToEntryEnemy]);
 
 
 
@@ -197,12 +186,12 @@ public class Gamelogic : MonoBehaviour
         {
             Debug.Log("Draw");
             return "none";
-        } else if (attack == 1)
+        } else if (attack == 0)
         {
             Debug.Log("UserWon");
             DamageEnemy(dmgOnLoss);
             return "user";
-        } else if (attack == 0)
+        } else if (attack == 1)
         {
             Debug.Log("EnemyWon");
             DamageUser(dmgOnLoss);

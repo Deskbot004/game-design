@@ -32,8 +32,8 @@ public class LibBR : MonoBehaviour
          * symbolToEntry.Add("scissors", 0);
          * symbolToEntry.Add("stone", 1);
          * symbolToEntry.Add("paper", 2);
-         * symbolToEntry.Add("lizard", 3);
-         * symbolToEntry.Add("spock", 4);
+         * symbolToEntry.Add("spock", 3);
+         * symbolToEntry.Add("lizard", 4);
         */
         var entry = -1;
         switch (win)
@@ -47,10 +47,10 @@ public class LibBR : MonoBehaviour
             case "paper":
                 entry = 2;
                 break;
-            case "lizard":
+            case "spock":
                 entry = 3;
                 break;
-            case "spock":
+            case "lizard":
                 entry = 4;
                 break;
             default:
