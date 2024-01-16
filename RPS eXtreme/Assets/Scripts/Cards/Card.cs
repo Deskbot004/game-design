@@ -11,7 +11,7 @@ public class Card : MonoBehaviour
     private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock", "support" };
     //protected int slotType = -1;
     public int slotType = -1; // Set to public for Debugging
-    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot
+    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot // TODO sollte in verschiedenen funktionen angepass werden
     private CardSprites cardSprites;
     protected Deck deck;
 

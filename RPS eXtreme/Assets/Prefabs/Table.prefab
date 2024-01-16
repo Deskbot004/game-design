@@ -505,6 +505,7 @@ MonoBehaviour:
   dmgOnLoss: 1
   libAR: {fileID: 0}
   table: {fileID: 1188935324138398999}
+  healthUI: {fileID: 0}
   testUser: []
   testEnemy: []
 --- !u!1 &7199287471145312262
@@ -697,6 +698,22 @@ PrefabInstance:
     - target: {fileID: 1802453394693249130, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
       propertyPath: m_Name
       value: Opponent
+      objectReference: {fileID: 0}
+    - target: {fileID: 2370196037366827925, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
+      propertyPath: m_Name
+      value: Slot Left
+      objectReference: {fileID: 0}
+    - target: {fileID: 2433592845975818760, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
+      propertyPath: slotPosition
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809674141299762854, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
+      propertyPath: slotPosition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5873081672125792059, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
+      propertyPath: m_Name
+      value: Slot Right
       objectReference: {fileID: 0}
     - target: {fileID: 6515485187003097866, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
       propertyPath: m_LocalPosition.x

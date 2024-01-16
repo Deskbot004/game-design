@@ -132,6 +132,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
         table.dim.gameObject.SetActive(false);
         hand.AddCard(attachCard);
+        attachCard.DropActive = false;
         foreach(Card card in hand.GetCards())
         {
             card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
@@ -143,6 +144,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         attachDoneButton.SetActive(false);
     }
 
+    //TODO: Allow empty slots on resolve
 
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive
@@ -172,7 +174,12 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Slot> GetSlots() { return slots; }
-    public Table GetTable() {return table;}
+    public Table GetTable() { return table; }
+    public Hand GetHand() { return hand; }
+    public List<Cardpile> GetAllCardpiles() {
+        List<Cardpile> allPiles  = new List<Cardpile> {drawpile, discardpile};
+        return allPiles;
+    }
 
     // ---------- For Debugging --------------------------------------------------------------------------------
     public void fakeResolve()

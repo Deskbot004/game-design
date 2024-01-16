@@ -51,7 +51,7 @@ public class Table : MonoBehaviour
 
     public void SetWinner(string name)
     {
-        
+        // TODO End Screen
     }
 
     // ------ Getter und Setter -------------------------------------------------------------------

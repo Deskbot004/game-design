@@ -38,7 +38,10 @@ public class Cardpile : MonoBehaviour
     // Shows all the cards in the pile on screen
     public void openPile()
     {
-        // TODO: Close all other opened Cardpiles
+        foreach(Cardpile pile in tablePlayer.GetAllCardpiles())
+        {
+            if(pile.isOpen()) pile.closePile();
+        }
         scrollview.SetActive(true);
 
         // Create a new temporary sorted list of cards in drawpile
@@ -55,6 +58,10 @@ public class Cardpile : MonoBehaviour
             card.gameObject.SetActive(true);
             card.GetComponent<Draggable>().enabled = false;
         }
+        foreach (Card card in tablePlayer.GetHand().GetCards())
+        {
+            card.GetComponent<Draggable>().enabled = false;
+        }
         // TODO: Also disable draggable for cards in hand
         open = true;
     }
@@ -67,6 +74,10 @@ public class Cardpile : MonoBehaviour
             card.transform.SetParent(card.GetDeck().transform);
             card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             card.gameObject.SetActive(false);
+            card.GetComponent<Draggable>().enabled = true;
+        }
+        foreach (Card card in tablePlayer.GetHand().GetCards())
+        {
             card.GetComponent<Draggable>().enabled = true;
         }
         open = false;
@@ -101,6 +112,7 @@ public class Cardpile : MonoBehaviour
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Card> GetCards() { return cards; }
+    public bool isOpen() {return open;}
 
     public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
     { 
