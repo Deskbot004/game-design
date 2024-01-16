@@ -10,21 +10,23 @@ public class SupportCard : Card
     public string description;
     private bool isAttached;
     public List<string> functionNames; // The entries should match one of the patterns nameofFunction:functionValue or nameOfFunction.
-    public List<object> functionValues = new List<object>();
-    private List<Action<Gamelogic, string>> functions = new List<Action<Gamelogic, string>>(); //Hat aktuell immer nur eine Funktion
+    private List<object> functionValues = new List<object>();
+    private List<Action<Gamelogic, object>> functions = new List<Action<Gamelogic, object>>(); //Hat aktuell immer nur eine Funktion
     private int[] viableSlotTypes = { 0, 1 }; // 0: fits in top slot, 1: fits in bottom slot
+    private LibAR libAR;
+    private LibBR libBR;
 
+    // ---------- Main Functions ------------------------------------------------------------------------------
 
     public void Awake()
     {
-        this.SetFunctions();
-
+        this.libAR = this.GetComponent<LibAR>();
+        this.libBR = this.GetComponent<LibBR>();
     }
 
+    // ---------- Getter & Setter ------------------------------------------------------------------------------
 
-    public List<Action<Gamelogic, string>> GetFunctions() {
-        return functions;
-    }
+    public List<Action<Gamelogic, object>> GetFunctions(){return functions;}
 
     /*
      * Check each entry of functionNames for a matching pattern and assign entries to functionValues and functions according to the pattern.
@@ -36,18 +38,20 @@ public class SupportCard : Card
         {
             string[] values = function.Split(':');
             int length = values.Length;
+            if(this.gamelogic.stringToFunc.ContainsKey(values[0]))
+            {
+                this.functions.Add(this.gamelogic.stringToFunc[values[0]]);
+            }
             switch (length)
             {
                 case 2:
-                    //TODO:Assign function according to values[0]
                     this.functionValues.Add(values[1]);
                     break;
                 case 1:
-                    //TODO:Assign function according to values[0]
                     this.functionValues.Add(null);
                     break;
                 default:
-                    Debug.Log("FunctionName " + function + " did not have the required pattern nameOfFunction:functionValue");
+                    Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
                     break;
             }
         }
@@ -71,10 +75,7 @@ public class SupportCard : Card
         }
     }
 
-    public List<string> GetFunctionNames()
-    {
-        return this.functionNames;
-    }
+    public List<string> GetFunctionNames(){return this.functionNames;}
 
     public int SetFunctionNames(List<string> names)
     {
@@ -82,10 +83,7 @@ public class SupportCard : Card
         return 0;
     }
 
-    public bool GetAttachmentStatus()
-    {
-        return this.isAttached;
-    }
+    public bool GetAttachmentStatus(){return this.isAttached;}
 
     public int SetAttachmentStatus(bool status)
     {

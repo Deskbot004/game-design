@@ -12,7 +12,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public List<Slot> slots;
     public bool isPlayer;
 
-    private Table table;
+    protected Table table;
     private bool dropActive = true;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
@@ -24,12 +24,12 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         discardpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
     }
     
-    public void init(Table table)
+    public virtual void init(Table table)
     {
         this.table = table;
-        drawpile.SetCards(playerDeck.cards);
+        drawpile.SetCards(playerDeck.GetCards());
         drawpile.Shuffle();
-        foreach (Card card in playerDeck.cards)
+        foreach (Card card in playerDeck.GetCards())
         {
             card.gameObject.SetActive(false);
         }
@@ -116,6 +116,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         // TODO: Play animation
     }
 
+    public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
+
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive
     {
@@ -157,4 +159,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     }
 
     
+
+
+
 }
