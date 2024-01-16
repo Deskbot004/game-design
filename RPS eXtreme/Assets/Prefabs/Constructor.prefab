@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f41eeea2dce306143bc94b6aff0d745e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NormalCard: {fileID: 1035841229192701943, guid: 5457312cfcf5ce349947b870af19a33c, type: 3}
-  SupportCard: {fileID: 8222774776693554697, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+  NormalCard: {fileID: 1003988081768242810, guid: dac5ddf5e1a075c44856a4ac9ea308bb, type: 3}
+  SupportCard: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
   Deck: {fileID: 7513835158189557573, guid: 0ac3b157b1ac4a04d9ab33dcd4bdb788, type: 3}

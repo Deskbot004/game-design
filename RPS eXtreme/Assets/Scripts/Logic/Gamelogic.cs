@@ -18,6 +18,9 @@ public class Gamelogic : MonoBehaviour
     public LibAR libAR;
     public Table table;
 
+    [Header("UI Connection")]
+    public Health healthUI;
+
     // Determines the Win of a symbol on attack
     private int[,] winMatrix = { { -1, 1, 0, 1, 0 }, 
                                  { 0, -1, 1, 1, 0 }, 
@@ -52,7 +55,7 @@ public class Gamelogic : MonoBehaviour
     {
         // rework?
         symbolToEntry.Add("scissors", 0);
-        symbolToEntry.Add("stone", 1);
+        symbolToEntry.Add("rock", 1);
         symbolToEntry.Add("paper", 2);
         symbolToEntry.Add("lizard", 3);
         symbolToEntry.Add("spock", 4);
@@ -64,6 +67,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
+        healthUI.setHealth(lifepointMax, true);
+        healthUI.setHealth(lifepointMax, false);
         players = table.GetComponentsInChildren<TablePlayer>();
 
         foreach (TablePlayer p in players)
@@ -84,6 +89,10 @@ public class Gamelogic : MonoBehaviour
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
+            if (!p.isPlayer)
+            {
+                p.StartCoroutine(p.playCards());
+            }
         }
     }
 
@@ -227,7 +236,7 @@ public class Gamelogic : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             symbolToEntry.Add("scissors", 0);
-            symbolToEntry.Add("stone", 1);
+            symbolToEntry.Add("rock", 1);
             symbolToEntry.Add("paper", 2);
             symbolToEntry.Add("lizard", 3);
             symbolToEntry.Add("spock", 4);
@@ -274,11 +283,14 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
+        healthUI.setHealth(currentLifepoints["user"], true);
+        
     }
 
     public void DamageEnemy(int dmg)
     {
         currentLifepoints["enemy"] -= dmg;
+        healthUI.setHealth(currentLifepoints["enemy"], false);
     }
 
     public void UserDraw(int amount)

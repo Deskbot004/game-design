@@ -59,7 +59,7 @@ public class Draggable : MonoBehaviour
         Droppable newDroppable;
 
         // Check whether it was dropped inside a Droppable that's a child of the default Droppable
-        if(colAmount == 0 || !colliders[0].transform.IsChildOf(defaultDroppable.GetTransform())) // Not the case
+        if(colAmount == 0) // Not the case
         {
             newDroppable = defaultDroppable;
         }
@@ -114,6 +114,7 @@ public class Draggable : MonoBehaviour
         // Filter out null entries and inactive droppables
         colliders = colliders.Where(c => c != null).ToArray();
         if (collidersAmount > 0) colliders = colliders.Where(c => c.GetComponent<Droppable>().DropActive).ToArray(); //Filter out inactive droppables
+        if (collidersAmount > 0) colliders = colliders.Where(c => c.transform.IsChildOf(defaultDroppable.GetTransform())).ToArray(); //Filter out droppables from other parents
         collidersAmount = colliders.Length;
 
         return (collidersAmount, colliders);
