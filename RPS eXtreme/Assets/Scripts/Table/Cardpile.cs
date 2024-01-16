@@ -1,40 +1,31 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Cardpile : MonoBehaviour
 {
-    public Collider2D background; // Background of the opened card pile
-    public double outerMargin; // Margin between cards and edge of background
-    public double cardMargin; // Margin between cards
+    public GameObject scrollview; // Scrollview object to be activated when opening the cardpile
+    public Transform content; // Content object of the Scrollview
+
+    [Header("Visual Stuff")]
+    public Color baseColor;
+    public Color hoverColor;
+    public Color clickColor;
+
+    private List<Card> sortedCards = new List<Card>(); // Cards shown in the Scrollview
+    private bool open = false; // is the scrollview open?
 
     private TablePlayer tablePlayer;
     private List<Card> cards = new List<Card>(); // Cards currently in the pile
-    private Vector3 cardSize; // size of the Collider of a Card
 
-    private Vector3 backgroundSize;
-    private int cardsPerRow;
-    private List<Card> sortedCards = new List<Card>();
-    private bool open = false;
 
-    public void Awake()
-    {
-        background.gameObject.SetActive(true);
-        backgroundSize = background.bounds.size; // To get the background size, the background needs to be enabled
-        background.gameObject.SetActive(false);
-    }
-
+    
     public void init(TablePlayer tablePlayer)
     {
         this.tablePlayer = tablePlayer;
-
-        // Calculate cardsPerRow
-        double outerWidth = backgroundSize.x;
-        double innerWidth = backgroundSize.x - 2 * outerMargin; // Width without outer margin
-        cardsPerRow = 1 + Mathf.FloorToInt((float)((innerWidth - cardSize.x) / (cardSize.x + cardMargin)));
-        double actualWidth = cardsPerRow * cardSize.x + (cardsPerRow - 1) * cardMargin;
-        outerMargin = (outerWidth - actualWidth) / 2;
     }
 
     // Randomizes the order of the cards
@@ -44,43 +35,49 @@ public class Cardpile : MonoBehaviour
         cards = cards.OrderBy(x => rng.Next()).ToList();
     }
 
-    // TODO: Überarbeiten, sobald wir die Assets haben
     // Shows all the cards in the pile on screen
     public void openPile()
     {
-        // TODO: Close all other opened Cardpiles
-        tablePlayer.GetTable().dim.gameObject.SetActive(true);
-        background.gameObject.SetActive(true);
+        foreach(Cardpile pile in tablePlayer.GetAllCardpiles())
+        {
+            if(pile.isOpen()) pile.closePile();
+        }
+        scrollview.SetActive(true);
 
         // Create a new temporary sorted list of cards in drawpile
         sortedCards.Clear();
         sortedCards.AddRange(cards);
         // TODO: Sort cards by some criteria
 
-        int currentCard = 0;
-        double startX = background.bounds.min.x + outerMargin + cardSize.x / 2; // world
-        double startY = background.bounds.max.y - outerMargin - cardSize.y / 2; // local
+        float cardRows = (float) Math.Ceiling(sortedCards.Count/5.0);
+        content.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, cardRows * 90);
         foreach (Card card in sortedCards)
         {
-            double x = startX + (currentCard % cardsPerRow) * (cardSize.x + cardMargin);
-            double y = startY - Mathf.Floor(currentCard / cardsPerRow) * (cardSize.y + cardMargin);
-            Vector3 localCardPosition = new Vector3((float) x, (float) y, -5);
-            card.transform.eulerAngles = new Vector3(0, 0, 0);
-            card.transform.localPosition = localCardPosition;
+            card.transform.SetParent(content);
+            card.GetComponent<SortingGroup>().sortingLayerName = "UI";
             card.gameObject.SetActive(true);
             card.GetComponent<Draggable>().enabled = false;
-            currentCard++;
         }
+        foreach (Card card in tablePlayer.GetHand().GetCards())
+        {
+            card.GetComponent<Draggable>().enabled = false;
+        }
+        // TODO: Also disable draggable for cards in hand
         open = true;
     }
 
     public void closePile()
     {
-        tablePlayer.GetTable().dim.gameObject.SetActive(true);
-        background.gameObject.SetActive(false);
+        scrollview.SetActive(false);
         foreach (Card card in sortedCards)
         {
+            card.transform.SetParent(card.GetDeck().transform);
+            card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             card.gameObject.SetActive(false);
+            card.GetComponent<Draggable>().enabled = true;
+        }
+        foreach (Card card in tablePlayer.GetHand().GetCards())
+        {
             card.GetComponent<Draggable>().enabled = true;
         }
         open = false;
@@ -91,19 +88,18 @@ public class Cardpile : MonoBehaviour
     // On Mouse Hover darkens the deck
     void OnMouseEnter()
     {
-        //GetComponent<SpriteRenderer>().color = new Color(204, 204, 204, 255);
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = hoverColor;
     }
 
     void OnMouseExit()
     {
         //GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 255);
-        GetComponent<SpriteRenderer>().color = Color.white;
+        GetComponent<SpriteRenderer>().color = baseColor;
     }
 
     void OnMouseDown()
     {
-        GetComponent<SpriteRenderer>().color = Color.black;
+        GetComponent<SpriteRenderer>().color = clickColor;
     }
 
     // Displays the cards on the screen
@@ -111,12 +107,12 @@ public class Cardpile : MonoBehaviour
     {
         if (!open) openPile();
         else closePile();
-        GetComponent<SpriteRenderer>().color = Color.gray;
+        GetComponent<SpriteRenderer>().color = hoverColor;
     }
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Card> GetCards() { return cards; }
-    public Vector3 GetCardSize() { return cardSize; }
+    public bool isOpen() {return open;}
 
     public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
     { 
@@ -127,6 +123,5 @@ public class Cardpile : MonoBehaviour
             card.SetStatus(0);
         }
     }
-    public void SetCardSize(Vector3 newSize) { cardSize = newSize; }
     public TablePlayer GetTablePlayer() {return tablePlayer;}
 }

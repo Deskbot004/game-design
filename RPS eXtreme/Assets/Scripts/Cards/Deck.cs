@@ -34,7 +34,7 @@ public class Deck : MonoBehaviour
     public void AddCard(Card card)
     {
         this.cards.Add(card);
-        card.gameObject.transform.parent = this.gameObject.transform;
+        card.gameObject.transform.SetParent(gameObject.transform);
     }
 
     public void AddCardDeck(List<Card> deck)
@@ -42,7 +42,7 @@ public class Deck : MonoBehaviour
         this.cards = deck;
         foreach (Card card in this.cards)
         {
-            card.gameObject.transform.parent = this.gameObject.transform;
+            card.gameObject.transform.SetParent(gameObject.transform);
         }
     }
 
@@ -166,5 +166,15 @@ public class Deck : MonoBehaviour
     void AddCards()
     {
         this.cards = new List<Card>(GetComponentsInChildren<Card>());
+    }
+
+    [ContextMenu("Reset Card Positions")]
+    void resetCardPositions()
+    {
+        foreach (Card card in cards)
+        {
+            card.transform.localPosition = new Vector3(0f,0f,0f);
+            card.transform.eulerAngles = new Vector3(0f,0f,0f);
+        }
     }
 }

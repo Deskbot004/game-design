@@ -41,9 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Background
+  - name: Attached Cards
     uniqueID: 3417006133
     locked: 0
-  - name: Icons
+  - name: Cards on Table
+    uniqueID: 2033895861
+    locked: 0
+  - name: Dim
     uniqueID: 4288305197
+    locked: 0
+  - name: Cards in Focus
+    uniqueID: 3983063315
+    locked: 0
+  - name: UI
+    uniqueID: 2453905037
     locked: 0

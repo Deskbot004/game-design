@@ -18,6 +18,9 @@ public class Gamelogic : MonoBehaviour
     public LibAR libAR;
     public Table table;
 
+    [Header("UI Connection")]
+    public Health healthUI;
+
     // Determines the Win of a symbol on attack
     private int[,] winMatrix = { { -1, 1, 0, 1, 0 }, 
                                  { 0, -1, 1, 1, 0 }, 
@@ -64,6 +67,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
+        healthUI.setHealth(lifepointMax, true);
+        healthUI.setHealth(lifepointMax, false);
         players = table.GetComponentsInChildren<TablePlayer>();
 
         foreach (TablePlayer p in players)
@@ -267,11 +272,14 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
+        healthUI.setHealth(currentLifepoints["user"], true);
+        
     }
 
     public void DamageEnemy(int dmg)
     {
         currentLifepoints["enemy"] -= dmg;
+        healthUI.setHealth(currentLifepoints["enemy"], false);
     }
 
     public void UserDraw(int amount)
