@@ -22,6 +22,8 @@ public class Constructor : MonoBehaviour
     }
 
 
+
+    private int counter;
     
     /*
      *  Creates a NormalCard but doesn't initialize it
@@ -42,6 +44,8 @@ public class Constructor : MonoBehaviour
     public NormalCard CreateNormalCard(string symbol, int type)
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
+        cardObject.name = "Normal Card " + counter;
+        counter++;
         cardObject.SetActive(false);
         NormalCard card = cardObject.GetComponent<NormalCard>();
         card.SetSymbol(symbol);
@@ -71,6 +75,8 @@ public class Constructor : MonoBehaviour
     public SupportCard CreateSupportCard(int type, List<string> names)
     {
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
+        cardObject.name = "Support Card " + counter;
+        counter++;
         cardObject.SetActive(false);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
@@ -110,6 +116,7 @@ public class Constructor : MonoBehaviour
     [ContextMenu("Create tryout Deck")]
     void Creation()
     {
+        counter = 0;
         List<Card> cards = new List<Card>();
         string[] names = { "draw:2", "win against:rock", "extra damage:2", "win on draw" };
         for(int i = 0; i < 4; i++)
@@ -139,5 +146,10 @@ public class Constructor : MonoBehaviour
 
         deck2.LoadDeck("opponentDeck");
 
+    }
+
+    public void Test()
+    {
+        Debug.Log("Hello");
     }
 }

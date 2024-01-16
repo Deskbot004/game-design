@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class TablePlayer : MonoBehaviour, DefaultDroppable
 {
@@ -12,18 +14,15 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public List<Slot> slots;
     public bool isPlayer;
 
+    [Header("UI Connections")]
+    public GameObject endTurnButton;
+    public GameObject attachDoneButton;
+
     protected Table table;
     private bool dropActive = true;
+    private NormalCard attachCard;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
-    void Awake()
-    {
-        Card card = playerDeck.GetCards()[0];
-        card.gameObject.SetActive(true);
-        drawpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
-        discardpile.SetCardSize(card.GetComponent<BoxCollider2D>().bounds.size);
-    }
-    
     public virtual void init(Table table)
     {
         this.table = table;
@@ -70,8 +69,25 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
+    // Shuffles all cards from the Discardpile into the Drawpile
+    public void DiscardToDrawpile()
+    {
+        drawpile.GetCards().AddRange(discardpile.GetCards());
+        discardpile.GetCards().Clear();
+        drawpile.Shuffle();
+        // TODO: Play animation
+    }
+
+    // ---------- Attaching Cards ----------------------------------------------------------------------------------
+
     public void startAttach(NormalCard baseCard)
     {
+        if(attachCard != null)
+        {
+            hand.AddCard(attachCard);
+            attachCard.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+        }
+
         // Disable all other droppables
         foreach (Slot slot in slots) 
         {
@@ -82,12 +98,13 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         List<Card> cardsInHand = hand.GetCards();
         foreach (Card card in cardsInHand)
         {
-            //Debug.Log(card.gameObject + ": " + card.transform.localPosition);
             if(card == baseCard)
             {
-                //card.GetComponent<Draggable>().SavePosition();
-                baseCard.transform.localPosition = new Vector3 (9f, 2.5f, -3.6f);
+                baseCard.transform.SetParent(transform);
+                baseCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
+                baseCard.transform.SetParent(playerDeck.transform);
                 baseCard.transform.eulerAngles = new Vector3(0, 0, 0);
+                baseCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
                 baseCard.GetComponent<Draggable>().enabled = false;
                 baseCard.DropActive = true;
             }
@@ -97,24 +114,37 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             }
             else
             {
-                Vector3 oldPosition = card.transform.localPosition;
-                oldPosition.z = -3.5f;
-                card.transform.localPosition = oldPosition;
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
             }
-            //Later: card.GetComponent<Draggable>().RestorePosition();
         }
         hand.RemoveCard(baseCard);
         hand.ArrangeHand();
+        attachCard = baseCard;
+        endTurnButton.SetActive(false);
+        attachDoneButton.SetActive(true);
     }
 
-    // Shuffles all cards from the Discardpile into the Drawpile
-    public void DiscardToDrawpile()
+    public void finishAttach()
     {
-        drawpile.GetCards().AddRange(discardpile.GetCards());
-        discardpile.GetCards().Clear();
-        drawpile.Shuffle();
-        // TODO: Play animation
+        foreach (Slot slot in slots) 
+        {
+            slot.DropActive = true;
+        }
+        table.dim.gameObject.SetActive(false);
+        hand.AddCard(attachCard);
+        attachCard.DropActive = false;
+        foreach(Card card in hand.GetCards())
+        {
+            card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            card.GetComponent<Draggable>().enabled = true;
+        }
+        hand.ArrangeHand();
+        attachCard = null;
+        endTurnButton.SetActive(true);
+        attachDoneButton.SetActive(false);
     }
+
+    //TODO: Allow empty slots on resolve
 
     public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
 
@@ -128,6 +158,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool OnDrop(Draggable draggedObject)
     {
         hand.GetCards().Add(draggedObject.GetComponent<Card>());
+        draggedObject.transform.localPosition = hand.transform.localPosition;
         hand.ArrangeHand();
         return true;
     }
@@ -145,7 +176,12 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Slot> GetSlots() { return slots; }
-    public Table GetTable() {return table;}
+    public Table GetTable() { return table; }
+    public Hand GetHand() { return hand; }
+    public List<Cardpile> GetAllCardpiles() {
+        List<Cardpile> allPiles  = new List<Cardpile> {drawpile, discardpile};
+        return allPiles;
+    }
 
     // ---------- For Debugging --------------------------------------------------------------------------------
     public void fakeResolve()
