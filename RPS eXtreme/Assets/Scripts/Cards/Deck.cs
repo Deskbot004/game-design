@@ -15,15 +15,17 @@ public class Deck : MonoBehaviour
     public string deckName;
     private TablePlayer tablePlayer;
 
+    // ---------- Main Functions ------------------------------------------------------------------------------
+
     public void Awake()
     {
         this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
     }
 
-    public void init(TablePlayer tablePlayer) 
+    public void init(TablePlayer tablePlayer)
     {
         this.tablePlayer = tablePlayer;
-        foreach (Card card in cards) 
+        foreach (Card card in cards)
         {
             card.init(this);
         }
@@ -38,15 +40,10 @@ public class Deck : MonoBehaviour
     public void AddCardDeck(List<Card> deck)
     {
         this.cards = deck;
-        foreach(Card card in this.cards)
+        foreach (Card card in this.cards)
         {
             card.gameObject.transform.parent = this.gameObject.transform;
         }
-    }
-
-    public List<Card> GetCards()
-    {
-        return this.cards;
     }
 
     /*
@@ -61,7 +58,7 @@ public class Deck : MonoBehaviour
         {
             if (this.cards[i].IsBasic()) // card is a NormalCard
             {
-                NormalCard card = (NormalCard) this.cards[i];
+                NormalCard card = (NormalCard)this.cards[i];
                 save.cardSymbols.Add(card.GetSymbol());
                 save.cardTypes.Add(0);
                 save.functions.Add("");
@@ -74,9 +71,9 @@ public class Deck : MonoBehaviour
                 save.cardTypes.Add(1);
                 List<string> functionnames = card.GetFunctionNames();
                 string functionString = functionnames[0];
-                foreach(string name in functionnames)
+                foreach (string name in functionnames)
                 {
-                    if(name != functionnames[0])
+                    if (name != functionnames[0])
                     {
                         functionString += ";" + name;
                     }
@@ -104,7 +101,7 @@ public class Deck : MonoBehaviour
         string savedDeck = "";
         if (File.Exists(filename_location))
         {
-             savedDeck = File.ReadAllText(filename_location);
+            savedDeck = File.ReadAllText(filename_location);
         }
         else
         {
@@ -146,20 +143,24 @@ public class Deck : MonoBehaviour
                 this.AddCard(card);
             }
         }
+        this.deckName = filename;
     }
 
+    // ---------- Getter & Setter ------------------------------------------------------------------------------
 
-    public string GetDeckName()
-    {
-        return this.deckName;
-    }
+    public Constructor GetConstructor(){return this.constructor;}
 
-    public void SetDeckName(string name)
-    {
-        this.deckName = name;
-    }
+    public void SetConstructor(Constructor constructor){this.constructor = constructor;}
+
+    public List<Card> GetCards(){return this.cards;}
+
+    public string GetDeckName(){return this.deckName;}
+
+    public void SetDeckName(string name){this.deckName = name;}
 
     public TablePlayer GetTablePlayer() {return tablePlayer;}
+
+    // ---------- For Debugging --------------------------------------------------------------------------------
 
     [ContextMenu("Add Cards")]
     void AddCards()

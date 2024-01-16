@@ -12,6 +12,8 @@ public class Table : MonoBehaviour
     [Header("Visual Stuff")]
     public SpriteRenderer dim;
 
+    private float cardMoveTime = 0.5f;
+
     void Start()
     {
         player.init(this);
@@ -31,13 +33,14 @@ public class Table : MonoBehaviour
             {
                 Card card = slot.GetCard();
                 slot.ClearCard();
-                if (true) // TODO: Check that card is not an empty card
+                if (card != null) // TODO: Check that card is not an empty card
                 {
                     p.discardpile.GetCards().Add(card);
+                    card.gameObject.SetActive(false);
+                    // TODO: Play animation of card being removed
+                    // Something like card.playAnimation
                 }
-                card.gameObject.SetActive(false);
-                // TODO: Play animation of card being removed
-                // Something like card.playAnimation
+
             }
         }
     }
@@ -56,6 +59,8 @@ public class Table : MonoBehaviour
     // ------ Getter und Setter -------------------------------------------------------------------
     public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
     public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
+    public Gamelogic GetGamelogic() { return this.logic; }
+    public float GetCardMoveTime() { return this.cardMoveTime; }
 
     // ---------- For Debbuging -----------------------------------------------------------
     public void startLogic()

@@ -11,6 +11,8 @@ public class NormalCard : Card, Droppable
     private int[] viableSlotTypes = { 0, 1, 2 , 3 }; // 0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
     private bool dropActive = false;
 
+    // ---------- Main Functions ------------------------------------------------------------------------------
+
     public void Awake()
     {
         if(this.GetSlotType() != -1)
@@ -24,6 +26,102 @@ public class NormalCard : Card, Droppable
     {
         return true;
     }
+
+    /*
+     * Checks, if the type of the SupportCard matches any of the slots of the NormalCard.
+     * If that is not the case, the function returns 1.
+     * Otherwise it assigns the SupportCard to its matching slot.
+     * Any SupportCards already in that slot will be removed.
+     */
+
+    public int AttachSupportCard(SupportCard card)
+    {
+        int type = card.GetSlotType();
+        string slot = "";
+        switch (type) //Check the Type of SupportCard, that is to be attached
+        {
+            case 1:
+                slot = "Bottom";
+                break;
+            case 0:
+                slot = "Top";
+                break;
+            default:
+                Debug.Log("SupportCard, to be attached, has invalid type!");
+                return -1;
+        }
+
+        if (this.supportCards.ContainsKey(slot))
+        {
+            if (this.supportCards[slot] != null) //detach previously attached card
+            {
+                if (this.DetachSupportCard(this.supportCards[slot], slot) == -1)
+                {
+                    Debug.Log("Called DetachSupportCard with unknown SlotName in AttachSupportCard");
+                }
+            }
+            this.supportCards[slot] = card; //TODO: Visual Effects of the attachment
+            card.SetAttachmentStatus(true);
+            return 0;
+        }
+        else
+        {
+            Debug.Log("Attached SupportCard doesn't have a matching type!");
+            return 1;
+        }
+    }
+
+    /*
+     * Checks, if any of the attached cards in the slot match the given SupportCard.
+     * If the slot containing the card is already known, its key can be given in the parameter slotName and this check will be skipped.
+     * The SupportCard is then removed from the slot.
+     */
+
+    public int DetachSupportCard(SupportCard card, string slotName = "Unknown")
+    {
+        if (slotName == "Unknown")
+        {
+            foreach (string slot in this.supportCards.Keys)
+            {
+                if (this.supportCards[slot] == card)
+                {
+                    slotName = slot;
+                }
+            }
+        }
+
+        if (!this.supportCards.ContainsKey(slotName))
+        {
+            Debug.Log("DetachCard called with wrong SlotName");
+            return -1;
+        }
+
+        this.supportCards[slotName] = null;
+        card.SetAttachmentStatus(false);
+        return 0;
+
+    }
+
+    public bool hasSlot(string slot)
+    {
+        switch (slot)
+        {
+            case "top":
+                return this.GetSlotType() == 1 || this.GetSlotType() == 3;
+            case "bottom":
+                return this.GetSlotType() == 2 || this.GetSlotType() == 3;
+            default:
+                return false;
+        }
+    }
+
+    public override void OnRightClickInHand()
+    {
+        base.OnRightClickInHand();
+        this.deck.GetTablePlayer().startAttach(this);
+    }
+
+    // ---------- Getter & Setter ------------------------------------------------------------------------------
 
     /*
      * Sets the SlotType of the card according to the given integer and adds the corresponding slot-keys into the slot-dictionary
@@ -59,94 +157,6 @@ public class NormalCard : Card, Droppable
         }
     }
 
-    /*
-     * Checks, if the type of the SupportCard matches any of the slots of the NormalCard.
-     * If that is not the case, the function returns 1.
-     * Otherwise it assigns the SupportCard to its matching slot.
-     * Any SupportCards already in that slot will be removed.
-     */
-
-    public int AttachSupportCard(SupportCard card)
-    {
-        int type = card.GetSlotType();
-        string slot = "";
-        switch (type) //Check the Type of SupportCard, that is to be attached
-        {
-            case 1:
-                slot = "Bottom";
-                break;
-            case 0:
-                slot = "Top";
-                break;
-            default:
-                Debug.Log("SupportCard, to be attached, has invalid type!");
-                return -1;
-        }
-
-        if (this.supportCards.ContainsKey(slot))
-        {
-            if(this.supportCards[slot] != null) //detach previously attached card
-            {
-                if(this.DetachSupportCard(this.supportCards[slot], slot) == -1)
-                {
-                    Debug.Log("Called DetachSupportCard with unknown SlotName in AttachSupportCard");
-                }
-            }
-            this.supportCards[slot] = card; //TODO: Visual Effects of the attachment
-            card.SetAttachmentStatus(true);
-            return 0;
-        }
-        else
-        {
-            Debug.Log("Attached SupportCard doesn't have a matching type!");
-            return 1;
-        }
-    }
-
-    /*
-     * Checks, if any of the attached cards in the slot match the given SupportCard.
-     * If the slot containing the card is already known, its key can be given in the parameter slotName and this check will be skipped.
-     * The SupportCard is then removed from the slot.
-     */
-
-    public int DetachSupportCard(SupportCard card, string slotName = "Unknown") 
-    {
-        if(slotName == "Unknown")
-        {
-            foreach(string slot in this.supportCards.Keys)
-            {
-                if(this.supportCards[slot] == card)
-                {
-                    slotName = slot;
-                }
-            }
-        }
-
-        if (!this.supportCards.ContainsKey(slotName))
-        {
-            Debug.Log("DetachCard called with wrong SlotName");
-            return -1;
-        }
-
-        this.supportCards[slotName] = null;
-        card.SetAttachmentStatus(false);
-        return 0;
-
-    }
-
-    public bool hasSlot(string slot)
-    {
-        switch(slot) 
-        {
-            case "top":
-                return this.GetSlotType() == 1 || this.GetSlotType() == 3;
-            case "bottom":
-                return this.GetSlotType() == 2 || this.GetSlotType() == 3;
-            default:
-                return false;
-        }
-    }
-
     public override void SetSprite()
     {
         base.SetSprite();
@@ -167,12 +177,7 @@ public class NormalCard : Card, Droppable
         
     }
 
-    public override void OnRightClickInHand()
-    {
-        base.OnRightClickInHand();
-        this.deck.GetTablePlayer().startAttach(this);
-    }
-
+    // ---------- Droppable Functions ------------------------------------------------------------------------------
 
     public bool DropActive
     {
@@ -212,8 +217,6 @@ public class NormalCard : Card, Droppable
         }
     }
 
-    public Transform GetTransform()
-    {
-        return this.transform;
-    }
+    public Transform GetTransform() { return this.transform; }
+
 }

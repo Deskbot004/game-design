@@ -14,6 +14,14 @@ public class Constructor : MonoBehaviour
     public GameObject NormalCard;
     public GameObject SupportCard;
     public GameObject Deck;
+    private Gamelogic logic;
+
+    public void Awake()
+    {
+        this.logic = GameObject.Find("Gamelogic").GetComponent<Gamelogic>();
+    }
+
+
     
     /*
      *  Creates a NormalCard but doesn't initialize it
@@ -79,6 +87,7 @@ public class Constructor : MonoBehaviour
     public Deck CreateEmptyDeck()
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
+        deckObject.GetComponent<Deck>().SetConstructor(this);
         return deckObject.GetComponent<Deck>();
     }
 
@@ -90,23 +99,24 @@ public class Constructor : MonoBehaviour
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
         Deck deck = deckObject.GetComponent<Deck>();
+        deck.SetConstructor(this);
         deck.AddCardDeck(cards);
         deck.SetDeckName(deckname);
         return deck;
     }
 
-    
+    // ---------- For Debugging --------------------------------------------------------------------------------
 
     [ContextMenu("Create tryout Deck")]
     void Creation()
     {
         List<Card> cards = new List<Card>();
-        string[] names = { "draw:2", "win against:stone", "extra damage:2", "win on draw" };
+        string[] names = { "draw:2", "win against:rock", "extra damage:2", "win on draw" };
         for(int i = 0; i < 4; i++)
         {
             NormalCard card0 = CreateNormalCard("scissors", i);
             cards.Add(card0);
-            NormalCard card1 = CreateNormalCard("stone", i);
+            NormalCard card1 = CreateNormalCard("rock", i);
             cards.Add(card1);
             NormalCard card2 = CreateNormalCard("paper", i);
             cards.Add(card2);
@@ -119,15 +129,15 @@ public class Constructor : MonoBehaviour
             SupportCard card5 = CreateSupportCard(i % 2, functionnames);
             cards.Add(card5);
         }
-        Deck deck = CreateDeck(cards, "playerTryoutDeck");
+        Deck deck = CreateDeck(cards, "playerDeck");
 
         List<Card> deckCards = deck.GetCards();
 
         deck.SaveDeck();
 
-        //Deck deck2 = CreateEmptyDeck();
+        Deck deck2 = CreateEmptyDeck();
 
-        //deck2.LoadDeck("tryout");
+        deck2.LoadDeck("opponentDeck");
 
     }
 }

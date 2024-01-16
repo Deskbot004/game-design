@@ -219,6 +219,8 @@ GameObject:
   - component: {fileID: 5130926723020224501}
   - component: {fileID: 3374979779170171523}
   - component: {fileID: 1151190523531407510}
+  - component: {fileID: 5583232344530730245}
+  - component: {fileID: 5680163666883888603}
   m_Layer: 0
   m_Name: SupportCard
   m_TagString: Untagged
@@ -434,6 +436,31 @@ MonoBehaviour:
   symbol: Support
   slotType: -1
   description: Description Text
+  functionNames: []
+--- !u!114 &5583232344530730245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726437772995218731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8123cc31a751a4ab86e0da774c4ad0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5680163666883888603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1726437772995218731}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 071308c802a3e1443a88fe89609e758e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2793255778902471628
 GameObject:
   m_ObjectHideFlags: 0

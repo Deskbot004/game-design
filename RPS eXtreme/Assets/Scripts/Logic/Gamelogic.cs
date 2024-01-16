@@ -52,7 +52,7 @@ public class Gamelogic : MonoBehaviour
     {
         // rework?
         symbolToEntry.Add("scissors", 0);
-        symbolToEntry.Add("stone", 1);
+        symbolToEntry.Add("rock", 1);
         symbolToEntry.Add("paper", 2);
         symbolToEntry.Add("lizard", 3);
         symbolToEntry.Add("spock", 4);
@@ -84,6 +84,10 @@ public class Gamelogic : MonoBehaviour
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
+            if (!p.isPlayer)
+            {
+                p.StartCoroutine(p.playCards());
+            }
         }
     }
 
@@ -227,7 +231,7 @@ public class Gamelogic : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.S))
         {
             symbolToEntry.Add("scissors", 0);
-            symbolToEntry.Add("stone", 1);
+            symbolToEntry.Add("rock", 1);
             symbolToEntry.Add("paper", 2);
             symbolToEntry.Add("lizard", 3);
             symbolToEntry.Add("spock", 4);
