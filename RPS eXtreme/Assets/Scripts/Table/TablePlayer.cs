@@ -26,13 +26,13 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public virtual void init(Table table)
     {
         this.table = table;
+        playerDeck.init(this);
         drawpile.SetCards(playerDeck.GetCards());
         drawpile.Shuffle();
         foreach (Card card in playerDeck.GetCards())
         {
             card.gameObject.SetActive(false);
         }
-        playerDeck.init(this);
         drawpile.init(this);
         discardpile.init(this);
         hand.init(this);
