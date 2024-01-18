@@ -50,7 +50,7 @@ public class Deck : MonoBehaviour
     /*
      * Saves the Deck into a text file using Json and a DeckManager.
      */
-
+    [ContextMenu("Save Deck")]
     public void SaveDeck()
     {
         string filename_location = Path.Combine(Application.persistentDataPath, this.deckName);

@@ -96,7 +96,6 @@ public class Card : MonoBehaviour
         cardSprites = transform.GetComponent<CardSprites>();
         if (GetCardSprites().colors.ContainsKey(GetSymbol()))
             transform.Find("Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
-
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
             transform.Find("Cardback").gameObject.SetActive(true);

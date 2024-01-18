@@ -122,7 +122,7 @@ public class Constructor : MonoBehaviour
 
     // ---------- For Debugging --------------------------------------------------------------------------------
 
-    [ContextMenu("Create tryout Deck")]
+    [ContextMenu("Create Deck")]
     void Creation()
     {
         counter = 0;
@@ -166,8 +166,6 @@ public class Constructor : MonoBehaviour
         Deck deck = CreateDeck(cards, this.deckName);
 
         List<Card> deckCards = deck.GetCards();
-
-        deck.SaveDeck();
 
     }
 
