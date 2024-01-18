@@ -17,10 +17,13 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     [Header("UI Connections")]
     public GameObject endTurnButton;
     public GameObject attachDoneButton;
+    public GameObject detachButton;
 
     protected Table table;
     private bool dropActive = true;
-    private NormalCard attachCard;
+    private NormalCard attachModeCardInFocus;
+
+    //TODO: Allow empty slots on resolve
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
     public virtual void init(Table table)
@@ -78,75 +81,114 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         // TODO: Play animation
     }
 
+    public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
+
     // ---------- Attaching Cards ----------------------------------------------------------------------------------
+    // ----- Main Functions -----
 
-    public void startAttach(NormalCard baseCard)
+    public void StartAttach(NormalCard baseCard)
     {
-        if(attachCard != null)
-        {
-            hand.AddCard(attachCard);
-            attachCard.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-        }
-
-        // Disable all other droppables
-        foreach (Slot slot in slots) 
-        {
-            slot.DropActive = false;
-        }
-
-        table.dim.gameObject.SetActive(true);
-        List<Card> cardsInHand = hand.GetCards();
-        foreach (Card card in cardsInHand)
-        {
-            if(card == baseCard)
-            {
-                baseCard.transform.SetParent(transform);
-                baseCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
-                baseCard.transform.SetParent(playerDeck.transform);
-                baseCard.transform.eulerAngles = new Vector3(0, 0, 0);
-                baseCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-                baseCard.GetComponent<Draggable>().enabled = false;
-                baseCard.DropActive = true;
-            }
-            else if(card is NormalCard)
-            {
-                card.GetComponent<Draggable>().enabled = false;
-            }
-            else
-            {
-                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-            }
-        }
-        hand.RemoveCard(baseCard);
-        hand.ArrangeHand();
-        attachCard = baseCard;
+        OpenAttachMode();
+        if(attachModeCardInFocus != null) 
+            RemoveAttachFocusFrom(attachModeCardInFocus);
+        SetAttachFocusOn(baseCard);
         endTurnButton.SetActive(false);
         attachDoneButton.SetActive(true);
+        detachButton.SetActive(baseCard.HasAttachedCards());
     }
 
-    public void finishAttach()
+    public void Detach() 
+    {
+        SupportCard[] cardSlots = attachModeCardInFocus.GetSupportCards().Values.ToArray();
+        foreach(SupportCard supCard in cardSlots)
+        {
+            if(supCard != null && attachModeCardInFocus.DetachSupportCard(supCard) == 0)
+            {
+                supCard.transform.SetParent(supCard.GetDeck().transform);
+                supCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+                OnDrop(supCard.GetComponent<Draggable>());
+                supCard.GetComponent<Draggable>().SetCurrentDroppable(this);
+            }
+        }
+    }
+
+    public void FinishAttach()
+    {
+        detachButton.SetActive(false);
+        attachDoneButton.SetActive(false);
+        endTurnButton.SetActive(true);
+        RemoveAttachFocusFrom(attachModeCardInFocus);
+        CloseAttachMode();
+    }
+
+    // ----- Helper Functions -----
+
+    public void OpenAttachMode()
     {
         foreach (Slot slot in slots) 
+            slot.DropActive = false;
+        table.dim.gameObject.SetActive(true);
+        foreach (Card card in hand.GetCards())
         {
-            slot.DropActive = true;
+            if(card is NormalCard)
+                card.GetComponent<Draggable>().enabled = false;
+            else
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
         }
-        table.dim.gameObject.SetActive(false);
-        hand.AddCard(attachCard);
-        attachCard.DropActive = false;
-        foreach(Card card in hand.GetCards())
-        {
-            card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-            card.GetComponent<Draggable>().enabled = true;
-        }
-        hand.ArrangeHand();
-        attachCard = null;
-        endTurnButton.SetActive(true);
-        attachDoneButton.SetActive(false);
     }
 
-    //TODO: Allow empty slots on resolve
+    public void CloseAttachMode()
+    {
+        foreach (Slot slot in slots) 
+            slot.DropActive = true;
+        table.dim.gameObject.SetActive(false);
+        foreach (Card card in hand.GetCards())
+        {
+            if(card is NormalCard)
+                card.GetComponent<Draggable>().enabled = true;
+            else
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+        }
+        hand.ArrangeHand();
+    }
 
-    public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
+    public void SetAttachFocusOn(NormalCard focusCard)
+    {
+        // Remove card from Hand
+        hand.RemoveCard(focusCard);
+
+        // Bring card to the middle of screen
+        focusCard.transform.SetParent(transform);
+        focusCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
+        focusCard.transform.eulerAngles = new Vector3(0, 0, 0);
+        focusCard.transform.SetParent(playerDeck.transform);
+
+        // Bring card in front of dim layer
+        focusCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+
+        // Make the card a Droppable
+        focusCard.DropActive = true;
+
+        // Everything succeeded
+        attachModeCardInFocus = focusCard;
+        hand.ArrangeHand();
+    }
+
+    public void RemoveAttachFocusFrom(NormalCard focusCard)
+    {
+        // Add card back to Hand
+        hand.AddCard(focusCard);
+
+        // Put card back on proper layer
+        focusCard.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+
+        // Disable Droppable
+        focusCard.DropActive = false;
+
+        // Everything succeeded
+        attachModeCardInFocus = null;
+        hand.ArrangeHand();
+    }
 
     // ---------- Droppable -------------------------------------------------------------------------------------
     public bool DropActive
