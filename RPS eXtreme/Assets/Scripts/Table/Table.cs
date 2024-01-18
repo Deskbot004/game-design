@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.SceneManagement;
 
 public class Table : MonoBehaviour
 {
@@ -55,6 +56,8 @@ public class Table : MonoBehaviour
     public void SetWinner(string name)
     {
         // TODO End Screen
+        DataBetweenScreens.playerWon = name == "user";
+        SceneManager.LoadScene("WinLoseScreen");
     }
 
     // ------ Getter und Setter -------------------------------------------------------------------
