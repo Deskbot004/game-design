@@ -116,7 +116,7 @@ public class Gamelogic : MonoBehaviour
                 {
                     slotUser.TurnCards();
                     slotEnemy.TurnCards();
-                    string winner = EvaluateCards(slotUser.GetCards(), slotEnemy.GetCards());
+                    string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
                     table.ResolveSlot(slotUser.GetSlotPosition(), winner);
                 }
             }

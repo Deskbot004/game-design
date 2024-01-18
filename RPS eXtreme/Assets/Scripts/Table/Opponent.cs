@@ -25,9 +25,9 @@ public class Opponent : TablePlayer
             {
                 continue;
             }
-            if(this.slots[i].GetCards().Count == 0)
+            if(this.slots[i].GetNormalAndSuppCards().Count == 0)
             {
-                this.slots[i].SetCards(card);
+                this.slots[i].SetCard(card.GetComponent<NormalCard>());
                 playedCards.Add(card);
                 i++;
             }

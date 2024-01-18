@@ -188,6 +188,15 @@ public class NormalCard : Card, Droppable
     }
 
     public Dictionary<string, SupportCard> GetSupportCards() {return supportCards;}
+    public List<SupportCard> GetAttachedSupportCards()
+    {
+        List<SupportCard> attachedSupport = new List<SupportCard>();
+        foreach(SupportCard supCard in supportCards.Values)
+        {
+            if (supCard != null) attachedSupport.Add(supCard);
+        }
+        return attachedSupport;
+    }
 
     // ---------- Droppable Functions ------------------------------------------------------------------------------
 
