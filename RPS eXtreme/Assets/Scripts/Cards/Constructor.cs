@@ -15,6 +15,13 @@ public class Constructor : MonoBehaviour
     public GameObject SupportCard;
     public GameObject Deck;
     private Gamelogic logic;
+    public int rockAmount;
+    public int paperAmount;
+    public int scissorsAmount;
+    public int spockAmount;
+    public int lizardAmount;
+    public int supportAmount;
+    public string deckName;
 
     public void Awake()
     {
@@ -64,6 +71,7 @@ public class Constructor : MonoBehaviour
         cardObject.SetActive(false);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
+        card.populateDictionaries();
         card.SetSprite();
         return card;
     }
@@ -80,9 +88,10 @@ public class Constructor : MonoBehaviour
         cardObject.SetActive(false);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetSymbol("support");
+        card.populateDictionaries();
         card.SetSlotType(type);
-        card.SetSprite();
         card.SetFunctionNames(names);
+        card.SetSprite();
         return card;
     }
 
@@ -118,33 +127,47 @@ public class Constructor : MonoBehaviour
     {
         counter = 0;
         List<Card> cards = new List<Card>();
-        string[] names = { "draw:2", "win against:rock", "extra damage:2", "win on draw" };
-        for(int i = 0; i < 4; i++)
+        string[] names = { "draw:draw:2", "BR:win against:rock", "AR:extra damage:2", "BR:win on draw", "AR:lifesteal:1" };
+
+        for (int i = 0; i < this.supportAmount; i++)
         {
-            NormalCard card0 = CreateNormalCard("scissors", i);
-            cards.Add(card0);
-            NormalCard card1 = CreateNormalCard("rock", i);
-            cards.Add(card1);
-            NormalCard card2 = CreateNormalCard("paper", i);
-            cards.Add(card2);
-            NormalCard card3 = CreateNormalCard("lizard", i);
-            cards.Add(card3);
-            NormalCard card4 = CreateNormalCard("spock", i);
-            cards.Add(card4);
             List<string> functionnames = new List<string>();
-            functionnames.Add(names[i]);
+            functionnames.Add(names[i % 5]);
             SupportCard card5 = CreateSupportCard(i % 2, functionnames);
             cards.Add(card5);
         }
-        Deck deck = CreateDeck(cards, "playerDeck");
+        for (int i = 0; i < this.scissorsAmount; i++)
+        {
+            NormalCard card0 = CreateNormalCard("scissors", i % 4);
+            cards.Add(card0);
+        }
+        for (int i = 0; i < this.rockAmount; i++)
+        {
+            NormalCard card1 = CreateNormalCard("rock", i % 4);
+            cards.Add(card1);
+        }
+        for (int i = 0; i < this.paperAmount; i++)
+        {
+            NormalCard card2 = CreateNormalCard("paper", i % 4);
+            cards.Add(card2);
+        }
+        for (int i = 0; i < this.lizardAmount; i++)
+        {
+            NormalCard card3 = CreateNormalCard("lizard", i % 4);
+            cards.Add(card3);
+        }
+        for (int i = 0; i < this.spockAmount; i++)
+        {
+            NormalCard card4 = CreateNormalCard("spock", i % 4);
+            cards.Add(card4);
+        }
+        
+        
+        Deck deck = CreateDeck(cards, this.deckName);
 
         List<Card> deckCards = deck.GetCards();
 
         deck.SaveDeck();
-
-        Deck deck2 = CreateEmptyDeck();
-
-        deck2.LoadDeck("opponentDeck");
 
     }
 

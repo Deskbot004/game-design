@@ -25,6 +25,7 @@ public class Deck : MonoBehaviour
     public void init(TablePlayer tablePlayer)
     {
         this.tablePlayer = tablePlayer;
+        this.LoadDeck(this.deckName);
         foreach (Card card in cards)
         {
             card.init(this);

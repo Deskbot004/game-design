@@ -177,10 +177,17 @@ public class NormalCard : Card, Droppable
         transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
     }
 
-    public override void OnRightClickInHand()
+    public List<SupportCard> GetAttachedCards()
     {
-        base.OnRightClickInHand();
-        deck.GetTablePlayer().startAttach(this);
+        List<SupportCard> attachedCards = new List<SupportCard>();
+        foreach(SupportCard card in supportCards.Values)
+        {
+            if(card != null)
+            {
+                attachedCards.Add(card);
+            }
+        }
+        return attachedCards;
     }
 
     // ---------- Droppable Functions ------------------------------------------------------------------------------
