@@ -50,9 +50,10 @@ public class Opponent : TablePlayer
     public int playNormalCard(Card card, int slot, List<Card> playedCards)
     {
         Debug.Log("playing Normal Card");
-        if (this.slots[slot].GetCards().Count == 0) 
+        if (this.slots[slot].GetNormalAndSuppCards().Count == 0) 
         {
-            this.slots[slot].SetCards(card);
+            NormalCard norm = (NormalCard)card;
+            this.slots[slot].SetCard(norm);
             playedCards.Add(card);
             return 0;
         }
@@ -71,13 +72,10 @@ public class Opponent : TablePlayer
             if (card2.IsBasic())
             {
                 NormalCard normal = (NormalCard)card2;
-                if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
+                if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
                 {
-                    Debug.Log("Attached Normal Card found");
-                    List<Card> slotCards = new List<Card>();
-                    slotCards.Add(normal);
-                    slotCards.Add(support);
-                    this.slots[slot].SetCards(slotCards);
+                    Debug.Log("Normal to be attached to Card found");;
+                    this.slots[slot].SetCard(normal);
                     playedCards.Add(normal);
                     return 0;
                 }

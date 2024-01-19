@@ -93,6 +93,7 @@ public class Gamelogic : MonoBehaviour
             p.DrawCards(turnDraw);
             if (!p.isPlayer)
             {
+                Debug.Log("Playing Cards");
                 p.StartCoroutine(p.playCards());
             }
         }
