@@ -96,6 +96,7 @@ public class Card : MonoBehaviour
         cardSprites = transform.GetComponent<CardSprites>();
         if (GetCardSprites().colors.ContainsKey(GetSymbol()))
             transform.Find("Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
+        /*
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
             transform.Find("Cardback").gameObject.SetActive(true);
@@ -103,6 +104,7 @@ public class Card : MonoBehaviour
             transform.Find("Lower Effect").gameObject.SetActive(false);
             return;
         }
+        */
     }
 
     public void SetStatus(int status) {this.status = status;}

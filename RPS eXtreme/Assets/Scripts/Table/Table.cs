@@ -26,7 +26,6 @@ public class Table : MonoBehaviour
     // Removes the card from every slot and puts them into the Discard Pile
     public void ClearSlots()
     {
-        Debug.Log("Clearing Slots...");
         TablePlayer[] players = { player, enemy };
         foreach (TablePlayer p in players)
         {
