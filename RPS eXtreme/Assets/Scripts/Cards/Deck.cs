@@ -19,7 +19,10 @@ public class Deck : MonoBehaviour
 
     public void Awake()
     {
-        this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+        if(GameObject.Find("Constructor") != null)
+        {
+            this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+        }
     }
 
     public void init(TablePlayer tablePlayer)
