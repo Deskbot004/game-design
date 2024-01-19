@@ -118,7 +118,7 @@ public class Card : MonoBehaviour
         targetRotation = rotation;
     }
 
-    public IEnumerator MoveToTarget(float moveTime)
+    public IEnumerator MoveToTarget(float moveTime, bool activeOnArrival = true)
     {
         //bool dragEnabled = GetComponent<Draggable>().enabled;
         //GetComponent<Draggable>().enabled = false;
@@ -138,6 +138,7 @@ public class Card : MonoBehaviour
             yield return null;
         }
 
+        gameObject.SetActive(activeOnArrival);
         //GetComponent<Draggable>().enabled = dragEnabled;
     }
 

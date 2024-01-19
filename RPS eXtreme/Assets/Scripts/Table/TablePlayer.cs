@@ -67,14 +67,14 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         StartCoroutine(DealCards(drawnCards, 0.3f));
     }
 
+// TODO: Avoid pressing multiple times right click on card in focus
+
     // Shuffles all cards from the Discardpile into the Drawpile
     public void DiscardToDrawpile()
     {
         drawpile.GetCards().AddRange(discardpile.GetCards());
-        StartCoroutine(MoveCardsToDrawpile(discardpile.GetCards(), 0.1f));
-        discardpile.GetCards().Clear();
+        StartCoroutine(MoveCardsToDrawpile(discardpile.GetCards(), 0.2f));
         drawpile.Shuffle();
-        // TODO: Play animation
     }
 
     public virtual IEnumerator playCards() { yield return new WaitForSeconds(0.5f); }
@@ -226,8 +226,12 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         {  
             card.GetComponent<Draggable>().enabled = false;
             card.gameObject.SetActive(true);
-            card.GetComponent<Animator>().SetBool("isStartingFront", false);
-            card.GetComponent<Animator>().SetBool("isFacingFront", isPlayer);
+            if(cards.Contains(card))
+            {
+                card.transform.position = drawpile.transform.position;
+                card.GetComponent<Animator>().SetBool("faceFront", false);
+                card.GetComponent<Animator>().SetBool("flip", isPlayer);
+            }
             StartCoroutine(card.MoveToTarget(0.5f));
             float actualOffset = cards.Contains(card)? timeOffset : 0f;
             yield return new WaitForSeconds(actualOffset);
@@ -239,20 +243,27 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     {
         card.GetComponent<Draggable>().enabled = false;
         card.SetWorldTargetPosition(discardpile.transform.TransformPoint(new Vector3(0,0,0)));
-        card.GetComponent<Animator>().SetBool("isFacingFront", false);
+        card.GetComponent<Animator>().SetBool("faceFront", false);
+        card.GetComponent<Animator>().SetBool("flip", true);
         yield return card.MoveToTarget(0.5f);
         card.gameObject.SetActive(false);
     }
 
     IEnumerator MoveCardsToDrawpile(List<Card> cards, float timeOffset)
     {
+        // TODO: Doesn't Work ._.
         foreach(Card card in cards)
-        {
+        {   
+            card.transform.position = discardpile.transform.position;
+            card.transform.eulerAngles = Vector3.zero;
             card.gameObject.SetActive(true);
+            card.GetComponent<Animator>().SetBool("faceFront", false);
             card.SetWorldTargetPosition(drawpile.transform.TransformPoint(Vector3.zero));
-            StartCoroutine(card.MoveToTarget(0.5f));
+            card.SetTargetRotation(Vector3.zero);
+            StartCoroutine(card.MoveToTarget(0.5f, false));
             yield return new WaitForSeconds(timeOffset);
         }
+        discardpile.GetCards().Clear();
     }
 
     // ---------- For Debugging --------------------------------------------------------------------------------

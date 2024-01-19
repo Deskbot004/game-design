@@ -20,7 +20,7 @@ public class Slot : MonoBehaviour, Droppable
     // ---------- Slot Functions ----------------------------------------------
     public void TurnCards()
     {
-        card.GetComponent<Animator>().SetBool("isFacingFront", true);
+        card.GetComponent<Animator>().SetBool("flip", true);
     }
 
     // ---------- Droppable Functions -----------------------------------------

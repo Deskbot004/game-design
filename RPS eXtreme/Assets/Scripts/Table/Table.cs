@@ -33,7 +33,7 @@ public class Table : MonoBehaviour
         {
             if (slot.GetCard() != null)
             {
-                slot.GetCard().GetComponent<Animator>().SetBool("isFacingFront", true);
+                slot.GetCard().GetComponent<Animator>().SetBool("flip", true);
                 animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
             }
         }
@@ -68,6 +68,7 @@ public class Table : MonoBehaviour
     }
 
     //TODO: Fix when no cards in slot
+    // TODO: Set all waitforseconds higher
     public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
     {
         Dictionary<string, Slot> slots = GetSlotByNr(slotNr);
@@ -75,7 +76,7 @@ public class Table : MonoBehaviour
         {
             slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
         }
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.3f);
         if(winner == "user")
         {
             slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
@@ -86,7 +87,7 @@ public class Table : MonoBehaviour
             slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["user"], "user");
         }
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.3f);
         foreach (Slot slot in slots.Values)
         {
             slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";

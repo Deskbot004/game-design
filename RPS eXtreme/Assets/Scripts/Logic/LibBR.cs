@@ -54,7 +54,7 @@ public class LibBR : MonoBehaviour
                 entry = 4;
                 break;
             default:
-                Debug.Log("Error: No additional win mentioned");
+                Debug.Log("Error: No additional win mentioned " + entry);
                 break;
         }
         for (int i = 0; i < mat.GetLength(0); i++)

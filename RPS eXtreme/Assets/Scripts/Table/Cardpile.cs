@@ -56,6 +56,7 @@ public class Cardpile : MonoBehaviour
             card.transform.SetParent(content);
             card.GetComponent<SortingGroup>().sortingLayerName = "UI";
             card.gameObject.SetActive(true);
+            card.GetComponent<Animator>().SetBool("faceFront", true);
             card.GetComponent<Draggable>().enabled = false;
         }
         foreach (Card card in tablePlayer.GetHand().GetCards())
