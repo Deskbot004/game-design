@@ -9,14 +9,8 @@ public class Slot : MonoBehaviour, Droppable
     public int slotPosition; // Leftmost is 0
 
     private TablePlayer tablePlayer;
-    public List<Card> cards = new List<Card>();
     private bool dropActive = true;
-
-    [Header("For Debugging")]
-    public Card exampleCard; // Default card if slot is empty
-#nullable enable
-    public Card? card; // While combining cards isn't implemented
-#nullable disable
+    private NormalCard card;
 
     public void init(TablePlayer tablePlayer) 
     {
@@ -47,10 +41,7 @@ public class Slot : MonoBehaviour, Droppable
         }
         else // Yes the case
         {
-            card = draggedObject.GetComponent<Card>();
-            cards.Add(card);
-            NormalCard normalCard = draggedObject.GetComponent<NormalCard>();
-            cards.AddRange(normalCard.GetAttachedCards());
+            card = draggedObject.GetComponent<NormalCard>();
             card.transform.position = transform.position;
             return true;
         }
@@ -68,27 +59,19 @@ public class Slot : MonoBehaviour, Droppable
 
     // ------ Getter und Setter -------------------------------------------------------------------
     public int GetSlotPosition() { return slotPosition; }
-    public List<Card> GetCards()
+    public List<Card> GetNormalAndSuppCards()
     {
-        // This check is only for Debugging
-        // Once we have Empty Cards, cards can't be empty on resolve
-        //if (cards.Count == 0) {
-        //    List<Card> emptyCard = new List<Card>();
-        //    emptyCard.Add(exampleCard);
-        //    return emptyCard;
-        //}
-        return cards;
+        List<Card> cardsInSlot = new List<Card>();
+        if(card != null)
+        {
+            cardsInSlot.Add(card);
+            foreach(SupportCard supCard in card.GetAttachedSupportCards())
+                cardsInSlot.Add(supCard);
+        }
+        return cardsInSlot;
     }
-    public void SetCards(List<Card> newCards) //Copies cards, doesn't set pointer of list
-    {
-        cards.Clear();
-        cards.AddRange(newCards);
-        card = newCards[0]; // For Debugging
-    }
-    public void SetCards(Card newCard)
+    public void SetCard(NormalCard newCard)
     { 
-        cards.Clear();
-        cards.Add(newCard);
         newCard.SetSupposedPosition(this.transform.position);
         newCard.SetMoveSpeed(Vector3.Distance(newCard.transform.position, this.transform.position) / this.tablePlayer.GetTable().GetCardMoveTime());
         card = newCard; // For Debugging
@@ -100,6 +83,5 @@ public class Slot : MonoBehaviour, Droppable
     public void ClearCard()
     {
         card = null;
-        cards.Clear();
     }
 }

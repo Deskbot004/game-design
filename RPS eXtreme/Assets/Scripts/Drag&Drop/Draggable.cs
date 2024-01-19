@@ -119,5 +119,10 @@ public class Draggable : MonoBehaviour
 
         return (collidersAmount, colliders);
     }
+
+    public void SetCurrentDroppable(Droppable droppable)
+    {
+        currentDroppable = droppable;
+    }
         
 }

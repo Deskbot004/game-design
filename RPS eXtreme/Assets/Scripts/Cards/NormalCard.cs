@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using TMPro;
 using UnityEngine.Rendering;
+using System.Linq;
 
 [Serializable]
 public class NormalCard : Card, Droppable
@@ -119,7 +120,16 @@ public class NormalCard : Card, Droppable
     public override void OnRightClickInHand()
     {
         base.OnRightClickInHand();
-        this.deck.GetTablePlayer().startAttach(this);
+        this.deck.GetTablePlayer().StartAttach(this);
+    }
+
+    public bool HasAttachedCards()
+    {
+        foreach(SupportCard card in supportCards.Values)
+        {
+            if(card != null) return true;
+        }
+        return false;
     }
 
     // ---------- Getter & Setter ------------------------------------------------------------------------------
@@ -177,17 +187,15 @@ public class NormalCard : Card, Droppable
         transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
     }
 
-    public List<SupportCard> GetAttachedCards()
+    public Dictionary<string, SupportCard> GetSupportCards() {return supportCards;}
+    public List<SupportCard> GetAttachedSupportCards()
     {
-        List<SupportCard> attachedCards = new List<SupportCard>();
-        foreach(SupportCard card in supportCards.Values)
+        List<SupportCard> attachedSupport = new List<SupportCard>();
+        foreach(SupportCard supCard in supportCards.Values)
         {
-            if(card != null)
-            {
-                attachedCards.Add(card);
-            }
+            if (supCard != null) attachedSupport.Add(supCard);
         }
-        return attachedCards;
+        return attachedSupport;
     }
 
     // ---------- Droppable Functions ------------------------------------------------------------------------------
@@ -211,7 +219,8 @@ public class NormalCard : Card, Droppable
 
     public bool OnDrop(Draggable draggedObject)
     {
-        if (this.AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
+        // TODO: Animation when replacing an already attached support card
+        if (AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
         {
             draggedObject.transform.SetParent(transform);
             draggedObject.transform.localPosition = new Vector3 (0, 0, 0.5f);
@@ -224,10 +233,7 @@ public class NormalCard : Card, Droppable
 
     public void OnLeave(Draggable draggedObject)
     {
-        if(this.DetachSupportCard(draggedObject.GetComponent<SupportCard>()) != 0)
-        {
-            Debug.Log("Detachment unsuccessfull");
-        }
+
     }
 
     public Transform GetTransform() { return this.transform; }
