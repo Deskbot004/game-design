@@ -18,9 +18,13 @@ public class LibAR : MonoBehaviour
     }
 
 
-    /* 
-     * Multiply damage dealt.
-     */
+    /*
+    The caller deals the damage which is given.
+    The reset gets thrown into stringToFunc and stringToInput from Gamelogic titled "Dmg".
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card / and won
+           value: the amount of damage which should be dealt
+    */
     public void AdditionalDamage(Gamelogic logic, string caller, object value)
     {
         logic.stringToFunc["Dmg"] = ResetDamage;
@@ -35,9 +39,12 @@ public class LibAR : MonoBehaviour
         logic.SetdmgOnLoss(resetT);
     }
 
-    /* 
-     * Draw additional cards.
-     */
+    /*
+    The caller draws as many cards as specified. Special case the user does not need to win!
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card
+           value: the amount of cards to be drawn
+    */
     public void DrawCards(Gamelogic logic, string caller, object value)
     {
         
@@ -52,9 +59,12 @@ public class LibAR : MonoBehaviour
         }
     }
 
-    /* 
-     * Draw additional cards.
-     */
+    /*
+    The caller heals for the given damage. (If expanded needs to be called after multiply dmg)
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card
+           value: the heal multiplier
+    */
     public void Lifesteal(Gamelogic logic, string caller, object value)
     {
         var amount = Convert.ToInt32(value);
