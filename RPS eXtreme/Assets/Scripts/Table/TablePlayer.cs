@@ -27,6 +27,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public virtual void init(Table table)
     {
         this.table = table;
+        playerDeck.init(this);
         playerDeck.transform.localPosition = drawpile.transform.localPosition;
         drawpile.SetCards(playerDeck.GetCards());
         //drawpile.Shuffle();
@@ -34,7 +35,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         {
             card.gameObject.SetActive(false);
         }
-        playerDeck.init(this);
         drawpile.init(this);
         discardpile.init(this);
         hand.init(this);

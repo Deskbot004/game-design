@@ -9,24 +9,32 @@ public class SupportCard : Card
 {
     public string description;
     private bool isAttached;
-    public List<string> functionNames; // The entries should match one of the patterns nameofFunction:functionValue or nameOfFunction.
-    private List<object> functionValues = new List<object>();
-    private List<Action<Gamelogic, object>> functions = new List<Action<Gamelogic, object>>(); //Hat aktuell immer nur eine Funktion
+    public List<string> functionNames; // The entries should match one of the patterns library:nameofFunction:functionValue or library:nameOfFunction.
+    private List<(Action<Gamelogic, string, object>, object)> ARFunctions = new List<(Action<Gamelogic, string, object>,object)>();
+    private List<(Action<Gamelogic, string, object>, object)> BRFunctions = new List<(Action<Gamelogic, string, object>, object)>();
+    private List<(Action<Gamelogic, string, object>, object)> drawFunctions = new List<(Action<Gamelogic, string, object>, object)>();
     private int[] viableSlotTypes = { 0, 1 }; // 0: fits in top slot, 1: fits in bottom slot
     private LibAR libAR;
     private LibBR libBR;
+    private Dictionary<string, Action<Gamelogic, string, object>> ARLibrary;
+    private Dictionary<string, Action<Gamelogic, string, object>> BRLibrary;
+    private Dictionary<string, Action<Gamelogic, string, object>> drawLibrary;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
 
     public void Awake()
     {
-        this.libAR = this.GetComponent<LibAR>();
-        this.libBR = this.GetComponent<LibBR>();
+        this.populateDictionaries();
     }
 
     // ---------- Getter & Setter ------------------------------------------------------------------------------
 
-    public List<Action<Gamelogic, object>> GetFunctions(){return functions;}
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR(){return ARFunctions;}
+
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsBR() { return BRFunctions; }
+
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsDraw() { return drawFunctions; }
+
 
     /*
      * Check each entry of functionNames for a matching pattern and assign entries to functionValues and functions according to the pattern.
@@ -38,22 +46,83 @@ public class SupportCard : Card
         {
             string[] values = function.Split(':');
             int length = values.Length;
-            if(this.gamelogic.stringToFunc.ContainsKey(values[0]))
+            switch (values[0]) //Check in which library the function should be in
             {
-                this.functions.Add(this.gamelogic.stringToFunc[values[0]]);
-            }
-            switch (length)
-            {
-                case 2:
-                    this.functionValues.Add(values[1]);
+                case "AR":
+                    if (this.ARLibrary.ContainsKey(values[1])) //Check if the library has a function of that name
+                    {
+                        switch (length)
+                        {
+                            case 3:
+                                this.ARFunctions.Add((this.ARLibrary[values[1]], values[2]));
+                                this.SetText(values[1], values[2]);
+                                break;
+                            case 2:
+                                this.ARFunctions.Add((this.ARLibrary[values[1]], null));
+                                this.SetText(values[1], null);
+                                break;
+                            default:
+                                Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Function with name " + values[1] + " does not exist in library AR");
+                    }
                     break;
-                case 1:
-                    this.functionValues.Add(null);
+                case "BR":
+                    if (this.BRLibrary.ContainsKey(values[1]))//Check if the library has a function of that name
+                    {
+                        switch (length)
+                        {
+                            case 3:
+                                this.BRFunctions.Add((this.BRLibrary[values[1]], values[2]));
+                                this.SetText(values[1], values[2]);
+                                break;
+                            case 2:
+                                this.BRFunctions.Add((this.BRLibrary[values[1]], null));
+                                this.SetText(values[1], null);
+                                break;
+                            default:
+                                Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Function with name " + values[1] + " does not exist in library BR");
+                    }
+                    break;
+                case "draw":
+                    if (this.drawLibrary.ContainsKey(values[1]))//Check if the library has a function of that name
+                    {
+                        switch (length)
+                        {
+                            case 3:
+                                this.drawFunctions.Add((this.drawLibrary[values[1]], values[2]));
+                                this.SetText(values[1], values[2]);
+                                break;
+                            case 2:
+                                this.drawFunctions.Add((this.drawLibrary[values[1]], null));
+                                this.SetText(values[1], null);
+                                break;
+                            default:
+                                Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("Function with name " + values[1] + " does not exist in library Draw");
+                    }
                     break;
                 default:
-                    Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
+                    Debug.Log("Library of name " + values[0] + " does not exist");
                     break;
             }
+                
+            
         }
     }
 
@@ -80,6 +149,7 @@ public class SupportCard : Card
     public int SetFunctionNames(List<string> names)
     {
         this.functionNames = names;
+        this.SetFunctions();
         return 0;
     }
 
@@ -121,5 +191,54 @@ public class SupportCard : Card
             this.transform.Find("Card Sprites/Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
             this.transform.Find("Card Sprites/Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
         }
+    }
+
+    private void SetText(string functionName, string value)
+    {
+        switch (functionName)
+        {
+            case "draw":
+                this.description = "Draw " + value;
+                break;
+
+            case "extra damage":
+                this.description = "Multiply damage by " + value;
+                break;
+            case "lifesteal":
+                this.description = "Lifesteal " + value;
+                break;
+            case "win on draw":
+                this.description = "Win on Draw";
+                break;
+            case "win against":
+                this.description = "Win against " + value;
+                break;
+            default:
+                Debug.Log("Functionname unknown: " + functionName);
+                break;
+        }
+    }
+
+    // ---------- Dictionaries ------------------------------------------------------------------------------
+
+    public void populateDictionaries()
+    {
+        this.libAR = this.GetComponent<LibAR>();
+        this.libBR = this.GetComponent<LibBR>();
+
+        this.drawLibrary = new Dictionary<string, Action<Gamelogic, string, object>>();
+        this.ARLibrary = new Dictionary<string, Action<Gamelogic, string, object>>();
+        this.BRLibrary = new Dictionary<string, Action<Gamelogic, string, object>>();
+
+        //draw functions
+        this.drawLibrary["draw"] = this.libAR.DrawCards;
+
+        //After resolution functions
+        this.ARLibrary["extra damage"] = this.libAR.AdditionalDamage;
+        this.ARLibrary["lifesteal"] = this.libAR.Lifesteal;
+
+        //Before resolution functions
+        this.BRLibrary["win on draw"] = this.libBR.WinDraw;
+        this.BRLibrary["win against"] = this.libBR.AdditionalWin;
     }
 }

@@ -19,12 +19,16 @@ public class Deck : MonoBehaviour
 
     public void Awake()
     {
-        this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+        if(GameObject.Find("Constructor") != null)
+        {
+            this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+        }
     }
 
     public void init(TablePlayer tablePlayer)
     {
         this.tablePlayer = tablePlayer;
+        this.LoadDeck(this.deckName);
         foreach (Card card in cards)
         {
             card.init(this);
@@ -49,7 +53,7 @@ public class Deck : MonoBehaviour
     /*
      * Saves the Deck into a text file using Json and a DeckManager.
      */
-
+    [ContextMenu("Save Deck")]
     public void SaveDeck()
     {
         string filename_location = Path.Combine(Application.persistentDataPath, this.deckName);
