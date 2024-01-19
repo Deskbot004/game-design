@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Android;
+using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
 public class Table : MonoBehaviour
@@ -13,6 +15,7 @@ public class Table : MonoBehaviour
 
     [Header("Visual Stuff")]
     public SpriteRenderer dim;
+    public Health healthUI;
 
     private float cardMoveTime = 0.5f;
 
@@ -21,6 +24,17 @@ public class Table : MonoBehaviour
         player.init(this);
         enemy.init(this);
         logic.init(this);
+    }
+
+    public float TurnEnemySlotCards()
+    {
+        float animationLength = 1f;
+        foreach (Slot slot in enemy.GetSlots())
+        {
+            slot.GetCard().GetComponent<Animator>().SetBool("isFacingFront", true);
+            animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
+        }
+        return animationLength;
     }
 
     // Removes the card from every slot and puts them into the Discard Pile
@@ -38,11 +52,11 @@ public class Table : MonoBehaviour
                     // TODO: Play animation of card being removed
                     List<SupportCard> supCards = card.DetachAllCards();
                     p.discardpile.GetCards().Add(card);
-                    card.gameObject.SetActive(false);
+                    StartCoroutine(p.DiscardCard(card));
                     foreach(SupportCard supCard in supCards)
                     {
                         p.discardpile.GetCards().Add(supCard);
-                        supCard.gameObject.SetActive(false);
+                        StartCoroutine(p.DiscardCard(supCard));
                     }
                 }
 
@@ -50,21 +64,47 @@ public class Table : MonoBehaviour
         }
     }
 
-    // TODO ------------------------------------------
-    public void ResolveSlot(int slotNr, string smth)
+    public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
     {
-        // Play winning animation
+        Dictionary<string, Slot> slots = GetSlotByNr(slotNr);
+        foreach (Slot slot in slots.Values)
+        {
+            slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+        }
+        yield return new WaitForSeconds(1);
+        if(winner == "user")
+        {
+            slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            healthUI.Damage(lifePoints["enemy"], "enemy");
+        }
+        else if (winner == "enemy")
+        {
+            slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            healthUI.Damage(lifePoints["user"], "user");
+        }
+        yield return new WaitForSeconds(1);
+        foreach (Slot slot in slots.Values)
+        {
+            slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+        }
     }
 
     public void SetWinner(string name)
     {
-        // TODO End Screen
+        // TODO Add Fade
         DataBetweenScreens.playerWon = name == "user";
         SceneManager.LoadScene("WinLoseScreen");
     }
 
     public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
     public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
+    public Dictionary<string, Slot> GetSlotByNr(int slotNr)
+    {
+        Dictionary<string, Slot> slots = new();
+        slots["user"] = player.GetSlots().Where(x => x.slotPosition == slotNr).ToList()[0];
+        slots["enemy"] = enemy.GetSlots().Where(x => x.slotPosition == slotNr).ToList()[0];
+        return slots;
+    }
     public Gamelogic GetGamelogic() { return this.logic; }
     public float GetCardMoveTime() { return this.cardMoveTime; }
 }

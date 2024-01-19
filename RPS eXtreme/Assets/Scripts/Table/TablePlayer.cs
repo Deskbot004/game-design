@@ -221,7 +221,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     // ------ Animation -------------------------------------------------------------------
     IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
-        foreach (Card card in hand.GetCards()) // TODO: If hand is empty do that, otherwise move all cards that were already in hand at the same time as first new card
+        foreach (Card card in hand.GetCards())
         {  
             card.GetComponent<Draggable>().enabled = false;
             card.gameObject.SetActive(true);
@@ -232,6 +232,15 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             yield return new WaitForSeconds(actualOffset);
         }
         foreach (Card card in hand.GetCards()) card.GetComponent<Draggable>().enabled = true;
+    }
+
+    public IEnumerator DiscardCard(Card card)
+    {
+        card.GetComponent<Draggable>().enabled = false;
+        card.SetWorldTargetPosition(discardpile.transform.TransformPoint(new Vector3(0,0,0)));
+        card.GetComponent<Animator>().SetBool("isFacingFront", false);
+        yield return card.MoveToTarget(0.5f);
+        card.gameObject.SetActive(false);
     }
 
     // ---------- For Debugging --------------------------------------------------------------------------------

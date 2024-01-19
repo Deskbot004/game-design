@@ -67,8 +67,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        healthUI.setHealth(lifepointMax, true);
-        healthUI.setHealth(lifepointMax, false);
+        table.healthUI.SetHealth(lifepointMax, "user");
+        table.healthUI.SetHealth(lifepointMax, "enemy");
         players = table.GetComponentsInChildren<TablePlayer>();
 
         foreach (TablePlayer p in players)
@@ -108,9 +108,17 @@ public class Gamelogic : MonoBehaviour
     public void ResolveTurn()
     {
         Debug.Log("Turn resolve started");
+        StartCoroutine(ResolveTurnCoroutine());
+    }
+
+    public IEnumerator ResolveTurnCoroutine()
+    {
+        float animationLength = table.TurnEnemySlotCards();
+        yield return new WaitForSecondsRealtime(animationLength + 1);
+        table.dim.gameObject.SetActive(true);
+
         List<Slot> slotsUser = table.GetSlotsPlayer();
         List<Slot> slotsEnemy = table.GetSlotsEnemy();
-
 
         foreach (Slot slotUser in slotsUser)
         {
@@ -118,13 +126,12 @@ public class Gamelogic : MonoBehaviour
             {
                 if(slotUser.GetSlotPosition() == slotEnemy.GetSlotPosition())
                 {
-                    slotUser.TurnCards();
-                    slotEnemy.TurnCards();
                     string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
-                    table.ResolveSlot(slotUser.GetSlotPosition(), winner);
+                    yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
                 }
             }
         }
+        table.dim.gameObject.SetActive(false);
         table.ClearSlots();
 
         Debug.Log("user " + currentLifepoints["user"]);
@@ -287,14 +294,12 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
-        healthUI.setHealth(currentLifepoints["user"], true);
         
     }
 
     public void DamageEnemy(int dmg)
     {
         currentLifepoints["enemy"] -= dmg;
-        healthUI.setHealth(currentLifepoints["enemy"], false);
     }
 
     public void UserDraw(int amount)
