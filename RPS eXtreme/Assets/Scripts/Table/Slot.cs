@@ -49,6 +49,8 @@ public class Slot : MonoBehaviour, Droppable
         {
             card = draggedObject.GetComponent<Card>();
             cards.Add(card);
+            NormalCard normalCard = draggedObject.GetComponent<NormalCard>();
+            cards.AddRange(normalCard.GetAttachedCards());
             card.transform.position = transform.position;
             return true;
         }

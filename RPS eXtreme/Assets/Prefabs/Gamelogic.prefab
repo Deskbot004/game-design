@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 6466380028084947432}
   - component: {fileID: 785538469352973617}
+  - component: {fileID: 1894205819553909397}
+  - component: {fileID: 8777783279924155961}
   m_Layer: 0
   m_Name: Gamelogic
   m_TagString: Untagged
@@ -47,4 +49,35 @@ MonoBehaviour:
   startDraw: 0
   turnDraw: 0
   lifepointMax: 0
+  dmgOnLoss: 1
+  libAR: {fileID: 0}
+  libBR: {fileID: 0}
   table: {fileID: 0}
+  healthUI: {fileID: 0}
+  TestVar: 2020
+  testUser: []
+  testEnemy: []
+--- !u!114 &1894205819553909397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036240160023183554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc8123cc31a751a4ab86e0da774c4ad0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8777783279924155961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036240160023183554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 071308c802a3e1443a88fe89609e758e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

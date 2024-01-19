@@ -16,6 +16,7 @@ public class Gamelogic : MonoBehaviour
     private IDictionary<string, int> currentLifepoints = new Dictionary<string, int>();
     // [Non serialized]
     public LibAR libAR;
+    public LibBR libBR;
     public Table table;
 
     [Header("UI Connection")]
@@ -57,11 +58,12 @@ public class Gamelogic : MonoBehaviour
         symbolToEntry.Add("scissors", 0);
         symbolToEntry.Add("rock", 1);
         symbolToEntry.Add("paper", 2);
-        symbolToEntry.Add("lizard", 3);
-        symbolToEntry.Add("spock", 4);
+        symbolToEntry.Add("spock", 3);
+        symbolToEntry.Add("lizard", 4);
 
         // Load Libs
         libAR = GetComponent<LibAR>();
+        libBR = GetComponent<LibBR>();
 
         Debug.Log("Game started");
         this.table = table;
@@ -147,23 +149,17 @@ public class Gamelogic : MonoBehaviour
     {
         int attack = -1;
 
-        // if no card was played on either slot
-        if (!cardsUser.Any() && !cardsEnemy.Any())
-        {
-            return "none";
-        } else if (!cardsEnemy.Any())
-        {
-            // TODO: NOOOOO cant skip every BR function FUCK
-            attack = 1;
-            goto AR;
-        } else if (!cardsUser.Any())
-        {
-            attack = 0;
-            goto AR;
-        }
-
         int symbolToEntryUser = 0;
         int symbolToEntryEnemy = 0;
+
+        List<(Action<Gamelogic, string, object>, object)> userARfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+        List<(Action<Gamelogic, string, object>, object)> userBRfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+        List<(Action<Gamelogic, string, object>, object)> userDrawfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+
+        List<(Action<Gamelogic, string, object>, object)> enemyARfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+        List<(Action<Gamelogic, string, object>, object)> enemyBRfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+        List<(Action<Gamelogic, string, object>, object)> enemyDrawfunctions = new List<(Action<Gamelogic, string, object>, object)>();
+
 
         foreach (Card card in cardsUser)
         {
@@ -171,6 +167,22 @@ public class Gamelogic : MonoBehaviour
             {
                 symbolToEntryUser = symbolToEntry[card.GetSymbol()];
                 Debug.Log(card.GetSymbol());
+            }
+            else
+            {
+                Debug.Log(card.GetSymbol());
+                if (card.GetFunctionsAR().Any())
+                {
+                    userARfunctions.AddRange(card.GetFunctionsAR());
+                }
+                if (card.GetFunctionsBR().Any())
+                {
+                    userBRfunctions.AddRange(card.GetFunctionsBR());
+                }
+                if (card.GetFunctionsDraw().Any())
+                {
+                    userDrawfunctions.AddRange(card.GetFunctionsDraw());
+                }
             }
         }
 
@@ -181,16 +193,39 @@ public class Gamelogic : MonoBehaviour
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
                 Debug.Log(card.GetSymbol());
             }
-            // TODO: Read effects here -> Translate to Functions
+            else
+            {
+                Debug.Log(card.GetSymbol());
+                if (card.GetFunctionsAR().Any())
+                {
+                    enemyARfunctions.AddRange(card.GetFunctionsAR());
+                }
+                if (card.GetFunctionsBR().Any())
+                {
+                    enemyBRfunctions.AddRange(card.GetFunctionsBR());
+                }
+                if (card.GetFunctionsDraw().Any())
+                {
+                    enemyDrawfunctions.AddRange(card.GetFunctionsDraw());
+                }
+            }
         }
+        if (userBRfunctions.Any())
+        {
+            libBR.RunAllBR(userBRfunctions, this, "user");
+        }
+        if (enemyBRfunctions.Any())
+        {
+            libBR.RunAllBR(enemyBRfunctions, this, "enemy");
+        }
+        
 
         attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
         Debug.Log(symbolToEntryUser);
         Debug.Log(symbolToEntryEnemy);
+        Debug.Log(winMatrix[symbolToEntryUser, symbolToEntryEnemy]);
 
 
-
-    AR:
         /* TODO: How to implement the call of the functions
             A Card should know its function plus its intensity -> How? Dictionary?
             This gets translated into a function -> How? IDK help
@@ -198,18 +233,43 @@ public class Gamelogic : MonoBehaviour
             
             Save Dictionary with function -> Input parameter
         */
+
         if (attack == -1)
         {
             Debug.Log("Draw");
             return "none";
-        } else if (attack == 1)
-        {
-            Debug.Log("UserWon");
-            DamageEnemy(dmgOnLoss);
-            return "user";
         } else if (attack == 0)
         {
+            Debug.Log("UserWon");
+            if (userARfunctions.Any())
+            {
+                libAR.RunAllAR(userARfunctions, this, "user");
+            }
+            if (userDrawfunctions.Any())
+            {
+                libAR.RunAllAR(userDrawfunctions, this, "user");
+            }
+            if (enemyDrawfunctions.Any())
+            {
+                libAR.RunAllAR(enemyDrawfunctions, this, "enemy");
+            }
+            DamageEnemy(dmgOnLoss);
+            return "user";
+        } else if (attack == 1)
+        {
             Debug.Log("EnemyWon");
+            if (enemyARfunctions.Any())
+            {
+                libAR.RunAllAR(enemyARfunctions, this, "enemy");
+            }
+            if (userDrawfunctions.Any())
+            {
+                libAR.RunAllAR(userDrawfunctions, this, "user");
+            }
+            if (enemyDrawfunctions.Any())
+            {
+                libAR.RunAllAR(enemyDrawfunctions, this, "enemy");
+            }
             DamageUser(dmgOnLoss);
             return "enemy";
         } else
