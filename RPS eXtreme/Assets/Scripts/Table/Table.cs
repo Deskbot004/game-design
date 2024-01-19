@@ -31,8 +31,11 @@ public class Table : MonoBehaviour
         float animationLength = 1f;
         foreach (Slot slot in enemy.GetSlots())
         {
-            slot.GetCard().GetComponent<Animator>().SetBool("isFacingFront", true);
-            animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
+            if (slot.GetCard() != null)
+            {
+                slot.GetCard().GetComponent<Animator>().SetBool("isFacingFront", true);
+                animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
+            }
         }
         return animationLength;
     }
@@ -64,6 +67,7 @@ public class Table : MonoBehaviour
         }
     }
 
+    //TODO: Fix when no cards in slot
     public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
     {
         Dictionary<string, Slot> slots = GetSlotByNr(slotNr);

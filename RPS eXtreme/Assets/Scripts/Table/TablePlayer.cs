@@ -71,6 +71,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public void DiscardToDrawpile()
     {
         drawpile.GetCards().AddRange(discardpile.GetCards());
+        StartCoroutine(MoveCardsToDrawpile(discardpile.GetCards(), 0.1f));
         discardpile.GetCards().Clear();
         drawpile.Shuffle();
         // TODO: Play animation
@@ -241,6 +242,17 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         card.GetComponent<Animator>().SetBool("isFacingFront", false);
         yield return card.MoveToTarget(0.5f);
         card.gameObject.SetActive(false);
+    }
+
+    IEnumerator MoveCardsToDrawpile(List<Card> cards, float timeOffset)
+    {
+        foreach(Card card in cards)
+        {
+            card.gameObject.SetActive(true);
+            card.SetWorldTargetPosition(drawpile.transform.TransformPoint(Vector3.zero));
+            StartCoroutine(card.MoveToTarget(0.5f));
+            yield return new WaitForSeconds(timeOffset);
+        }
     }
 
     // ---------- For Debugging --------------------------------------------------------------------------------
