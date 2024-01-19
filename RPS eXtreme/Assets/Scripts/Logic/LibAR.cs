@@ -17,21 +17,12 @@ public class LibAR : MonoBehaviour
         }
     }
 
-    public void RunTest(List<Action<Gamelogic, string>> actions, Gamelogic logic)
-    {
-        foreach (Action<Gamelogic, String> action in actions)
-        {
-            action(logic, "test");
-        }
-    }
-
 
     /* 
      * Multiply damage dealt.
      */
     public void AdditionalDamage(Gamelogic logic, string caller, object value)
     {
-        Debug.Log("Additional Damage from" + caller);
         logic.stringToFunc["Dmg"] = ResetDamage;
         logic.stringToInput["Dmg"] = logic.GetdmgOnLoss();
         var damage = Convert.ToInt32(value);
@@ -50,13 +41,12 @@ public class LibAR : MonoBehaviour
     public void DrawCards(Gamelogic logic, string caller, object value)
     {
         
-        var amount = Convert.ToInt32(value);
-        Debug.Log("Drawing " + amount + " cards for " + caller);
-        if (caller == "player")
+        int amount = Convert.ToInt32(value);
+        if (String.Equals(caller, "user"))
         {
             logic.UserDraw(amount);
         }
-        if (caller == "enemy")
+        if (String.Equals(caller, "enemy"))
         {
             logic.EnemyDraw(amount);
         }
@@ -67,29 +57,15 @@ public class LibAR : MonoBehaviour
      */
     public void Lifesteal(Gamelogic logic, string caller, object value)
     {
-        Debug.Log("Lifesteal from " + caller);
         var amount = Convert.ToInt32(value);
-        var damage = logic.GetdmgOnLoss() * amount;
-        if (caller == "player")
+        int damage = logic.GetdmgOnLoss() * amount;
+        if (String.Equals(caller, "user"))
         {
             logic.DamageUser((-1)*amount);
         }
-        if (caller == "enemy")
+        if (String.Equals(caller, "enemy"))
         {
             logic.DamageEnemy((-1) * amount);
         }
-    }
-
-    public void Test(Gamelogic logic, string caller)
-    {
-        logic.stringToFunc["Test"] = ResetTest;
-        logic.stringToInput["Test"] = logic.TestVar;
-        logic.TestVar = 9000;
-    }
-
-    public void ResetTest(Gamelogic logic, object reset)
-    {
-        var resetT = Convert.ToInt32(reset);
-        logic.TestVar = resetT;
     }
 }

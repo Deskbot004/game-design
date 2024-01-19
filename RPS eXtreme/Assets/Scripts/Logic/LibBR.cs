@@ -21,9 +21,8 @@ public class LibBR : MonoBehaviour
     {
         logic.stringToFunc["Win"] = ResetMatrix;
         var mat = logic.GetwinMatrix();
-        logic.stringToInput["Win"] = mat;
+        logic.stringToInput["Win"] = mat.Clone();
         var win = Convert.ToString(value);
-        Debug.Log(caller + " now wins against " + win);
         int winner = -1;
         if(caller == "user")
         {
@@ -77,9 +76,9 @@ public class LibBR : MonoBehaviour
         logic.SetwinMatrix(mat);
     }
 
+
     public void WinDraw(Gamelogic logic, string caller, object value)
     {
-        Debug.Log(caller + " wins draw");
         logic.stringToFunc["Win"] = ResetMatrix;
         var mat = logic.GetwinMatrix();
         logic.stringToInput["Win"] = mat;
@@ -101,7 +100,8 @@ public class LibBR : MonoBehaviour
 
     public void ResetMatrix(Gamelogic logic, object value)
     {
-        var resetT = Convert.ToInt32(value);
-        logic.SetdmgOnLoss(resetT);
+        int[,] resetT = (int[,])value;
+
+        logic.SetwinMatrix(resetT);
     }
 }
