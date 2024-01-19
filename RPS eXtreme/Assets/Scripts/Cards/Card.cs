@@ -2,37 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEditor;
 
 [Serializable]
 public class Card : MonoBehaviour
 {
-    //private string symbol;
-    public string symbol; // Set to public for Debugging
+    public string symbol;
+    public int slotType = -1;   //For Normal:  0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
+                                //For Support: 0: fits in top slot, 1: fits in bottom slot
+
     private string[] viableStrings = { "scissors", "rock", "paper", "lizard", "spock", "support" };
-    //protected int slotType = -1;
-    public int slotType = -1; // Set to public for Debugging
-    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot // TODO sollte in verschiedenen funktionen angepass werden
-    private CardSprites cardSprites;
-    protected Deck deck;
+    
     protected Gamelogic gamelogic;
-    private Vector3 supposedPosition;
-    private float moveSpeed = 0f;
+    protected Deck deck;
+    private CardSprites cardSprites;
+
+    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot // TODO sollte in verschiedenen funktionen angepass werden
+
+    // Animation stuff
+    private Vector3 targetPosition; // WorldPosition
+    private Vector3 targetRotation;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
-
-    public void Update()
-    {
-        if (this.transform.position != this.supposedPosition)
-        {
-            this.transform.position = Vector3.MoveTowards(this.transform.position, this.supposedPosition, this.moveSpeed * Time.deltaTime);
-        }
-    }
-
     public virtual void init(Deck deck)
     {
+        if(!deck.GetTablePlayer().isPlayer)
+            transform.eulerAngles = new Vector3(0f, 0f, 180f);
         this.deck = deck;
         this.gamelogic = deck.GetTablePlayer().GetTable().GetGamelogic();
-        this.supposedPosition = this.transform.position;
+        this.targetPosition = this.transform.position;
         SetSprite();
     }
 
@@ -90,20 +88,20 @@ public class Card : MonoBehaviour
     {
         cardSprites = transform.GetComponent<CardSprites>();
         if (GetCardSprites().colors.ContainsKey(GetSymbol()))
-            transform.Find("Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
+            transform.Find("Card Sprites/Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
 
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
-            transform.Find("Cardback").gameObject.SetActive(true);
-            transform.Find("Upper Effect").gameObject.SetActive(false);
-            transform.Find("Lower Effect").gameObject.SetActive(false);
+            transform.Find("Card Sprites/Cardback").gameObject.SetActive(true);
+            transform.Find("Card Sprites/Upper Effect").gameObject.SetActive(false);
+            transform.Find("Card Sprites/Lower Effect").gameObject.SetActive(false);
             return;
         }
     }
 
     public void flipCard()
     {
-        transform.Find("Cardback").gameObject.SetActive(!transform.Find("Cardback").gameObject.activeSelf);
+        transform.Find("Card Sprites/Cardback").gameObject.SetActive(!transform.Find("Card Sprites/Cardback").gameObject.activeSelf);
     }
 
     public void SetStatus(int status) {this.status = status;}
@@ -111,11 +109,37 @@ public class Card : MonoBehaviour
     public int GetStatus() {return this.status;}
     public Deck GetDeck() {return deck;}
 
-    public void SetMoveSpeed(float speed){this.moveSpeed = speed;}
+    public void SetWorldTargetPosition(Vector3 position)
+    {
+        targetPosition = position;
+    }
+    public void SetTargetRotation(Vector3 rotation)
+    {
+        targetRotation = rotation;
+    }
 
-    public void SetSupposedPosition(Vector3 position){this.supposedPosition = position;}
+    public IEnumerator MoveToTarget(float moveTime)
+    {
+        //bool dragEnabled = GetComponent<Draggable>().enabled;
+        //GetComponent<Draggable>().enabled = false;
 
-    
+        Vector3 startingPos  = transform.position;
+        Vector3 finalPos = targetPosition;
+        Quaternion startingRotation = transform.localRotation;
+        Quaternion finalRotation = Quaternion.Euler(targetRotation);
+
+        float elapsedTime = 0;
+        
+        while (elapsedTime < moveTime)
+        {
+            transform.position = Vector3.Lerp(startingPos, finalPos, elapsedTime / moveTime);
+            transform.localRotation = Quaternion.Lerp(startingRotation, finalRotation, elapsedTime / moveTime);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        //GetComponent<Draggable>().enabled = dragEnabled;
+    }
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/

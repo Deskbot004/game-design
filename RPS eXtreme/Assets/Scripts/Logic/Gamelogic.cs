@@ -73,9 +73,13 @@ public class Gamelogic : MonoBehaviour
 
         foreach (TablePlayer p in players)
         {
-            p.DrawCards(startDraw);
+            p.DrawCards(startDraw + turnDraw);
+            if (!p.isPlayer)
+            {
+                p.StartCoroutine(p.playCards());
+            }
         }
-        StartTurn();
+        //StartTurn();
     }
     
     /* Starts the turn by drawing cards.

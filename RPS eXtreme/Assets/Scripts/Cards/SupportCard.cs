@@ -102,26 +102,24 @@ public class SupportCard : Card
         { 
             upperCaseSymbol = string.Concat(GetSymbol()[0].ToString().ToUpper(), GetSymbol().Substring(1));
         }
-        this.transform.Find("Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
+        this.transform.Find("Card Sprites/Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
 
         // Set Window Icon
         //Debug.Log(symbol);
         if (this.GetCardSprites().supportWindowSprites.ContainsKey(GetSymbol()))
-            this.transform.Find("Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[GetSymbol()];
+            this.transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[GetSymbol()];
 
         // Set slots
-        this.transform.Find("Upper Effect").gameObject.SetActive(GetSlotType() == 0);
-        this.transform.Find("Upper Effect/Text").GetComponent<TMP_Text>().text = description;
-        this.transform.Find("Lower Effect").gameObject.SetActive(GetSlotType() == 1);
-        this.transform.Find("Lower Effect/Text").GetComponent<TMP_Text>().text = description;
+        this.transform.Find("Card Sprites/Upper Effect").gameObject.SetActive(GetSlotType() == 0);
+        this.transform.Find("Card Sprites/Upper Effect/Text").GetComponent<TMP_Text>().text = description;
+        this.transform.Find("Card Sprites/Lower Effect").gameObject.SetActive(GetSlotType() == 1);
+        this.transform.Find("Card Sprites/Lower Effect/Text").GetComponent<TMP_Text>().text = description;
 
         // Set hexagon icons
         if (this.GetCardSprites().supportIconSprites.ContainsKey(GetSymbol()))
         {
-            this.transform.Find("Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
-            this.transform.Find("Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
+            this.transform.Find("Card Sprites/Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
+            this.transform.Find("Card Sprites/Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
         }
-            
-
     }
 }

@@ -26,21 +26,24 @@ public class Table : MonoBehaviour
     // Removes the card from every slot and puts them into the Discard Pile
     public void ClearSlots()
     {
-        Debug.Log("Clearing Slots...");
         TablePlayer[] players = { player, enemy };
         foreach (TablePlayer p in players)
         {
-            // TODO: Überarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
             foreach (Slot slot in p.slots)
             {
-                Card card = slot.GetCard();
+                NormalCard card = slot.GetCard();
                 slot.ClearCard();
-                if (card != null) // TODO: Check that card is not an empty card
+                if (card != null)
                 {
+                    // TODO: Play animation of card being removed
+                    List<SupportCard> supCards = card.DetachAllCards();
                     p.discardpile.GetCards().Add(card);
                     card.gameObject.SetActive(false);
-                    // TODO: Play animation of card being removed
-                    // Something like card.playAnimation
+                    foreach(SupportCard supCard in supCards)
+                    {
+                        p.discardpile.GetCards().Add(supCard);
+                        supCard.gameObject.SetActive(false);
+                    }
                 }
 
             }
@@ -60,16 +63,8 @@ public class Table : MonoBehaviour
         SceneManager.LoadScene("WinLoseScreen");
     }
 
-    // ------ Getter und Setter -------------------------------------------------------------------
     public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
     public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
     public Gamelogic GetGamelogic() { return this.logic; }
     public float GetCardMoveTime() { return this.cardMoveTime; }
-
-    // ---------- For Debbuging -----------------------------------------------------------
-    public void startLogic()
-    {
-        logic.init(this);
-    }
-
 }

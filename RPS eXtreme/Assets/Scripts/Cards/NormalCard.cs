@@ -104,6 +104,22 @@ public class NormalCard : Card, Droppable
 
     }
 
+    public List<SupportCard> DetachAllCards()
+    {
+        SupportCard[] cardSlots = GetSupportCards().Values.ToArray();
+        List<SupportCard> supCards = new();
+        foreach(SupportCard supCard in cardSlots)
+        {
+            if(supCard != null && DetachSupportCard(supCard) == 0)
+            {
+                supCard.transform.SetParent(supCard.GetDeck().transform);
+                supCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+                supCards.Add(supCard);
+            }
+        }
+        return supCards;
+    }
+
     public bool hasSlot(string slot)
     {
         switch (slot)
@@ -176,15 +192,15 @@ public class NormalCard : Card, Droppable
         string upperCaseSymbol = "";
         if (GetSymbol().Length > 0)
             upperCaseSymbol = string.Concat(GetSymbol()[0].ToString().ToUpper(), GetSymbol().Substring(1));
-        this.transform.Find("Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
+        this.transform.Find("Card Sprites/Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
 
         // Set Window Icon
         if (GetCardSprites().symbolSprites.ContainsKey(GetSymbol()))
-            this.transform.Find("Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().symbolSprites[GetSymbol()];
+            this.transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().symbolSprites[GetSymbol()];
 
         // Set slots
-        transform.Find("Upper Effect").gameObject.SetActive(hasSlot("top"));
-        transform.Find("Lower Effect").gameObject.SetActive(hasSlot("bottom"));
+        transform.Find("Card Sprites/Upper Effect").gameObject.SetActive(hasSlot("top"));
+        transform.Find("Card Sprites/Lower Effect").gameObject.SetActive(hasSlot("bottom"));
     }
 
     public Dictionary<string, SupportCard> GetSupportCards() {return supportCards;}
@@ -223,9 +239,14 @@ public class NormalCard : Card, Droppable
         if (AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
         {
             draggedObject.transform.SetParent(transform);
-            draggedObject.transform.localPosition = new Vector3 (0, 0, 0.5f);
-            draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
+            //draggedObject.transform.localPosition = new Vector3 (0, 0, 0.5f);
+            //draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
             draggedObject.GetComponent<SortingGroup>().sortingLayerName = "Cards Background";
+            draggedObject.GetComponent<Card>().SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0.5f)));
+            draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
+            StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
+            deck.GetTablePlayer().detachButton.SetActive(true);
+            //draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
             return true;
         }
         return false;
