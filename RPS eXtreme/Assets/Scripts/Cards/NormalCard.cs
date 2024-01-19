@@ -61,7 +61,7 @@ public class NormalCard : Card, Droppable
                     Debug.Log("Called DetachSupportCard with unknown SlotName in AttachSupportCard");
                 }
             }
-            this.supportCards[slot] = card; //TODO: Visual Effects of the attachment
+            this.supportCards[slot] = card;
             card.SetAttachmentStatus(true);
             return 0;
         }
