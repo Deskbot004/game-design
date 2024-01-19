@@ -131,6 +131,66 @@ public class Deck : MonoBehaviour
             Destroy(card.gameObject);
         }
 
+
+        //Add new Cards
+        for (int i = 0; i < save.cardSymbols.Count; i++)
+        {
+            if (save.cardTypes[i] == 0) // saved Card at index i was a NormalCard
+            {
+                NormalCard card = this.constructor.CreateNormalCard(save.cardSymbols[i], save.slotTypes[i]);
+                this.AddCard(card);
+            }
+            else
+            {
+                string[] namesArray = save.functions[i].Split(";");
+                List<string> names = new List<string>(namesArray);
+                SupportCard card = this.constructor.CreateSupportCard(save.slotTypes[i], names);
+                this.AddCard(card);
+            }
+        }
+        this.deckName = filename;
+    }
+
+    /*
+     * Loads the Deck saved under its deckname from a text file using Json and a DeckManager.
+     */
+    [ContextMenu("Load Deck")]
+    public void LoadDeckFromEditor()
+    {
+        //Read text from file and convert it into a DeckManager
+        this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
+        string filename = this.deckName;
+        string filename_location = Path.Combine(Application.persistentDataPath, filename);
+        string savedDeck = "";
+        if (File.Exists(filename_location))
+        {
+            savedDeck = File.ReadAllText(filename_location);
+        }
+        else
+        {
+            Debug.Log("Something went wrong while saving the deck. The savefile was not found.");
+            return;
+        }
+
+        Debug.Log("Loaded String: " + savedDeck);
+
+        DeckManager save = JsonUtility.FromJson<DeckManager>(savedDeck);
+        if (!(save.cardSymbols.Count == save.cardTypes.Count && save.cardSymbols.Count == save.functions.Count && save.cardSymbols.Count == save.slotTypes.Count))
+        {
+            Debug.Log("Something went wrong while saving the deck. The lists do not have the same length and can't be decoded.");
+            return;
+        }
+
+        //Remove old Cards starting with last Element
+        int count = this.cards.Count;
+        for (int i = count; i > 0; i--)
+        {
+            Card card = this.cards[i - 1];
+            this.cards.RemoveAt(i - 1);
+            DestroyImmediate(card.gameObject);
+        }
+
+
         //Add new Cards
         for (int i = 0; i < save.cardSymbols.Count; i++)
         {

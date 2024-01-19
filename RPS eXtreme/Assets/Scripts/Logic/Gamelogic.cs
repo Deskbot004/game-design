@@ -93,6 +93,7 @@ public class Gamelogic : MonoBehaviour
             p.DrawCards(turnDraw);
             if (!p.isPlayer)
             {
+                Debug.Log("Playing Cards");
                 p.StartCoroutine(p.playCards());
             }
         }
@@ -118,7 +119,7 @@ public class Gamelogic : MonoBehaviour
                 {
                     slotUser.TurnCards();
                     slotEnemy.TurnCards();
-                    string winner = EvaluateCards(slotUser.GetCards(), slotEnemy.GetCards());
+                    string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
                     table.ResolveSlot(slotUser.GetSlotPosition(), winner);
                 }
             }
@@ -148,6 +149,7 @@ public class Gamelogic : MonoBehaviour
     private string EvaluateCards(List<Card> cardsUser, List<Card> cardsEnemy)
     {
         int attack = -1;
+        bool skipEval = false;
 
         int symbolToEntryUser = 0;
         int symbolToEntryEnemy = 0;
@@ -161,6 +163,22 @@ public class Gamelogic : MonoBehaviour
         List<(Action<Gamelogic, string, object>, object)> enemyDrawfunctions = new List<(Action<Gamelogic, string, object>, object)>();
 
 
+        if(!cardsUser.Any() && !cardsEnemy.Any()) //automatic draw because no card was played
+        {
+            skipEval = true;
+        }
+        else if (!cardsUser.Any()) //automatic win for enemy because user didnt't play cards
+        {
+            skipEval = true;
+            attack = 1;
+        }
+        else if (!cardsEnemy.Any()) //automatic win for user because enemy didnt't play cards
+        {
+            skipEval = true;
+            attack = 0;
+        }
+
+        Debug.Log("user Cards: ");
         foreach (Card card in cardsUser)
         {
             if (card.IsBasic())
@@ -186,6 +204,7 @@ public class Gamelogic : MonoBehaviour
             }
         }
 
+        Debug.Log("Enemy Cards: ");
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
@@ -218,13 +237,14 @@ public class Gamelogic : MonoBehaviour
         {
             libBR.RunAllBR(enemyBRfunctions, this, "enemy");
         }
-        
 
-        attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
-        Debug.Log(symbolToEntryUser);
-        Debug.Log(symbolToEntryEnemy);
-        Debug.Log(winMatrix[symbolToEntryUser, symbolToEntryEnemy]);
-
+        if (!skipEval)
+        {
+            attack = winMatrix[symbolToEntryUser, symbolToEntryEnemy];
+            Debug.Log(symbolToEntryUser);
+            Debug.Log(symbolToEntryEnemy);
+            Debug.Log(winMatrix[symbolToEntryUser, symbolToEntryEnemy]);
+        }
 
         /* TODO: How to implement the call of the functions
             A Card should know its function plus its intensity -> How? Dictionary?
@@ -367,7 +387,7 @@ public class Gamelogic : MonoBehaviour
     {
         foreach (TablePlayer p in players)
         {
-            if (p.isPlayer)
+            if (!p.isPlayer)
             {
                 p.DrawCards(amount);
             }
