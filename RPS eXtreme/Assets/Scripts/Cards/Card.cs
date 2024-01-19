@@ -58,6 +58,11 @@ public class Card : MonoBehaviour
         return false;
     }
 
+    public void flipCard()
+    {
+        transform.Find("Cardback").gameObject.SetActive(!transform.Find("Cardback").gameObject.activeSelf);
+    }
+
     // ---------- Getter & Setter ------------------------------------------------------------------------------
 
     public string GetSymbol(){return this.symbol;}
@@ -91,7 +96,6 @@ public class Card : MonoBehaviour
         cardSprites = transform.GetComponent<CardSprites>();
         if (GetCardSprites().colors.ContainsKey(GetSymbol()))
             transform.Find("Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
-
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
             transform.Find("Cardback").gameObject.SetActive(true);
@@ -99,11 +103,6 @@ public class Card : MonoBehaviour
             transform.Find("Lower Effect").gameObject.SetActive(false);
             return;
         }
-    }
-
-    public void flipCard()
-    {
-        transform.Find("Cardback").gameObject.SetActive(!transform.Find("Cardback").gameObject.activeSelf);
     }
 
     public void SetStatus(int status) {this.status = status;}
@@ -115,7 +114,13 @@ public class Card : MonoBehaviour
 
     public void SetSupposedPosition(Vector3 position){this.supposedPosition = position;}
 
-    
+    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR() { return null; }
+
+    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsBR() { return null; }
+
+    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsDraw() { return null; }
+
+
 
     //[ContextMenu("Init Card")]
     // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
