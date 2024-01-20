@@ -44,7 +44,7 @@ public class Opponent : TablePlayer
         {
             this.hand.RemoveCard(card);
         }
-        yield return new WaitForSeconds(this.table.GetCardMoveTime());
+        yield return null;
         this.hand.ArrangeHand();
     }
 
@@ -56,6 +56,9 @@ public class Opponent : TablePlayer
             NormalCard norm = (NormalCard)card;
             this.slots[slot].SetCard(norm);
             playedCards.Add(card);
+            card.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
+            card.SetTargetRotation(Vector3.zero);
+            StartCoroutine(card.MoveToTarget(1));
             return 0;
         }
         else
@@ -76,18 +79,28 @@ public class Opponent : TablePlayer
             if (card2.IsBasic())
             {
                 NormalCard normal = (NormalCard)card2;
-                if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
+                if (normal.OnDrop(support.GetComponent<Draggable>()) && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
                 {
-                    Debug.Log("Normal to be attached to Card found with symbol " + normal.GetSymbol());;
+                    Debug.Log("Normal to be attached to Card found with symbol " + normal.GetSymbol());
                     Debug.Log(normal.GetSlotType());
                     Debug.Log(support.GetSlotType());
                     this.slots[slot].SetCard(normal);
                     playedCards.Add(normal);
                     playedCards.Add(support);
+                    normal.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
+                    normal.SetTargetRotation(Vector3.zero);
+                    StartCoroutine(normal.MoveToTarget(1));
                     return 0;
                 }
             }
         }
         return 1;
+    }
+
+    protected override IEnumerator DealCards(List<Card> cards, float timeOffset)
+    {
+        yield return (base.DealCards(cards, timeOffset));
+        StartCoroutine(playCards());
+        yield return null;
     }
 }

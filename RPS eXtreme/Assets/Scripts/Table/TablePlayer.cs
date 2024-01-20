@@ -90,7 +90,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     public virtual IEnumerator playCards() 
     {
-        yield return new WaitForSeconds(0.5f); 
+        yield return new WaitForSeconds(0.3f); 
     }
 
     // ---------- Attaching Cards ----------------------------------------------------------------------------------
@@ -234,7 +234,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     }
 
     // ------ Animation -------------------------------------------------------------------
-    IEnumerator DealCards(List<Card> cards, float timeOffset)
+    protected virtual IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
         hand.ArrangeHand(false);
         foreach (Card card in hand.GetCards())
@@ -245,7 +245,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             {
                 card.transform.position = drawpile.transform.position;
                 card.GetComponent<Animator>().SetBool("faceFront", false);
-                card.GetComponent<Animator>().SetBool("flip", isPlayer);
+                //card.GetComponent<Animator>().SetBool("flip", isPlayer);
+                card.GetComponent<Animator>().SetBool("flip", true); // TODO: Change back to hide enemy cards
             }
             StartCoroutine(card.MoveToTarget(0.5f));
             float actualOffset = cards.Contains(card)? timeOffset : 0f;

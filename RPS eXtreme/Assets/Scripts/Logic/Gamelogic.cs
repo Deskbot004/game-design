@@ -65,9 +65,18 @@ public class Gamelogic : MonoBehaviour
         healthUI.SetHealth(lifepointMax, "enemy");
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
-        EnemyDraw(startDraw);
-        UserDraw(startDraw);
-        StartTurn();
+        EnemyDraw(startDraw + turnDraw);
+        UserDraw(startDraw + turnDraw);
+        //StartTurn();
+        /*
+        foreach (TablePlayer p in players)
+        {
+            if (!p.isPlayer)
+            {
+                p.StartCoroutine(p.playCards());
+            }
+        }
+        */
     }
     
     /* Starts the turn by drawing cards.
@@ -80,10 +89,12 @@ public class Gamelogic : MonoBehaviour
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
+            /*
             if (!p.isPlayer)
             {
                 p.StartCoroutine(p.playCards());
             }
+            */
         }
     }
 
