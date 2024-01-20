@@ -13,6 +13,7 @@ public class Deck : MonoBehaviour
     private Constructor constructor;
     public List<Card> cards = new List<Card>();
     public string deckName;
+    public string flavor;
     private TablePlayer tablePlayer;
 
     // ---------- Main Functions ------------------------------------------------------------------------------

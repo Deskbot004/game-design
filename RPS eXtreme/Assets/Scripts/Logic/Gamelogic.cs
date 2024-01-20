@@ -68,6 +68,15 @@ public class Gamelogic : MonoBehaviour
         EnemyDraw(startDraw + turnDraw);
         UserDraw(startDraw + turnDraw);
         //StartTurn();
+        /*
+        foreach (TablePlayer p in players)
+        {
+            if (!p.isPlayer)
+            {
+                p.StartCoroutine(p.playCards());
+            }
+        }
+        */
     }
     
     /* Starts the turn by drawing cards.
@@ -80,11 +89,12 @@ public class Gamelogic : MonoBehaviour
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
+            /*
             if (!p.isPlayer)
             {
-                // Function does not get overriden by Opponent for some reason
                 p.StartCoroutine(p.playCards());
             }
+            */
         }
     }
 
@@ -95,7 +105,7 @@ public class Gamelogic : MonoBehaviour
      */
     public void ResolveTurn()
     {
-        Debug.Log("Turn resolve started");
+        //Debug.Log("Turn resolve started");
         StartCoroutine(ResolveTurnCoroutine());
     }
 
@@ -205,16 +215,18 @@ public class Gamelogic : MonoBehaviour
                 }
             }
         }
+
+        //Debug.Log("Enemy Cards");
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
             {
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
-                Debug.Log(card.GetSymbol());
+                //Debug.Log(card.GetSymbol());
             }
             else
             {
-                Debug.Log(card.GetSymbol());
+                //Debug.Log(card.GetSymbol());
                 if (card.GetFunctionsAR().Any())
                 {
                     enemyARfunctions.AddRange(card.GetFunctionsAR());

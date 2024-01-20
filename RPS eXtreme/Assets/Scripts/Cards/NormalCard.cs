@@ -156,6 +156,7 @@ public class NormalCard : Card, Droppable
 
     public override int SetSlotType(int type)
     {
+        supportCards.Clear();
         if(Array.Exists(viableSlotTypes, element => element == type))
         {
             this.slotType = type;
@@ -245,7 +246,7 @@ public class NormalCard : Card, Droppable
             draggedObject.GetComponent<Card>().SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0.5f)));
             draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
             StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
-            deck.GetTablePlayer().detachButton.SetActive(true);
+            if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
             //draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
             return true;
         }
