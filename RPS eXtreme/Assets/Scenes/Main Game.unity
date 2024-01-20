@@ -25965,7 +25965,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7854591089168944989, guid: dac5ddf5e1a075c44856a4ac9ea308bb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: dac5ddf5e1a075c44856a4ac9ea308bb, type: 3}
 --- !u!1 &670081296
 GameObject:
@@ -76235,7 +76238,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3510244151316458878, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 2793255778902471628, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 48998dc0ee506074fae66dda226be200, type: 3}
 --- !u!1 &1882513455
 GameObject:
@@ -88020,6 +88029,22 @@ PrefabInstance:
     - target: {fileID: 2517949669937798281, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 00dac0405014f8845ab80004b03cea95, type: 3}
+    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
+      propertyPath: m_Color.b
+      value: 0.754717
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
+      propertyPath: m_Color.g
+      value: 0.754717
+      objectReference: {fileID: 0}
+    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
+      propertyPath: m_Color.r
+      value: 0.754717
       objectReference: {fileID: 0}
     - target: {fileID: 2857129726384868595, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
       propertyPath: m_LocalPosition.y

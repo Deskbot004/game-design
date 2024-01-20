@@ -37,7 +37,7 @@ public class MainMenu : MonoBehaviour
         {
             opponentDeck.SaveDeck();
             playerDeck.SaveDeck();
-            SceneManager.LoadSceneAsync(1);
+            SceneManager.LoadSceneAsync("Main Game");
         }
         
 
