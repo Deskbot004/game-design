@@ -88021,22 +88021,6 @@ PrefabInstance:
       propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 00dac0405014f8845ab80004b03cea95, type: 3}
-    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
-      propertyPath: m_Color.b
-      value: 0.754717
-      objectReference: {fileID: 0}
-    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
-      propertyPath: m_Color.g
-      value: 0.754717
-      objectReference: {fileID: 0}
-    - target: {fileID: 2649462399181231547, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
-      propertyPath: m_Color.r
-      value: 0.754717
-      objectReference: {fileID: 0}
     - target: {fileID: 2857129726384868595, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.32
