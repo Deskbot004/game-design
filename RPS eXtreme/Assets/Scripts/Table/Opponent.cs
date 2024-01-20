@@ -142,15 +142,30 @@ public class Opponent : TablePlayer
             } 
 
 
-            // TODO random not implemented
             foreach(Card card in cards) {
                 if (card.symbol == cardToPlay && wantedSlots.Count > 0){
-                    playNormalCard(card, wantedSlots.Dequeue() , playedCards);
-                    //TODO decide to play support card
+                    float decisionSupp = Random.Range(0.0f, 1.0f);
+                    if (decisionSupp <= preferences["support"]) {
+                        foreach(Card support in cards) {
+                            if (playedCards.Contains(support)){
+                                continue;
+                            }
+                            if(!support.IsBasic()){
+                                NormalCard normal = (NormalCard)card;
+                                if(!normal.HasAttachedCards() && normal.OnDrop(support.GetComponent<Draggable>())){
+                                    yield return new WaitForSeconds(1);
+                                    support.transform.localPosition = new Vector3(0,0,0.5f);
+                                    playedCards.Add(support);
+                                }
+                            }
+                        }
+                    }
+                    playNormalCard(card, wantedSlots.Dequeue(), playedCards);
+                    yield return new WaitForSeconds(1);
                 }
             }
         }
-
+        yield return new WaitForSeconds(1);
         foreach(Card card in playedCards)
         {
             this.hand.RemoveCard(card);
