@@ -44,17 +44,27 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
+    public void DrawCardsButton(int amount)
+    {
+        DrawCards(amount);
+    }
+
     // Draws an amount of cards from the Drawpile into the Hand
-    public void DrawCards(int amount)
+    public List<Card> DrawCards(int amount, bool playAnimation = true)
     {
         // Not enough cards in the drawpile
         if (drawpile.GetCards().Count < amount)
         {
             int amountMissing = amount - drawpile.GetCards().Count;
-            DrawCards(drawpile.GetCards().Count);
+            List<Card> allDrawnCards = new();
+            List<Card> discardToDraw = new();
+            discardToDraw.AddRange(discardpile.GetCards());
+            allDrawnCards.AddRange(DrawCards(drawpile.GetCards().Count, false));
             DiscardToDrawpile();
-            DrawCards(amountMissing);
-            return;
+            allDrawnCards.AddRange(DrawCards(amountMissing, false));
+            hand.ArrangeHand(false);
+            StartCoroutine(MoveCardsToDrawpileThenDraw(discardToDraw, allDrawnCards, 0.1f));
+            return allDrawnCards;
         }
 
         // Draw abstract Cards
@@ -64,7 +74,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
         // Add those Cards as GameObjects
         hand.ArrangeHand(false);
-        StartCoroutine(DealCards(drawnCards, 0.3f));
+        if(playAnimation) StartCoroutine(DealCards(drawnCards, 0.3f));
+        return drawnCards;
     }
 
 // TODO: Avoid pressing multiple times right click on card in focus
@@ -73,7 +84,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public void DiscardToDrawpile()
     {
         drawpile.GetCards().AddRange(discardpile.GetCards());
-        StartCoroutine(MoveCardsToDrawpile(discardpile.GetCards(), 0.2f));
+        discardpile.GetCards().Clear();
         drawpile.Shuffle();
     }
 
@@ -222,6 +233,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     // ------ Animation -------------------------------------------------------------------
     IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
+        hand.ArrangeHand(false);
         foreach (Card card in hand.GetCards())
         {  
             card.GetComponent<Draggable>().enabled = false;
@@ -249,10 +261,9 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         card.gameObject.SetActive(false);
     }
 
-    IEnumerator MoveCardsToDrawpile(List<Card> cards, float timeOffset)
+    IEnumerator MoveCardsToDrawpileThenDraw(List<Card> shuffledCard, List<Card> drawnCards, float timeOffset)
     {
-        // TODO: Doesn't Work ._.
-        foreach(Card card in cards)
+        foreach(Card card in shuffledCard)
         {   
             card.transform.position = discardpile.transform.position;
             card.transform.eulerAngles = Vector3.zero;
@@ -263,7 +274,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             StartCoroutine(card.MoveToTarget(0.5f, false));
             yield return new WaitForSeconds(timeOffset);
         }
-        discardpile.GetCards().Clear();
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DealCards(drawnCards, 0.3f));
     }
 
     // ---------- For Debugging --------------------------------------------------------------------------------

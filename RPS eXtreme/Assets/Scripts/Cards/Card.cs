@@ -56,11 +56,6 @@ public class Card : MonoBehaviour
         return false;
     }
 
-    public void flipCard()
-    {
-        transform.Find("Cardback").gameObject.SetActive(!transform.Find("Cardback").gameObject.activeSelf);
-    }
-
     // ---------- Getter & Setter ------------------------------------------------------------------------------
 
     public string GetSymbol(){return this.symbol;}
@@ -94,6 +89,8 @@ public class Card : MonoBehaviour
         cardSprites = transform.GetComponent<CardSprites>();
         if (GetCardSprites().colors.ContainsKey(GetSymbol()))
             transform.Find("Card Sprites/Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol()]; // Set color
+        if (GetCardSprites().colors.ContainsKey(GetSymbol() + " window"))
+            transform.Find("Card Sprites/Picture Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol() + " window"]; // Set color
 
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
@@ -146,7 +143,6 @@ public class Card : MonoBehaviour
         gameObject.SetActive(activeOnArrival);
         //GetComponent<Draggable>().enabled = dragEnabled;
     }
-    public void SetSupposedPosition(Vector3 position){this.supposedPosition = position;}
 
     public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR() { return null; }
 

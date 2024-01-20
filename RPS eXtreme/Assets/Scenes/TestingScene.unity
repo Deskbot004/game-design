@@ -1511,6 +1511,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 0
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - extra damage:2
@@ -3711,7 +3713,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4318,7 +4320,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6091615876227109056}
         m_TargetAssemblyTypeName: TablePlayer, Assembly-CSharp
-        m_MethodName: DrawCards
+        m_MethodName: DrawCardsButton
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -24442,7 +24444,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -25522,7 +25524,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -27583,6 +27585,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 1
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - win on draw
@@ -28005,7 +28009,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -34633,7 +34637,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -40386,7 +40390,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -42218,7 +42222,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -43394,6 +43398,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 0
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - draw:2
@@ -47247,6 +47253,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 1
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - win on draw
@@ -48191,7 +48199,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Support
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -58063,7 +58071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NormalCard: {fileID: 1035841229192701943, guid: 5457312cfcf5ce349947b870af19a33c, type: 3}
-  SupportCard: {fileID: 8222774776693554697, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+  SupportCard: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
   cards:
   - {fileID: 886554691}
   - {fileID: 163360396}
@@ -68624,6 +68632,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 1
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - win against:rock
@@ -73027,6 +73037,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 0
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - draw:2
@@ -76096,10 +76108,50 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1548676033}
     m_Modifications:
+    - target: {fileID: 239623345440218280, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+    - target: {fileID: 288620437858158632, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Color.b
+      value: 0.12156863
+      objectReference: {fileID: 0}
+    - target: {fileID: 288620437858158632, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Color.g
+      value: 0.32156864
+      objectReference: {fileID: 0}
+    - target: {fileID: 288620437858158632, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Color.r
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 513278897817404712, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+    - target: {fileID: 1151190523531407510, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: effectType
+      value: lifesteal
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151190523531407510, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: description
+      value: Draw 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151190523531407510, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: effectValue
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
       propertyPath: m_Name
       value: SupportCard
       objectReference: {fileID: 0}
+    - target: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2466366650481403336, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
     - target: {fileID: 8210344597261639609, guid: 48998dc0ee506074fae66dda226be200, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -76591,6 +76643,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 0
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - extra damage:2
@@ -82383,13 +82437,57 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckName
+      value: Testing
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
       propertyPath: NormalCard
       value: 
       objectReference: {fileID: 1003988081768242810, guid: dac5ddf5e1a075c44856a4ac9ea308bb, type: 3}
     - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: rockAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
       propertyPath: SupportCard
       value: 
       objectReference: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: paperAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: supportAmount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: scissorsAmount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.data[0]
+      value: draw:draw:1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.data[1]
+      value: draw:draw:1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.data[2]
+      value: draw:draw:1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.data[3]
+      value: draw:draw:1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3378790427902757390, guid: e2951b94409a6314da97baf698d09c03, type: 3}
+      propertyPath: deckSupportFunctions.Array.data[4]
+      value: draw:draw:1
+      objectReference: {fileID: 0}
     - target: {fileID: 8963914034216108301, guid: e2951b94409a6314da97baf698d09c03, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.05504179
@@ -85347,6 +85445,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   symbol: support
   slotType: 1
+  effectType: 
+  effectValue: 
   description: Description Text
   functionNames:
   - win against:rock
@@ -86592,7 +86692,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NormalCard: {fileID: 1035841229192701943, guid: 5457312cfcf5ce349947b870af19a33c, type: 3}
-  SupportCard: {fileID: 8222774776693554697, guid: 48998dc0ee506074fae66dda226be200, type: 3}
+  SupportCard: {fileID: 1726437772995218731, guid: 48998dc0ee506074fae66dda226be200, type: 3}
   cards:
   - {fileID: 1684357359}
   - {fileID: 564704757}
