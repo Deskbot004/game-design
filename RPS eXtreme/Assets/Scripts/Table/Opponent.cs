@@ -12,7 +12,7 @@ public class Opponent : TablePlayer
 
     public override IEnumerator playCards()
     {
-        Debug.Log("Opponent is playing cards");
+        Debug.Log("Opponent playing Cards");
         int i = 0;
         List<Card> playedCards = new List<Card>();
         foreach(Card card in this.hand.GetCards())
@@ -22,13 +22,18 @@ public class Opponent : TablePlayer
             {
                 break;
             }
-            if(playedCards.Contains(card)){ //Card has been played already (probably together with a support Card)
+            if(playedCards.Contains(card)) //Card has been played already (probably together with a support Card)
+            { 
                 continue;
             }
             if (!card.IsBasic())
             {
-                if(playSupportCard(card,i,playedCards) == 0)
+                NormalCard normal = playSupportCard(card,i,playedCards);
+                if(normal != null)
                 {
+                    yield return new WaitForSeconds(1);
+                    card.transform.localPosition = new Vector3(0,0,0.5f);
+                    StartCoroutine(normal.MoveToTarget(1));
                     i++;
                 }
                 continue;
@@ -43,18 +48,21 @@ public class Opponent : TablePlayer
         {
             this.hand.RemoveCard(card);
         }
-        yield return new WaitForSeconds(this.table.GetCardMoveTime());
         this.hand.ArrangeHand();
+        yield return null;
     }
 
     public int playNormalCard(Card card, int slot, List<Card> playedCards)
     {
-        Debug.Log("playing Normal Card");
+        Debug.Log("playing Normal Card with symbol " + card.GetSymbol());
         if (this.slots[slot].GetNormalAndSuppCards().Count == 0) 
         {
             NormalCard norm = (NormalCard)card;
             this.slots[slot].SetCard(norm);
             playedCards.Add(card);
+            card.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
+            card.SetTargetRotation(Vector3.zero);
+            StartCoroutine(card.MoveToTarget(1));
             return 0;
         }
         else
@@ -63,24 +71,40 @@ public class Opponent : TablePlayer
         }
     }
 
-    public int playSupportCard(Card card, int slot, List<Card> playedCards)
+    public NormalCard playSupportCard(Card card, int slot, List<Card> playedCards)
     {
-        Debug.Log("playing Support Card");
         SupportCard support = (SupportCard)card;
         foreach (Card card2 in this.hand.GetCards())
         {
+            if (playedCards.Contains(card))
+            { //Card has been played already (probably together with a support Card)
+                continue;
+            }
             if (card2.IsBasic())
             {
                 NormalCard normal = (NormalCard)card2;
-                if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
+                if (normal.OnDrop(support.GetComponent<Draggable>()) && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
                 {
-                    Debug.Log("Normal to be attached to Card found");;
+                    Debug.Log("Normal to be attached to Card found with symbol " + normal.GetSymbol());
+                    Debug.Log(normal.GetSlotType());
+                    Debug.Log(support.GetSlotType());
                     this.slots[slot].SetCard(normal);
                     playedCards.Add(normal);
-                    return 0;
+                    playedCards.Add(support);
+                    normal.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
+                    normal.SetTargetRotation(Vector3.zero);
+                    return normal;
                 }
             }
         }
-        return 1;
+        return null;
+    }
+
+    protected override IEnumerator DealCards(List<Card> cards, float timeOffset)
+    {
+        yield return base.DealCards(cards, timeOffset);
+        yield return new WaitForSeconds(1);
+        StartCoroutine(playCards());
+        yield return null;
     }
 }

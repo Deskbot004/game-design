@@ -36,9 +36,9 @@ public class Table : MonoBehaviour
         float animationLength = 1f;
         foreach (Slot slot in enemy.GetSlots())
         {
-            if (slot.GetCard() != null)
+            foreach(Card card in slot.GetNormalAndSuppCards())
             {
-                slot.GetCard().GetComponent<Animator>().SetBool("flip", true);
+                card.GetComponent<Animator>().SetBool("flip", true);
                 animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
             }
         }
