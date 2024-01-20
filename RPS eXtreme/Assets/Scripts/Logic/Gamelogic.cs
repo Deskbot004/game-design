@@ -61,8 +61,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        healthUI.setHealth(lifepointMax, true);
-        healthUI.setHealth(lifepointMax, false);
+        healthUI.SetHealth(lifepointMax, "user"); //TODO: Change to true/false later
+        healthUI.SetHealth(lifepointMax, "enemy");
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
         EnemyDraw(startDraw + turnDraw);
