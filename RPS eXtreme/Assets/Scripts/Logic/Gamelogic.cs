@@ -105,7 +105,7 @@ public class Gamelogic : MonoBehaviour
      */
     public void ResolveTurn()
     {
-        Debug.Log("Turn resolve started");
+        //Debug.Log("Turn resolve started");
         StartCoroutine(ResolveTurnCoroutine());
     }
 
@@ -216,17 +216,17 @@ public class Gamelogic : MonoBehaviour
             }
         }
 
-        Debug.Log("Enemy Cards");
+        //Debug.Log("Enemy Cards");
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
             {
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
-                Debug.Log(card.GetSymbol());
+                //Debug.Log(card.GetSymbol());
             }
             else
             {
-                Debug.Log(card.GetSymbol());
+                //Debug.Log(card.GetSymbol());
                 if (card.GetFunctionsAR().Any())
                 {
                     enemyARfunctions.AddRange(card.GetFunctionsAR());
