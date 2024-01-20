@@ -7,9 +7,6 @@ public class Opponent : TablePlayer
     Dictionary<string,float> preferences;
     public override void init(Table table)
     {
-        base.init(table);
-        this.isPlayer = false;
-
         this.preferences = new Dictionary<string, float>();
         this.preferences["resourcing"] = 0;
         this.preferences["right"] = 1;
@@ -18,6 +15,22 @@ public class Opponent : TablePlayer
         this.preferences["paper"] = 1;
         this.preferences["random"] = 0;
         this.preferences["support"] = 1;
+        base.init(table);
+        this.isPlayer = false;
+    }
+
+    public void SetPreferences(List<float> preferences){
+        if(preferences.Count != this.preferences.Keys.Count){
+            Debug.Log("Number of preferences of deck doesn't match number of preferences of opponent!");
+            return;
+        }
+        this.preferences["resourcing"] = preferences[0];
+        this.preferences["right"] = preferences[1];
+        this.preferences["rock"] = preferences[2];
+        this.preferences["scissors"] = preferences[3];
+        this.preferences["paper"] = preferences[4];
+        this.preferences["random"] = preferences[5];
+        this.preferences["support"] = preferences[6];
     }
 
     private Dictionary<string,int> AnalyzeHand(List<Card> cards) {  
@@ -90,10 +103,13 @@ public class Opponent : TablePlayer
             float decision = Random.Range(0.0f, preferences["rock"]+preferences["scissors"]+preferences["paper"]+preferences["random"]);
             string cardToPlay = "random";
             if(decision <= preferences["rock"] && stats["numRock"] > 0){
+                stats["numRock"] -= 1;
                 cardToPlay = "rock";
             } else if(decision <= preferences["rock"] + preferences["scissors"] && stats["numScissors"] > 0){
+                stats["numScissors"] -= 1;
                 cardToPlay = "scissors";
             } else if(decision <= preferences["rock"] + preferences["scissors"] + preferences["paper"] && stats["numPaper"] > 0){
+                stats["numPaper"] -= 1;
                 cardToPlay = "paper";
             } 
 
@@ -108,7 +124,8 @@ public class Opponent : TablePlayer
                             }
                             if(!support.IsBasic()){
                                 NormalCard normal = (NormalCard)card;
-                                if(!normal.HasAttachedCards() && normal.OnDrop(support.GetComponent<Draggable>())){
+                                bool cannotAttach = (normal.OccupiedSlots() == support.slotType) || normal.OccupiedSlots() == 3;
+                                if(!cannotAttach && normal.OnDrop(support.GetComponent<Draggable>())){
                                     yield return new WaitForSeconds(1);
                                     support.transform.localPosition = new Vector3(0,0,0.5f);
                                     playedCards.Add(support);

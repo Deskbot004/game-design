@@ -68,7 +68,7 @@ public class NormalCard : Card, Droppable
         }
         else
         {
-            Debug.Log("Attached SupportCard doesn't have a matching type!");
+            //Debug.Log("Attached SupportCard doesn't have a matching type!");
             return 1;
         }
     }
@@ -146,6 +146,20 @@ public class NormalCard : Card, Droppable
             if(card != null) return true;
         }
         return false;
+    }
+
+    public int OccupiedSlots() {
+        // 0: nothing occupied, 1: top slot occupied, 2: bottom slot occupied; 3: both slots occupied
+        var occupied = 0;
+        foreach(SupportCard card in supportCards.Values)
+        {
+            if(!card) continue;
+            if(card.GetSlotType() == 1 && occupied == 0) occupied = 1;
+            if(card.GetSlotType() == 1 && occupied == 2) occupied = 3;
+            if(card.GetSlotType() == 2 && occupied == 0) occupied = 2;
+            if(card.GetSlotType() == 2 && occupied == 1) occupied = 3;
+        }
+        return occupied;
     }
 
     // ---------- Getter & Setter ------------------------------------------------------------------------------

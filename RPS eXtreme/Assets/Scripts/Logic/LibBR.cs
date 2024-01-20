@@ -7,10 +7,10 @@ public class LibBR : MonoBehaviour
 {
     public void RunAllBR(List<(Action<Gamelogic, string, object>, object)> actions, Gamelogic logic, String caller)
     {
-        Debug.Log("running BR for " + caller);
+        //Debug.Log("running BR for " + caller);
         foreach (var entry in actions)
         {
-            Debug.Log("Calling a function for " + caller);
+            //Debug.Log("Calling a function for " + caller);
             Action<Gamelogic, String, object> func = entry.Item1;
             object input = entry.Item2;
             func(logic, caller, input);
@@ -95,7 +95,7 @@ public class LibBR : MonoBehaviour
     {
         logic.stringToFunc["WinD"] = ResetMatrix;
         var mat = logic.GetwinMatrix();
-        logic.stringToInput["WinD"] = mat;
+        logic.stringToInput["WinD"] = mat.Clone();
         int winner = -1;
         if (caller == "user")
         {

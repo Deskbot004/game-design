@@ -15,6 +15,8 @@ public class Deck : MonoBehaviour
     public string deckName;
     public string flavor;
     private TablePlayer tablePlayer;
+    [Header("[resourcing,right,rock,paper,scissors,random,support]")]
+    public List<float> preferences;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
 
@@ -33,6 +35,10 @@ public class Deck : MonoBehaviour
         foreach (Card card in cards)
         {
             card.init(this);
+        }
+        if(!this.tablePlayer.isPlayer){
+            Opponent enemy = (Opponent) this.tablePlayer;
+            enemy.SetPreferences(this.preferences);
         }
     }
 
@@ -87,6 +93,7 @@ public class Deck : MonoBehaviour
                 save.slotTypes.Add(card.GetSlotType());
             }
         }
+        save.preferences = this.preferences;
         string savedDeck = JsonUtility.ToJson(save);
 
         Debug.Log("Saved String: " + savedDeck);
@@ -149,6 +156,7 @@ public class Deck : MonoBehaviour
                 this.AddCard(card);
             }
         }
+        this.preferences = save.preferences;
         this.deckName = filename;
     }
 
