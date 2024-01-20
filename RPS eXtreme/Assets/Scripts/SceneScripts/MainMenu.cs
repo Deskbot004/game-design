@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
-
     public GameObject menu;
     public GameObject options;
     public GameObject credits;
@@ -14,10 +14,17 @@ public class MainMenu : MonoBehaviour
     public string selectedPlayerDeckName;
     public string selectedOpponentDeckName;
 
+    public TextMeshProUGUI playerSelectedText;
+    public TextMeshProUGUI enemySelectedText;
+
     public void Awake()
     {
         this.selectedOpponentDeckName = "rpsOpponentStandard";
         this.selectedPlayerDeckName = "rpsPlayerStandard";
+        Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
+        Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
+        this.playerSelectedText.text = playerDeck.flavor;
+        this.enemySelectedText.text = opponentDeck.flavor;
     }
 
 
@@ -29,7 +36,6 @@ public class MainMenu : MonoBehaviour
     public void LoadTable()
     {
         GameObject opponentDeckObject = GameObject.Find(this.selectedOpponentDeckName);
-        Debug.Log(opponentDeckObject);
         Deck opponentDeck = opponentDeckObject.GetComponent<Deck>();
         GameObject playerDeckObject = GameObject.Find(this.selectedPlayerDeckName);
         Deck playerDeck = playerDeckObject.GetComponent<Deck>();
@@ -37,7 +43,7 @@ public class MainMenu : MonoBehaviour
         {
             opponentDeck.SaveDeck();
             playerDeck.SaveDeck();
-            SceneManager.LoadSceneAsync(1);
+            SceneManager.LoadSceneAsync("Main Game");
         }
         
 
@@ -54,8 +60,14 @@ public class MainMenu : MonoBehaviour
         Dictionary<int, string> valueToDeckname = new Dictionary<int, string>();
         valueToDeckname[0] = "rpsOpponentStandard";
         valueToDeckname[1] = "rpsOpponentNoSupport";
+        valueToDeckname[2] = "rpsOpponentRockHeavy";
+        valueToDeckname[3] = "rpsOpponentScissorHeavy";
+        valueToDeckname[4] = "rpsOpponentPaperHeavy";
+        valueToDeckname[5] = "rpsOpponentLifesteal";
 
         this.selectedOpponentDeckName = valueToDeckname[value];
+        Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
+        this.enemySelectedText.text = opponentDeck.flavor;
 
     }
 
@@ -69,8 +81,14 @@ public class MainMenu : MonoBehaviour
         Dictionary<int, string> valueToDeckname = new Dictionary<int, string>();
         valueToDeckname[0] = "rpsPlayerStandard";
         valueToDeckname[1] = "rpsPlayerNoSupport";
+        valueToDeckname[2] = "rpsPlayerPaperHeavy";
+        valueToDeckname[3] = "rpsPlayerRockHeavy";
+        valueToDeckname[4] = "rpsPlayerScissorHeavy";
+        valueToDeckname[5] = "rpsPlayerLifesteal";
 
         this.selectedPlayerDeckName = valueToDeckname[value];
+        Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
+        this.playerSelectedText.text = playerDeck.flavor;
 
     }
 
