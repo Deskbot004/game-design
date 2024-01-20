@@ -61,13 +61,13 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        healthUI.setHealth(lifepointMax, true);
-        healthUI.setHealth(lifepointMax, false);
+        healthUI.SetHealth(lifepointMax, "user"); //TODO: Change to true/false later
+        healthUI.SetHealth(lifepointMax, "enemy");
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
-        EnemyDraw(startDraw);
-        UserDraw(startDraw);
-        StartTurn();
+        EnemyDraw(startDraw + turnDraw);
+        UserDraw(startDraw + turnDraw);
+        //StartTurn();
     }
     
     /* Starts the turn by drawing cards.
@@ -95,9 +95,19 @@ public class Gamelogic : MonoBehaviour
      */
     public void ResolveTurn()
     {
+        Debug.Log("Turn resolve started");
+        StartCoroutine(ResolveTurnCoroutine());
+    }
+
+    public IEnumerator ResolveTurnCoroutine()
+    {
+        float animationLength = table.TurnEnemySlotCards();
+        if(table.quickResolve) animationLength = 0;
+        yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
+        table.dim.gameObject.SetActive(true);
+
         List<Slot> slotsUser = table.GetSlotsPlayer();
         List<Slot> slotsEnemy = table.GetSlotsEnemy();
-
 
         foreach (Slot slotUser in slotsUser)
         {
@@ -105,10 +115,8 @@ public class Gamelogic : MonoBehaviour
             {
                 if(slotUser.GetSlotPosition() == slotEnemy.GetSlotPosition())
                 {
-                    slotUser.TurnCards();
-                    slotEnemy.TurnCards();
                     string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
-                    table.ResolveSlot(slotUser.GetSlotPosition(), winner);
+                    yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
                     foreach (var item in stringToInput.Reverse()) {
                     Action<Gamelogic,object> func = stringToFunc[item.Key];
                     func(this, item.Value);
@@ -119,6 +127,7 @@ public class Gamelogic : MonoBehaviour
                 }
             }
         }
+        table.dim.gameObject.SetActive(false);
 
         
 
@@ -302,14 +311,12 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
-        healthUI.setHealth(currentLifepoints["user"], true);
         
     }
 
     public void DamageEnemy(int dmg)
     {
         currentLifepoints["enemy"] -= dmg;
-        healthUI.setHealth(currentLifepoints["enemy"], false);
     }
 
     public void UserDraw(int amount)

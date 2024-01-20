@@ -7,7 +7,10 @@ using TMPro;
 [Serializable]
 public class SupportCard : Card
 {
+    public string effectType;
+    public string effectValue;
     public string description;
+
     private bool isAttached;
     public List<string> functionNames; // The entries should match one of the patterns library:nameofFunction:functionValue or library:nameOfFunction.
     private List<(Action<Gamelogic, string, object>, object)> ARFunctions = new List<(Action<Gamelogic, string, object>,object)>();
@@ -56,11 +59,11 @@ public class SupportCard : Card
                         {
                             case 3:
                                 this.ARFunctions.Add((this.ARLibrary[values[1]], values[2]));
-                                this.SetText(values[1], values[2]);
+                                this.SetEffectType(values[1], values[2]);
                                 break;
                             case 2:
                                 this.ARFunctions.Add((this.ARLibrary[values[1]], null));
-                                this.SetText(values[1], null);
+                                this.SetEffectType(values[1], null);
                                 break;
                             default:
                                 Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
@@ -79,11 +82,11 @@ public class SupportCard : Card
                         {
                             case 3:
                                 this.BRFunctions.Add((this.BRLibrary[values[1]], values[2]));
-                                this.SetText(values[1], values[2]);
+                                this.SetEffectType(values[1], values[2]);
                                 break;
                             case 2:
                                 this.BRFunctions.Add((this.BRLibrary[values[1]], null));
-                                this.SetText(values[1], null);
+                                this.SetEffectType(values[1], null);
                                 break;
                             default:
                                 Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
@@ -102,11 +105,11 @@ public class SupportCard : Card
                         {
                             case 3:
                                 this.drawFunctions.Add((this.drawLibrary[values[1]], values[2]));
-                                this.SetText(values[1], values[2]);
+                                this.SetEffectType(values[1], values[2]);
                                 break;
                             case 2:
                                 this.drawFunctions.Add((this.drawLibrary[values[1]], null));
-                                this.SetText(values[1], null);
+                                this.SetEffectType(values[1], null);
                                 break;
                             default:
                                 Debug.Log("FunctionName " + function + " did not have one of the required patterns nameOfFunction:functionValue or nameOfFunction");
@@ -166,38 +169,40 @@ public class SupportCard : Card
     public override void SetSprite()
     {
         base.SetSprite();
+        SetEffectType(effectType, effectValue);
 
         // Set Text
         string upperCaseSymbol = "";
-        if (this.GetSymbol().Length > 0) 
+        if (effectType.Length > 0) 
         { 
-            upperCaseSymbol = string.Concat(GetSymbol()[0].ToString().ToUpper(), GetSymbol().Substring(1));
+            upperCaseSymbol = string.Concat(effectType[0].ToString().ToUpper(), effectType.Substring(1));
         }
-        this.transform.Find("Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
+        this.transform.Find("Card Sprites/Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
 
         // Set Window Icon
-        //Debug.Log(symbol);
-        if (this.GetCardSprites().supportWindowSprites.ContainsKey(GetSymbol()))
-            this.transform.Find("Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[GetSymbol()];
+        if (this.GetCardSprites().supportWindowSprites.ContainsKey(effectType))
+            this.transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[effectType];
 
         // Set slots
-        this.transform.Find("Upper Effect").gameObject.SetActive(GetSlotType() == 0);
-        this.transform.Find("Upper Effect/Text").GetComponent<TMP_Text>().text = description;
-        this.transform.Find("Lower Effect").gameObject.SetActive(GetSlotType() == 1);
-        this.transform.Find("Lower Effect/Text").GetComponent<TMP_Text>().text = description;
+        this.transform.Find("Card Sprites/Upper Effect").gameObject.SetActive(GetSlotType() == 0);
+        this.transform.Find("Card Sprites/Upper Effect/Text").GetComponent<TMP_Text>().text = description;
+        this.transform.Find("Card Sprites/Lower Effect").gameObject.SetActive(GetSlotType() == 1);
+        this.transform.Find("Card Sprites/Lower Effect/Text").GetComponent<TMP_Text>().text = description;
 
         // Set hexagon icons
-        if (this.GetCardSprites().supportIconSprites.ContainsKey(GetSymbol()))
+        if (this.GetCardSprites().supportIconSprites.ContainsKey(effectType))
         {
-            this.transform.Find("Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
-            this.transform.Find("Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportIconSprites[GetSymbol()];
+            // TODO: Change supportWindowSprites to supportIconSprites
+            this.transform.Find("Card Sprites/Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[effectType];
+            this.transform.Find("Card Sprites/Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[effectType];
         }
-            
-
     }
 
-    private void SetText(string functionName, string value)
+    private void SetEffectType(string functionName, string value)
     {
+        effectType = functionName;
+        effectValue = value;
+
         switch (functionName)
         {
             case "draw":
@@ -205,7 +210,7 @@ public class SupportCard : Card
                 break;
 
             case "extra damage":
-                this.description = "Multiply damage by " + value;
+                this.description = "Do  " + value + " extra damage on win";
                 break;
             case "lifesteal":
                 this.description = "Lifesteal " + value;
@@ -217,7 +222,6 @@ public class SupportCard : Card
                 this.description = "Win against " + value;
                 break;
             default:
-                Debug.Log("Functionname unknown: " + functionName);
                 break;
         }
     }

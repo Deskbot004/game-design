@@ -25,7 +25,7 @@ public class Hand : MonoBehaviour
 
     // ---------- Functions for Hand arrangement --------------------------------------------------------------
     // Arranges all cards along a curve
-    public void ArrangeHand()
+    public void ArrangeHand(bool moveInstantly = true, float moveTime = 0.1f)
     {
         if (cards.Count == 0) return;
 
@@ -45,7 +45,7 @@ public class Hand : MonoBehaviour
         float maxHandWidth = circumference * maxHandDegree /360;
 
         // Get Needed Hand Width with given Cards and Margin
-        float cardWidth = cards[0].GetComponent<BoxCollider2D>().size.x; //TODO: Vorher war hier *2, why?
+        float cardWidth = cards[0].GetComponent<BoxCollider2D>().size.x;
         float handWidth = (cardWidth + margin) * (n - 1);
         handWidth = Mathf.Min(handWidth, maxHandWidth);
 
@@ -65,11 +65,14 @@ public class Hand : MonoBehaviour
         float degreeChange = (n-1) > 0 ? handDegree / (n - 1) : 0;
         foreach (Card card in cards)
         {
-            currentPosition.z = card.transform.localPosition.z + currentZ;
-            currentZ += 0.001f;
-            card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
-            card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
-
+            currentPosition.z = currentZ;
+            currentZ += 0.1f;
+            //card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
+            //card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
+            card.SetWorldTargetPosition(transform.TransformDirection(currentPosition) + transform.position);
+            card.SetTargetRotation(new Vector3(0, 0, currentDegree));
+            if (moveInstantly) StartCoroutine(card.MoveToTarget(moveTime));
+            
             rotatedBorder = Quaternion.Euler(0, 0, -degreeChange) * rotatedBorder;
             currentPosition =  circleCenter + rotatedBorder;
             currentDegree -= degreeChange;
