@@ -28,8 +28,12 @@ public class Opponent : TablePlayer
             }
             if (!card.IsBasic())
             {
-                if(playSupportCard(card,i,playedCards) == 0)
+                NormalCard normal = playSupportCard(card,i,playedCards);
+                if(normal != null)
                 {
+                    yield return new WaitForSeconds(1);
+                    card.transform.localPosition = new Vector3(0,0,0.5f);
+                    StartCoroutine(normal.MoveToTarget(1));
                     i++;
                 }
                 continue;
@@ -44,8 +48,8 @@ public class Opponent : TablePlayer
         {
             this.hand.RemoveCard(card);
         }
-        yield return null;
         this.hand.ArrangeHand();
+        yield return null;
     }
 
     public int playNormalCard(Card card, int slot, List<Card> playedCards)
@@ -67,7 +71,7 @@ public class Opponent : TablePlayer
         }
     }
 
-    public int playSupportCard(Card card, int slot, List<Card> playedCards)
+    public NormalCard playSupportCard(Card card, int slot, List<Card> playedCards)
     {
         SupportCard support = (SupportCard)card;
         foreach (Card card2 in this.hand.GetCards())
@@ -89,17 +93,17 @@ public class Opponent : TablePlayer
                     playedCards.Add(support);
                     normal.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
                     normal.SetTargetRotation(Vector3.zero);
-                    StartCoroutine(normal.MoveToTarget(1));
-                    return 0;
+                    return normal;
                 }
             }
         }
-        return 1;
+        return null;
     }
 
     protected override IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
-        yield return (base.DealCards(cards, timeOffset));
+        yield return base.DealCards(cards, timeOffset);
+        yield return new WaitForSeconds(1);
         StartCoroutine(playCards());
         yield return null;
     }

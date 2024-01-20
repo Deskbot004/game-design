@@ -156,6 +156,7 @@ public class NormalCard : Card, Droppable
 
     public override int SetSlotType(int type)
     {
+        supportCards.Clear();
         if(Array.Exists(viableSlotTypes, element => element == type))
         {
             this.slotType = type;
