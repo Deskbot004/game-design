@@ -23,15 +23,14 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     private bool dropActive = true;
     private NormalCard attachModeCardInFocus;
 
-    //TODO: Allow empty slots on resolve
-
     // ---------- Main Functions ----------------------------------------------------------------------------------
     public virtual void init(Table table)
     {
         this.table = table;
         playerDeck.init(this);
+        playerDeck.transform.localPosition = drawpile.transform.localPosition;
         drawpile.SetCards(playerDeck.GetCards());
-        drawpile.Shuffle();
+        //drawpile.Shuffle();
         foreach (Card card in playerDeck.GetCards())
         {
             card.gameObject.SetActive(false);
@@ -45,17 +44,27 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         }
     }
 
+    public void DrawCardsButton(int amount)
+    {
+        DrawCards(amount);
+    }
+
     // Draws an amount of cards from the Drawpile into the Hand
-    public void DrawCards(int amount)
+    public List<Card> DrawCards(int amount, bool playAnimation = true)
     {
         // Not enough cards in the drawpile
         if (drawpile.GetCards().Count < amount)
         {
             int amountMissing = amount - drawpile.GetCards().Count;
-            DrawCards(drawpile.GetCards().Count);
+            List<Card> allDrawnCards = new();
+            List<Card> discardToDraw = new();
+            discardToDraw.AddRange(discardpile.GetCards());
+            allDrawnCards.AddRange(DrawCards(drawpile.GetCards().Count, false));
             DiscardToDrawpile();
-            DrawCards(amountMissing);
-            return;
+            allDrawnCards.AddRange(DrawCards(amountMissing, false));
+            hand.ArrangeHand(false);
+            StartCoroutine(MoveCardsToDrawpileThenDraw(discardToDraw, allDrawnCards, 0.1f));
+            return allDrawnCards;
         }
 
         // Draw abstract Cards
@@ -64,13 +73,12 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         hand.AddCards(drawnCards);
 
         // Add those Cards as GameObjects
-        hand.ArrangeHand();
-        foreach (Card card in drawnCards)
-        {
-            // TODO: Play Animation
-            card.gameObject.SetActive(true);
-        }
+        hand.ArrangeHand(false);
+        if(playAnimation) StartCoroutine(DealCards(drawnCards, 0.3f));
+        return drawnCards;
     }
+
+// TODO: Avoid pressing multiple times right click on card in focus
 
     // Shuffles all cards from the Discardpile into the Drawpile
     public void DiscardToDrawpile()
@@ -78,10 +86,9 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         drawpile.GetCards().AddRange(discardpile.GetCards());
         discardpile.GetCards().Clear();
         drawpile.Shuffle();
-        // TODO: Play animation
     }
 
-    public virtual IEnumerator playCards() { yield return new WaitForSeconds(this.table.GetCardMoveTime()); }
+    public virtual IEnumerator playCards() { yield return new WaitForSeconds(0.5f); }
 
     // ---------- Attaching Cards ----------------------------------------------------------------------------------
     // ----- Main Functions -----
@@ -97,18 +104,13 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         detachButton.SetActive(baseCard.HasAttachedCards());
     }
 
-    public void Detach() 
+    public void DetachAllCards() 
     {
-        SupportCard[] cardSlots = attachModeCardInFocus.GetSupportCards().Values.ToArray();
-        foreach(SupportCard supCard in cardSlots)
+        List<SupportCard> supCards = attachModeCardInFocus.DetachAllCards();
+        foreach (SupportCard supCard in supCards)
         {
-            if(supCard != null && attachModeCardInFocus.DetachSupportCard(supCard) == 0)
-            {
-                supCard.transform.SetParent(supCard.GetDeck().transform);
-                supCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-                OnDrop(supCard.GetComponent<Draggable>());
-                supCard.GetComponent<Draggable>().SetCurrentDroppable(this);
-            }
+            OnDrop(supCard.GetComponent<Draggable>());
+            supCard.GetComponent<Draggable>().SetCurrentDroppable(this);
         }
     }
 
@@ -149,7 +151,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             else
                 card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
         }
-        hand.ArrangeHand();
+        //hand.ArrangeHand();
     }
 
     public void SetAttachFocusOn(NormalCard focusCard)
@@ -159,8 +161,11 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
         // Bring card to the middle of screen
         focusCard.transform.SetParent(transform);
-        focusCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
-        focusCard.transform.eulerAngles = new Vector3(0, 0, 0);
+        focusCard.SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0)));
+        focusCard.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
+        StartCoroutine(focusCard.MoveToTarget(0.1f));
+        //focusCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
+        //focusCard.transform.eulerAngles = new Vector3(0, 0, 0);
         focusCard.transform.SetParent(playerDeck.transform);
 
         // Bring card in front of dim layer
@@ -187,7 +192,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
         // Everything succeeded
         attachModeCardInFocus = null;
-        hand.ArrangeHand();
+        hand.ArrangeHand(true, 0.3f);
     }
 
     // ---------- Droppable -------------------------------------------------------------------------------------
@@ -200,7 +205,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool OnDrop(Draggable draggedObject)
     {
         hand.GetCards().Add(draggedObject.GetComponent<Card>());
-        draggedObject.transform.localPosition = hand.transform.localPosition;
+        //draggedObject.transform.localPosition = hand.transform.localPosition;
         hand.ArrangeHand();
         return true;
     }
@@ -223,6 +228,54 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public List<Cardpile> GetAllCardpiles() {
         List<Cardpile> allPiles  = new List<Cardpile> {drawpile, discardpile};
         return allPiles;
+    }
+
+    // ------ Animation -------------------------------------------------------------------
+    IEnumerator DealCards(List<Card> cards, float timeOffset)
+    {
+        hand.ArrangeHand(false);
+        foreach (Card card in hand.GetCards())
+        {  
+            card.GetComponent<Draggable>().enabled = false;
+            card.gameObject.SetActive(true);
+            if(cards.Contains(card))
+            {
+                card.transform.position = drawpile.transform.position;
+                card.GetComponent<Animator>().SetBool("faceFront", false);
+                card.GetComponent<Animator>().SetBool("flip", isPlayer);
+            }
+            StartCoroutine(card.MoveToTarget(0.5f));
+            float actualOffset = cards.Contains(card)? timeOffset : 0f;
+            yield return new WaitForSeconds(actualOffset);
+        }
+        foreach (Card card in hand.GetCards()) card.GetComponent<Draggable>().enabled = true;
+    }
+
+    public IEnumerator DiscardCard(Card card)
+    {
+        card.GetComponent<Draggable>().enabled = false;
+        card.SetWorldTargetPosition(discardpile.transform.TransformPoint(new Vector3(0,0,0)));
+        card.GetComponent<Animator>().SetBool("faceFront", false);
+        card.GetComponent<Animator>().SetBool("flip", true);
+        yield return card.MoveToTarget(0.5f);
+        card.gameObject.SetActive(false);
+    }
+
+    IEnumerator MoveCardsToDrawpileThenDraw(List<Card> shuffledCard, List<Card> drawnCards, float timeOffset)
+    {
+        foreach(Card card in shuffledCard)
+        {   
+            card.transform.position = discardpile.transform.position;
+            card.transform.eulerAngles = Vector3.zero;
+            card.gameObject.SetActive(true);
+            card.GetComponent<Animator>().SetBool("faceFront", false);
+            card.SetWorldTargetPosition(drawpile.transform.TransformPoint(Vector3.zero));
+            card.SetTargetRotation(Vector3.zero);
+            StartCoroutine(card.MoveToTarget(0.5f, false));
+            yield return new WaitForSeconds(timeOffset);
+        }
+        yield return new WaitForSeconds(0.5f);
+        StartCoroutine(DealCards(drawnCards, 0.3f));
     }
 
     // ---------- For Debugging --------------------------------------------------------------------------------
