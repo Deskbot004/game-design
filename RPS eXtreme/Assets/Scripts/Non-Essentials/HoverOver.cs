@@ -10,12 +10,11 @@ public class HoverOver : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
         Button.GetComponent<Image>().color = Color.grey;
-        Debug.Log("Above End Turn");
+        Button.GetComponent<AudioSource>().Play();
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         Button.GetComponent<Image>().color = Color.white;
-        Debug.Log("Exited End Turn");
     }
 }

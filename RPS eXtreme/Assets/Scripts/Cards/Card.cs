@@ -17,6 +17,8 @@ public class Card : MonoBehaviour
     protected Deck deck;
     private CardSprites cardSprites;
 
+    public AudioClip playWhenMoved;
+
     private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot // TODO sollte in verschiedenen funktionen angepass werden
 
     // Animation stuff
@@ -143,6 +145,12 @@ public class Card : MonoBehaviour
         }
 
         gameObject.SetActive(activeOnArrival);
+        if(this.symbol != "support") {
+            var audios = this.GetComponents<AudioSource>();
+            foreach (var audio in audios) {
+                if (audio.clip == playWhenMoved) audio.Play();
+            }
+        }
         //GetComponent<Draggable>().enabled = dragEnabled;
     }
 

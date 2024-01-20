@@ -38,6 +38,7 @@ public class Cardpile : MonoBehaviour
     // Shows all the cards in the pile on screen
     public void openPile()
     {
+        this.GetComponent<AudioSource>().Play();
         foreach(Cardpile pile in tablePlayer.GetAllCardpiles())
         {
             if(pile.isOpen()) pile.closePile();
