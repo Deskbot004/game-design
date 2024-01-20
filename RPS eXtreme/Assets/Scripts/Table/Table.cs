@@ -17,10 +17,15 @@ public class Table : MonoBehaviour
     public SpriteRenderer dim;
     public Health healthUI;
 
+    [Header("Debugging")]
+    public bool quickResolve;
+    public float waitTimer = -1;
+
     private float cardMoveTime = 0.5f;
 
     void Start()
     {
+        if (waitTimer < 0) waitTimer = quickResolve? 0.3f : 1f;
         player.init(this);
         enemy.init(this);
         logic.init(this);
@@ -76,7 +81,7 @@ public class Table : MonoBehaviour
         {
             slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
         }
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(waitTimer);
         if(winner == "user")
         {
             slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
@@ -87,7 +92,7 @@ public class Table : MonoBehaviour
             slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["user"], "user");
         }
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(waitTimer);
         foreach (Slot slot in slots.Values)
         {
             slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";

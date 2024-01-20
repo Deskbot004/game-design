@@ -87973,6 +87973,10 @@ PrefabInstance:
       propertyPath: healthUI
       value: 
       objectReference: {fileID: 623604939}
+    - target: {fileID: 1188935324138398999, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
+      propertyPath: quickResolve
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1384962138173387994, guid: 4370bf76383c2a341af617e3ba276b6f, type: 3}
       propertyPath: m_LocalPosition.y
       value: -4.1893
