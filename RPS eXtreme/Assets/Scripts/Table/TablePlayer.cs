@@ -30,7 +30,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         playerDeck.init(this);
         playerDeck.transform.localPosition = drawpile.transform.localPosition;
         drawpile.SetCards(playerDeck.GetCards());
-        //drawpile.Shuffle();
+        drawpile.Shuffle();
         foreach (Card card in playerDeck.GetCards())
         {
             card.gameObject.SetActive(false);
@@ -88,7 +88,10 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         drawpile.Shuffle();
     }
 
-    public virtual IEnumerator playCards() { yield return new WaitForSeconds(0.5f); }
+    public virtual IEnumerator playCards() 
+    {
+        yield return new WaitForSeconds(0.5f); 
+    }
 
     // ---------- Attaching Cards ----------------------------------------------------------------------------------
     // ----- Main Functions -----

@@ -65,9 +65,9 @@ public class Gamelogic : MonoBehaviour
         healthUI.SetHealth(lifepointMax, "enemy");
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
-        EnemyDraw(startDraw + turnDraw);
-        UserDraw(startDraw + turnDraw);
-        //StartTurn();
+        EnemyDraw(startDraw);
+        UserDraw(startDraw);
+        StartTurn();
     }
     
     /* Starts the turn by drawing cards.
@@ -82,7 +82,6 @@ public class Gamelogic : MonoBehaviour
             p.DrawCards(turnDraw);
             if (!p.isPlayer)
             {
-                // Function does not get overriden by Opponent for some reason
                 p.StartCoroutine(p.playCards());
             }
         }

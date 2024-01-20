@@ -12,6 +12,7 @@ public class Opponent : TablePlayer
 
     public override IEnumerator playCards()
     {
+        Debug.Log("Opponent playing Cards");
         int i = 0;
         List<Card> playedCards = new List<Card>();
         foreach(Card card in this.hand.GetCards())
@@ -78,8 +79,11 @@ public class Opponent : TablePlayer
                 if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
                 {
                     Debug.Log("Normal to be attached to Card found with symbol " + normal.GetSymbol());;
+                    Debug.Log(normal.GetSlotType());
+                    Debug.Log(support.GetSlotType());
                     this.slots[slot].SetCard(normal);
                     playedCards.Add(normal);
+                    playedCards.Add(support);
                     return 0;
                 }
             }
