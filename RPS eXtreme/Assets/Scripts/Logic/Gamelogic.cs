@@ -35,13 +35,6 @@ public class Gamelogic : MonoBehaviour
     // Shitty implementation of reset function
     public Dictionary<string, Action<Gamelogic, object>> stringToFunc = new Dictionary<string, Action<Gamelogic, object>>();
     public Dictionary<string, object> stringToInput = new Dictionary<string, object>();
-    //public Dictionary<string, Action<Gamelogic, object>> stringToFunc;
-    //public Dictionary<string, object> stringToInput;
-    public int TestVar = 2020;
-
-    // Tests
-    public List<Card> testUser = new List<Card>();
-    public List<Card> testEnemy = new List<Card>();
     
     // Temporary Globals
 
@@ -65,22 +58,15 @@ public class Gamelogic : MonoBehaviour
         libAR = GetComponent<LibAR>();
         libBR = GetComponent<LibBR>();
 
-        Debug.Log("Game started");
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        table.healthUI.SetHealth(lifepointMax, "user");
-        table.healthUI.SetHealth(lifepointMax, "enemy");
-        players = table.GetComponentsInChildren<TablePlayer>();
+        healthUI.setHealth(lifepointMax, true);
+        healthUI.setHealth(lifepointMax, false);
+        this.players = table.GetComponentsInChildren<TablePlayer>();
 
-        foreach (TablePlayer p in players)
-        {
-            p.DrawCards(startDraw + turnDraw);
-            if (!p.isPlayer)
-            {
-                p.StartCoroutine(p.playCards());
-            }
-        }
+        EnemyDraw(startDraw + turnDraw);
+        UserDraw(startDraw + turnDraw);
         //StartTurn();
     }
     
@@ -91,12 +77,12 @@ public class Gamelogic : MonoBehaviour
      */
     void StartTurn()
     {
-        Debug.Log("Turn started");
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
             if (!p.isPlayer)
             {
+                // Function does not get overriden by Opponent for some reason
                 p.StartCoroutine(p.playCards());
             }
         }
@@ -130,14 +116,21 @@ public class Gamelogic : MonoBehaviour
                 {
                     string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
                     yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
+                    foreach (var item in stringToInput.Reverse()) {
+                    Action<Gamelogic,object> func = stringToFunc[item.Key];
+                    func(this, item.Value);
+        }
+        
+        stringToInput.Clear();
+        stringToFunc.Clear();
                 }
             }
         }
         table.dim.gameObject.SetActive(false);
-        table.ClearSlots();
 
-        Debug.Log("user " + currentLifepoints["user"]);
-        Debug.Log("enemy " + currentLifepoints["enemy"]);
+        
+
+        table.ClearSlots();
 
         if (currentLifepoints["user"] <= 0)
         {
@@ -159,6 +152,7 @@ public class Gamelogic : MonoBehaviour
     private string EvaluateCards(List<Card> cardsUser, List<Card> cardsEnemy)
     {
         int attack = -1;
+        bool skipEval = false;
 
         int symbolToEntryUser = 0;
         int symbolToEntryEnemy = 0;
@@ -172,16 +166,30 @@ public class Gamelogic : MonoBehaviour
         List<(Action<Gamelogic, string, object>, object)> enemyDrawfunctions = new List<(Action<Gamelogic, string, object>, object)>();
 
 
+        if(!cardsUser.Any() && !cardsEnemy.Any()) //automatic draw because no card was played
+        {
+            skipEval = true;
+        }
+        else if (!cardsUser.Any()) //automatic win for enemy because user didnt't play cards
+        {
+            skipEval = true;
+            attack = 1;
+        }
+        else if (!cardsEnemy.Any()) //automatic win for user because enemy didnt't play cards
+        {
+            skipEval = true;
+            attack = 0;
+        }
+
         foreach (Card card in cardsUser)
         {
             if (card.IsBasic())
             {
                 symbolToEntryUser = symbolToEntry[card.GetSymbol()];
-                Debug.Log(card.GetSymbol());
             }
             else
             {
-                Debug.Log(card.GetSymbol());
+                
                 if (card.GetFunctionsAR().Any())
                 {
                     userARfunctions.AddRange(card.GetFunctionsAR());
@@ -196,7 +204,6 @@ public class Gamelogic : MonoBehaviour
                 }
             }
         }
-
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
@@ -229,13 +236,11 @@ public class Gamelogic : MonoBehaviour
         {
             libBR.RunAllBR(enemyBRfunctions, this, "enemy");
         }
-        
 
-        attack = winMatrix[symbolToEntryUser,symbolToEntryEnemy];
-        Debug.Log(symbolToEntryUser);
-        Debug.Log(symbolToEntryEnemy);
-        Debug.Log(winMatrix[symbolToEntryUser, symbolToEntryEnemy]);
-
+        if (!skipEval)
+        {
+            attack = winMatrix[symbolToEntryUser, symbolToEntryEnemy];
+        }
 
         /* TODO: How to implement the call of the functions
             A Card should know its function plus its intensity -> How? Dictionary?
@@ -301,55 +306,6 @@ public class Gamelogic : MonoBehaviour
         table.SetWinner(s);
     }
 
-    private void Update()
-    {
-        // Setup with "S"
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            symbolToEntry.Add("scissors", 0);
-            symbolToEntry.Add("rock", 1);
-            symbolToEntry.Add("paper", 2);
-            symbolToEntry.Add("lizard", 3);
-            symbolToEntry.Add("spock", 4);
-
-            // Load Libs
-            libAR = GetComponent<LibAR>();
-
-            Debug.Log("Test Evaluate");
-            currentLifepoints.Add("user", lifepointMax);
-            currentLifepoints.Add("enemy", lifepointMax);
-        }
-
-        // Play Turn with "Space"
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log(EvaluateCards(testUser, testEnemy));
-            Debug.Log("enemy: " + currentLifepoints["enemy"]);
-            Debug.Log("user: " + currentLifepoints["user"]);
-        }
-
-        // Proof of Concept calling function list with "F"
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            libAR = GetComponent<LibAR>();
-            List<Action<Gamelogic, String>> actions = new List<Action<Gamelogic, String>>();
-            actions.Add(libAR.Test);
-            libAR.RunTest(actions, this);
-            Debug.Log(TestVar);
-        }
-
-        // Proof of Concept Reset
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            foreach (var item in stringToInput) {
-                Action<Gamelogic,object> func = stringToFunc[item.Key];
-                func(this, item.Value);
-                Debug.Log(TestVar);
-                stringToFunc.Remove(item.Key);
-                stringToInput.Remove(item.Key);
-            }
-        }
-    }
 
     public void DamageUser(int dmg)
     {
@@ -376,7 +332,7 @@ public class Gamelogic : MonoBehaviour
     {
         foreach (TablePlayer p in players)
         {
-            if (p.isPlayer)
+            if (!p.isPlayer)
             {
                 p.DrawCards(amount);
             }

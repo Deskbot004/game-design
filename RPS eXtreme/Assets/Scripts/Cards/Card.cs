@@ -92,6 +92,7 @@ public class Card : MonoBehaviour
         if (GetCardSprites().colors.ContainsKey(GetSymbol() + " window"))
             transform.Find("Card Sprites/Picture Background").GetComponent<SpriteRenderer>().color = GetCardSprites().colors[GetSymbol() + " window"]; // Set color
 
+        /*
         if(deck != null && !deck.GetTablePlayer().isPlayer)
         {
             transform.Find("Card Sprites/Cardback").gameObject.SetActive(true);
@@ -99,6 +100,7 @@ public class Card : MonoBehaviour
             transform.Find("Card Sprites/Lower Effect").gameObject.SetActive(false);
             return;
         }
+        */
     }
 
     public void flipCard()

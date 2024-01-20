@@ -17,21 +17,16 @@ public class LibAR : MonoBehaviour
         }
     }
 
-    public void RunTest(List<Action<Gamelogic, string>> actions, Gamelogic logic)
-    {
-        foreach (Action<Gamelogic, String> action in actions)
-        {
-            action(logic, "test");
-        }
-    }
 
-
-    /* 
-     * Multiply damage dealt.
-     */
+    /*
+    The caller deals the damage which is given.
+    The reset gets thrown into stringToFunc and stringToInput from Gamelogic titled "Dmg".
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card / and won
+           value: the amount of damage which should be dealt
+    */
     public void AdditionalDamage(Gamelogic logic, string caller, object value)
     {
-        Debug.Log("Additional Damage from" + caller);
         logic.stringToFunc["Dmg"] = ResetDamage;
         logic.stringToInput["Dmg"] = logic.GetdmgOnLoss();
         var damage = Convert.ToInt32(value);
@@ -44,52 +39,43 @@ public class LibAR : MonoBehaviour
         logic.SetdmgOnLoss(resetT);
     }
 
-    /* 
-     * Draw additional cards.
-     */
+    /*
+    The caller draws as many cards as specified. Special case the user does not need to win!
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card
+           value: the amount of cards to be drawn
+    */
     public void DrawCards(Gamelogic logic, string caller, object value)
     {
         
-        var amount = Convert.ToInt32(value);
-        Debug.Log("Drawing " + amount + " cards for " + caller);
-        if (caller == "player")
+        int amount = Convert.ToInt32(value);
+        if (String.Equals(caller, "user"))
         {
             logic.UserDraw(amount);
         }
-        if (caller == "enemy")
+        if (String.Equals(caller, "enemy"))
         {
             logic.EnemyDraw(amount);
         }
     }
 
-    /* 
-     * Draw additional cards.
-     */
+    /*
+    The caller heals for the given damage. (If expanded needs to be called after multiply dmg)
+    input: Gamelogic: the overarching Gamelogic
+           caller: the player who used the card
+           value: the heal multiplier
+    */
     public void Lifesteal(Gamelogic logic, string caller, object value)
     {
-        Debug.Log("Lifesteal from " + caller);
         var amount = Convert.ToInt32(value);
-        var damage = logic.GetdmgOnLoss() * amount;
-        if (caller == "player")
+        int damage = logic.GetdmgOnLoss() * amount;
+        if (String.Equals(caller, "user"))
         {
             logic.DamageUser((-1)*amount);
         }
-        if (caller == "enemy")
+        if (String.Equals(caller, "enemy"))
         {
             logic.DamageEnemy((-1) * amount);
         }
-    }
-
-    public void Test(Gamelogic logic, string caller)
-    {
-        logic.stringToFunc["Test"] = ResetTest;
-        logic.stringToInput["Test"] = logic.TestVar;
-        logic.TestVar = 9000;
-    }
-
-    public void ResetTest(Gamelogic logic, object reset)
-    {
-        var resetT = Convert.ToInt32(reset);
-        logic.TestVar = resetT;
     }
 }

@@ -28,15 +28,16 @@ public class SupportCard : Card
     public void Awake()
     {
         this.populateDictionaries();
+        this.SetFunctions();
     }
 
     // ---------- Getter & Setter ------------------------------------------------------------------------------
 
-    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR(){return ARFunctions;}
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR(){ return ARFunctions;}
 
-    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsBR() { return BRFunctions; }
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsBR() { return BRFunctions;}
 
-    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsDraw() { return drawFunctions; }
+    public override List<(Action<Gamelogic, string, object>, object)> GetFunctionsDraw() { return drawFunctions;}
 
 
     /*
