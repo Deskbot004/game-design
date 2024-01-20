@@ -67,12 +67,10 @@ public class LibAR : MonoBehaviour
     */
     public void Lifesteal(Gamelogic logic, string caller, object value)
     {
-        Debug.Log("Gonna suck life for "+value+" by "+caller);
         var amount = Convert.ToInt32(value);
         int damage = logic.GetdmgOnLoss() * amount;
         if (String.Equals(caller, "user"))
         {
-            Debug.Log("Yep we doing it");
             logic.DamageUser((-1)*amount);
         }
         if (String.Equals(caller, "enemy"))

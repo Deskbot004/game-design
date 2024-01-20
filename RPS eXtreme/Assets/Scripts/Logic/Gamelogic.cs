@@ -307,7 +307,6 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
-        
     }
 
     public void DamageEnemy(int dmg)
