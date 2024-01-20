@@ -7,10 +7,10 @@ public class LibAR : MonoBehaviour
 {
     public void RunAllAR(List<(Action<Gamelogic, string, object>,object)> actions, Gamelogic logic, string caller)
     {
-        Debug.Log("running AR for " + caller);
+        //Debug.Log("running AR for " + caller);
         foreach (var entry in actions)
         {
-            Debug.Log("Calling a function for " + caller);
+            //Debug.Log("Calling a function for " + caller);
             Action<Gamelogic, String, object> func = entry.Item1;
             object input = entry.Item2;
             func(logic, caller, input);
