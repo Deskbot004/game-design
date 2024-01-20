@@ -12,7 +12,6 @@ public class Opponent : TablePlayer
 
     public override IEnumerator playCards()
     {
-        Debug.Log("Opponent is playing cards");
         int i = 0;
         List<Card> playedCards = new List<Card>();
         foreach(Card card in this.hand.GetCards())
@@ -22,7 +21,8 @@ public class Opponent : TablePlayer
             {
                 break;
             }
-            if(playedCards.Contains(card)){ //Card has been played already (probably together with a support Card)
+            if(playedCards.Contains(card)) //Card has been played already (probably together with a support Card)
+            { 
                 continue;
             }
             if (!card.IsBasic())
@@ -49,7 +49,7 @@ public class Opponent : TablePlayer
 
     public int playNormalCard(Card card, int slot, List<Card> playedCards)
     {
-        Debug.Log("playing Normal Card");
+        Debug.Log("playing Normal Card with symbol " + card.GetSymbol());
         if (this.slots[slot].GetNormalAndSuppCards().Count == 0) 
         {
             NormalCard norm = (NormalCard)card;
@@ -65,16 +65,19 @@ public class Opponent : TablePlayer
 
     public int playSupportCard(Card card, int slot, List<Card> playedCards)
     {
-        Debug.Log("playing Support Card");
         SupportCard support = (SupportCard)card;
         foreach (Card card2 in this.hand.GetCards())
         {
+            if (playedCards.Contains(card))
+            { //Card has been played already (probably together with a support Card)
+                continue;
+            }
             if (card2.IsBasic())
             {
                 NormalCard normal = (NormalCard)card2;
                 if (normal.AttachSupportCard(support) == 0 && this.slots[slot].GetNormalAndSuppCards().Count == 0) //Attach the support Card to the basic card and play the basic Card into the slot
                 {
-                    Debug.Log("Normal to be attached to Card found");;
+                    Debug.Log("Normal to be attached to Card found with symbol " + normal.GetSymbol());;
                     this.slots[slot].SetCard(normal);
                     playedCards.Add(normal);
                     return 0;

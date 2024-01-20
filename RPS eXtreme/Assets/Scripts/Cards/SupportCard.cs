@@ -25,7 +25,6 @@ public class SupportCard : Card
     public void Awake()
     {
         this.populateDictionaries();
-        this.SetFunctions();
     }
 
     // ---------- Getter & Setter ------------------------------------------------------------------------------

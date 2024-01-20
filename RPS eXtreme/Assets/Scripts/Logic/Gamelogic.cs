@@ -196,6 +196,8 @@ public class Gamelogic : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log("Enemy Cards");
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
