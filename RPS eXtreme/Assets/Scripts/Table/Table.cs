@@ -86,11 +86,13 @@ public class Table : MonoBehaviour
         {
             slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["enemy"], "enemy");
+            healthUI.SetHealth(lifePoints["user"], "user");
         }
         else if (winner == "enemy")
         {
             slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["user"], "user");
+            healthUI.SetHealth(lifePoints["enemy"], "enemy");
         }
         yield return new WaitForSeconds(waitTimer);
         foreach (Slot slot in slots.Values)
