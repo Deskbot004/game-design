@@ -8,14 +8,20 @@ public class WinLoseScreen : MonoBehaviour
 {
     public TextMeshProUGUI winText;
 
-    void Start()
+    public void showWinner(string winner)
     {
-        if (!DataBetweenScreens.playerWon) winText.text = "You Lost!";
+        bool playerWon = winner == "user";
+        if(!playerWon) 
+        {
+            winText.text = "You Lost...";
+        }
+        gameObject.SetActive(true);
+        GetComponent<Animator>().SetBool("playerWon", playerWon);
     }
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("TestingScene");
+        SceneManager.LoadScene("Main Game");
     }
 
     public void MainMenu()

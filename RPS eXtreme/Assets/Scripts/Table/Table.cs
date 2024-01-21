@@ -16,6 +16,7 @@ public class Table : MonoBehaviour
     [Header("Visual Stuff")]
     public SpriteRenderer dim;
     public Health healthUI;
+    public WinLoseScreen winLoseScreen;
 
     [Header("Debugging")]
     public bool quickResolve;
@@ -104,8 +105,10 @@ public class Table : MonoBehaviour
     public void SetWinner(string name)
     {
         // TODO Add Fade
-        DataBetweenScreens.playerWon = name == "user";
-        SceneManager.LoadScene("WinLoseScreen");
+        //DataBetweenScreens.playerWon = name == "user";
+        //SceneManager.LoadScene("WinLoseScreen");
+
+        winLoseScreen.showWinner(name);
     }
 
     public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
