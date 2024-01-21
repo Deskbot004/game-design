@@ -10,7 +10,7 @@ A game project created in the context of "Einführung in die Spielentwicklung" i
 | Krivorutski, Julia | 10012457 |
 
 #  Basic Description & Tutorial
-The current version of the game features a card based rock, paper, scissors variant.
+The current version of the game features a card-based rock, paper, scissors variant.
 
 ## Main menu
 ### Play
@@ -47,6 +47,7 @@ After the cards are dealt the Game-loop begins:
 The loop ends after a player hits a lifetotal of 0 or below and the Option to **Restart** with the same decks or **Return** to the main menu is presented.
 
 ### Special Rules
+After playing every card in the players hand a new set of cards (Amount equal to starting draw) is given to the player.
 
 ## Planned Extensions
 - Rebuild the game to be a deck building tournament mode
