@@ -99,12 +99,20 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public void StartAttach(NormalCard baseCard)
     {
         OpenAttachMode();
-        if(attachModeCardInFocus != null) 
+        if(attachModeCardInFocus == baseCard)
+        {
+            FinishAttach();
+            return;
+        }
+        else if(attachModeCardInFocus != null)
+        {
             RemoveAttachFocusFrom(attachModeCardInFocus);
+        }
         SetAttachFocusOn(baseCard);
         endTurnButton.SetActive(false);
         attachDoneButton.SetActive(true);
         detachButton.SetActive(baseCard.HasAttachedCards());
+        hand.ArrangeHand(true, 0.3f);
     }
 
     public void DetachAllCards() 
@@ -124,6 +132,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         endTurnButton.SetActive(true);
         RemoveAttachFocusFrom(attachModeCardInFocus);
         CloseAttachMode();
+        hand.ArrangeHand(true, 0.3f);
     }
 
     // ----- Helper Functions -----
@@ -154,7 +163,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             else
                 card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
         }
-        //hand.ArrangeHand();
     }
 
     public void SetAttachFocusOn(NormalCard focusCard)
@@ -179,7 +187,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
         // Everything succeeded
         attachModeCardInFocus = focusCard;
-        hand.ArrangeHand();
     }
 
     public void RemoveAttachFocusFrom(NormalCard focusCard)
@@ -195,7 +202,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
         // Everything succeeded
         attachModeCardInFocus = null;
-        hand.ArrangeHand(true, 0.3f);
     }
 
     // ---------- Droppable -------------------------------------------------------------------------------------
