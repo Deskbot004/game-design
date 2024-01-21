@@ -3,19 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Buttons")]
     public GameObject menu;
     public GameObject options;
     public GameObject credits;
     public GameObject selection;
 
+    [Header("Player Select")]
     public string selectedPlayerDeckName;
     public string selectedOpponentDeckName;
 
     public TextMeshProUGUI playerSelectedText;
     public TextMeshProUGUI enemySelectedText;
+
+    public GameObject playerSelectCard;
+    public GameObject enemySelectCard;
+
+    private DeckSelectSprites sprites;
+
+    private FadeInOut fade;
 
     public void Awake()
     {
@@ -25,6 +35,10 @@ public class MainMenu : MonoBehaviour
         Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
         this.playerSelectedText.text = playerDeck.flavor;
         this.enemySelectedText.text = opponentDeck.flavor;
+        this.sprites = GetComponent<DeckSelectSprites>();
+        this.fade = this.selection.transform.Find("SelectionPanel/Buttons/StartGame").GetComponent<FadeInOut>();
+        HandleRPSOpponentSelection(0);
+        HandleRPSPlayerSelection(0);
     }
 
 
@@ -35,6 +49,13 @@ public class MainMenu : MonoBehaviour
 
     public void LoadTable()
     {
+        StartCoroutine(LoadTableCor());  
+    }
+
+    public IEnumerator LoadTableCor()
+    {
+        fade.FadeIn();
+        yield return new WaitForSeconds(fade.timeToFade);
         GameObject opponentDeckObject = GameObject.Find(this.selectedOpponentDeckName);
         Deck opponentDeck = opponentDeckObject.GetComponent<Deck>();
         GameObject playerDeckObject = GameObject.Find(this.selectedPlayerDeckName);
@@ -45,9 +66,6 @@ public class MainMenu : MonoBehaviour
             playerDeck.SaveDeck();
             SceneManager.LoadSceneAsync("Main Game");
         }
-        
-
-        
     }
 
     /*
@@ -68,7 +86,8 @@ public class MainMenu : MonoBehaviour
         this.selectedOpponentDeckName = valueToDeckname[value];
         Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
         this.enemySelectedText.text = opponentDeck.flavor;
-
+        enemySelectCard.transform.Find("Symbol Mask/Symbol Image").GetComponent<Image>().sprite = sprites.windowSprites[selectedOpponentDeckName.Substring(11)];
+        enemySelectCard.transform.Find("Background").GetComponent<Image>().color = sprites.backgroundColors[selectedOpponentDeckName.Substring(11)];
     }
 
     /*
@@ -89,6 +108,8 @@ public class MainMenu : MonoBehaviour
         this.selectedPlayerDeckName = valueToDeckname[value];
         Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
         this.playerSelectedText.text = playerDeck.flavor;
+        playerSelectCard.transform.Find("Symbol Mask/Symbol Image").GetComponent<Image>().sprite = sprites.windowSprites[selectedPlayerDeckName.Substring(9)];
+        playerSelectCard.transform.Find("Background").GetComponent<Image>().color = sprites.backgroundColors[selectedPlayerDeckName.Substring(9)];
 
     }
 
