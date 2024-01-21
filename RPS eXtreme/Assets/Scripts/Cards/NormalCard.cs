@@ -57,6 +57,7 @@ public class NormalCard : Card, Droppable
         {
             if (this.supportCards[slot] != null) //detach previously attached card
             {
+                //TODO Rework
                 /*if (this.DetachSupportCard(this.supportCards[slot], slot) == -1)
                 {
                     Debug.Log("Called DetachSupportCard with unknown SlotName in AttachSupportCard");
