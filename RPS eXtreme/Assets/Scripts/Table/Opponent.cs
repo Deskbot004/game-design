@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Opponent : TablePlayer
 {
@@ -144,12 +145,12 @@ public class Opponent : TablePlayer
 
         var wantedSlots = new Queue<int>();
         var slotfill = stats["numSlots"];
-        bool beResourceful = false;
+        /*bool beResourceful = false;
 
         if(stats["numBasic"] <= 3)
         {
             beResourceful = true;
-        }
+        }*/
 
 
         if (stats["numBasic"] < stats["numSlots"]) {
@@ -231,6 +232,8 @@ public class Opponent : TablePlayer
             this.hand.RemoveCard(card);
         }
         this.hand.ArrangeHand();
+        
+        table.player.endTurnButton.GetComponent<Button>().interactable = true;
 
         yield return new WaitForSeconds(0.5f);
         float animationLength = table.TurnEnemySlotCards();

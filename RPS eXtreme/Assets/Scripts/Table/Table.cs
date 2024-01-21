@@ -66,7 +66,6 @@ public class Table : MonoBehaviour
                 slot.ClearCard();
                 if (card != null)
                 {
-                    // TODO: Play animation of card being removed
                     List<SupportCard> supCards = card.DetachAllCards();
                     p.discardpile.GetCards().Add(card);
                     StartCoroutine(p.DiscardCard(card));
@@ -81,8 +80,7 @@ public class Table : MonoBehaviour
         }
     }
 
-    //TODO: Fix when no cards in slot
-    // TODO: Set all waitforseconds higher
+    // TODO: Make better anim for no cards in slot
     public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
     {
         List<string> winnerToInt = new() {"user", "enemy", "none"};
@@ -151,10 +149,6 @@ public class Table : MonoBehaviour
 
     public void SetWinner(string name)
     {
-        // TODO Add Fade
-        //DataBetweenScreens.playerWon = name == "user";
-        //SceneManager.LoadScene("WinLoseScreen");
-
         winLoseScreen.showWinner(name);
     }
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Gamelogic : MonoBehaviour
 {
@@ -89,6 +90,7 @@ public class Gamelogic : MonoBehaviour
     */
     public void ResolveTurn()
     {
+        table.player.endTurnButton.GetComponent<Button>().interactable = false;
         StartCoroutine(ResolveTurnCoroutine());
     }
 

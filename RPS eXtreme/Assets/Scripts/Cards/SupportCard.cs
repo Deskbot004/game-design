@@ -212,7 +212,7 @@ public class SupportCard : Card
         switch (functionName)
         {
             case "draw":
-                this.description = "Draw " + value;
+                this.description = "Draw " + value + " on win or lose";
                 break;
 
             case "extra damage":
