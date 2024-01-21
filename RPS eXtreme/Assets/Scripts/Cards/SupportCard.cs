@@ -189,11 +189,17 @@ public class SupportCard : Card
         this.transform.Find("Card Sprites/Lower Effect/Text").GetComponent<TMP_Text>().text = description;
 
         // Set hexagon icons
-        if (this.GetCardSprites().supportIconSprites.ContainsKey(effectType))
+        if (this.GetCardSprites().supportWindowSprites.ContainsKey(effectType)) //TODO: Change back to supportIconSprites
         {
             // TODO: Change supportWindowSprites to supportIconSprites
             this.transform.Find("Card Sprites/Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[effectType];
             this.transform.Find("Card Sprites/Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites[effectType];
+        }
+        else if (effectType == "win against" && this.GetCardSprites().supportWindowSprites.ContainsKey("win against " + effectValue))
+        {
+            this.transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites["win against " + effectValue];
+            this.transform.Find("Card Sprites/Upper Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites["win against " + effectValue];
+            this.transform.Find("Card Sprites/Lower Effect/Icon").GetComponent<SpriteRenderer>().sprite = GetCardSprites().supportWindowSprites["win against " + effectValue];
         }
     }
 

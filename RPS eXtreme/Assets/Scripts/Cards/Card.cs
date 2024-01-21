@@ -47,7 +47,10 @@ public class Card : MonoBehaviour
         }
     }
 
-    public virtual void OnRightClickInHand() { }
+    public virtual void OnRightClickInHand() 
+    { 
+        if(!deck.GetTablePlayer().isPlayer) return;
+    }
 
     /*
      * Checks, if the card is a SupportCard or a NormalCard. false = Support, true = Normal.

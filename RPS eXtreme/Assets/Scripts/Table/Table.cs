@@ -87,25 +87,29 @@ public class Table : MonoBehaviour
         Dictionary<string, Slot> slots = GetSlotByNr(slotNr);
         foreach (Slot slot in slots.Values)
         {
-            slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+            if(slot.GetCard() != null)
+                slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
         }
         yield return new WaitForSeconds(waitTimer);
         if(winner == "user")
         {
-            slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            if(slots["enemy"].GetCard() != null)
+                slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["enemy"], "enemy");
             healthUI.SetHealth(lifePoints["user"], "user");
         }
         else if (winner == "enemy")
         {
-            slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            if(slots["user"].GetCard() != null)
+                slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
             healthUI.Damage(lifePoints["user"], "user");
             healthUI.SetHealth(lifePoints["enemy"], "enemy");
         }
         yield return new WaitForSeconds(waitTimer);
         foreach (Slot slot in slots.Values)
         {
-            slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            if(slot.GetCard() != null)
+                slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
         }
     }
 

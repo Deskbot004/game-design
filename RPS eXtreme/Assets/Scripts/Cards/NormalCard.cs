@@ -138,6 +138,8 @@ public class NormalCard : Card, Droppable
     public override void OnRightClickInHand()
     {
         base.OnRightClickInHand();
+        if(!deck.GetTablePlayer().isPlayer) return;
+        Debug.Log("hi");
         this.deck.GetTablePlayer().StartAttach(this);
     }
 
