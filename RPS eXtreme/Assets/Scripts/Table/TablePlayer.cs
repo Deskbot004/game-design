@@ -251,8 +251,8 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             {
                 card.transform.position = drawpile.transform.position;
                 card.GetComponent<Animator>().SetBool("faceFront", false);
-                //card.GetComponent<Animator>().SetBool("flip", isPlayer);
-                card.GetComponent<Animator>().SetBool("flip", true); // TODO: Change back to hide enemy cards
+                card.GetComponent<Animator>().SetBool("flip", isPlayer);
+                //card.GetComponent<Animator>().SetBool("flip", true); // TODO: Change back to hide enemy cards
             }
             StartCoroutine(card.MoveToTarget(0.5f));
             float actualOffset = cards.Contains(card)? timeOffset : 0f;

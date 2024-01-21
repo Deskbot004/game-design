@@ -185,4 +185,10 @@ public class MainMenu : MonoBehaviour
     {
         rgbAnimator.SetBool("rgbMode", !rgbAnimator.GetBool("rgbMode"));
     }
+
+    public void FullscreenMode()
+    {
+        if( Screen.fullScreen ) Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        else Screen.fullScreenMode = FullScreenMode.Windowed;
+    }
 }
