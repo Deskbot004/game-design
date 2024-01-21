@@ -64,7 +64,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -90,7 +90,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -2998686286087705572}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 3916434414387288620}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -105,6 +106,33 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &3916434414387288620
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59d6ea9421aa8844c8628f3e3f4ec297, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useMultiple: 0
+  clip: {fileID: 8300000, guid: 2d9017b6a35b6e94b99d91665e82e010, type: 3}
+  clips: []
+  condition: 0
+  delayer:
+    delayType: 0
+    timer:
+      loops: 0
+      time: 0
+    frameTimer:
+      loops: 0
+      frame: 0
+  frequencyTimer:
+    loops: 0
+    time: 0
 --- !u!1107 &4046748389095807676
 AnimatorStateMachine:
   serializedVersion: 6

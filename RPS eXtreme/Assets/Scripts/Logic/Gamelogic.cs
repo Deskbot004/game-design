@@ -67,16 +67,6 @@ public class Gamelogic : MonoBehaviour
 
         EnemyDraw(startDraw + turnDraw);
         UserDraw(startDraw + turnDraw);
-        //StartTurn();
-        /*
-        foreach (TablePlayer p in players)
-        {
-            if (!p.isPlayer)
-            {
-                p.StartCoroutine(p.playCards());
-            }
-        }
-        */
     }
     
     /* Starts the turn by drawing cards.
@@ -89,12 +79,6 @@ public class Gamelogic : MonoBehaviour
         foreach (TablePlayer p in players)
         {
             p.DrawCards(turnDraw);
-            /*
-            if (!p.isPlayer)
-            {
-                p.StartCoroutine(p.playCards());
-            }
-            */
         }
     }
 
@@ -323,7 +307,6 @@ public class Gamelogic : MonoBehaviour
     public void DamageUser(int dmg)
     {
         currentLifepoints["user"] -= dmg;
-        
     }
 
     public void DamageEnemy(int dmg)
