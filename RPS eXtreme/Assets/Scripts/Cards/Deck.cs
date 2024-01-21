@@ -13,6 +13,8 @@ public class Deck : MonoBehaviour
     private Constructor constructor;
     public List<Card> cards = new List<Card>();
     public string deckName;
+
+    [TextArea(3,20)]
     public string flavor;
     private TablePlayer tablePlayer;
     [Header("[resourcing,right,rock,paper,scissors,random,support]")]
