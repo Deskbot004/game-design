@@ -78,7 +78,8 @@ public class Gamelogic : MonoBehaviour
     {
         foreach (TablePlayer p in players)
         {
-            p.DrawCards(turnDraw);
+            if(p.hand.GetCards().Count == 0) p.DrawCards(startDraw);
+            else p.DrawCards(turnDraw);
         }
     }
 
