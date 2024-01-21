@@ -12,11 +12,15 @@ public class SupportCard : Card
     public string description;
 
     private bool isAttached;
-    public List<string> functionNames; // The entries should match one of the patterns library:nameofFunction:functionValue or library:nameOfFunction.
+
+    // The entries should match one of the patterns library:nameofFunction:functionValue or library:nameOfFunction.
+    public List<string> functionNames; 
     private List<(Action<Gamelogic, string, object>, object)> ARFunctions = new List<(Action<Gamelogic, string, object>,object)>();
     private List<(Action<Gamelogic, string, object>, object)> BRFunctions = new List<(Action<Gamelogic, string, object>, object)>();
     private List<(Action<Gamelogic, string, object>, object)> drawFunctions = new List<(Action<Gamelogic, string, object>, object)>();
-    private int[] viableSlotTypes = { 0, 1 }; // 0: fits in top slot, 1: fits in bottom slot
+    
+    // 0: fits in top slot, 1: fits in bottom slot
+    private int[] viableSlotTypes = { 0, 1 }; 
     private LibAR libAR;
     private LibBR libBR;
     private Dictionary<string, Action<Gamelogic, string, object>> ARLibrary;
@@ -40,9 +44,8 @@ public class SupportCard : Card
 
 
     /*
-     * Check each entry of functionNames for a matching pattern and assign entries to functionValues and functions according to the pattern.
-     */
-
+    * Check each entry of functionNames for a matching pattern and assign entries to functionValues and functions according to the pattern.
+    */
     private void SetFunctions()
     {
         foreach(string function in this.functionNames)
@@ -130,9 +133,8 @@ public class SupportCard : Card
     }
 
     /*
-     * Checks, if the type is a viable slotType and sets the type, if it is.
-     */
-
+    * Checks, if the type is a viable slotType and sets the type, if it is.
+    */
     public override int SetSlotType(int type)
     {
         if (Array.Exists(viableSlotTypes, element => element == type))
@@ -163,7 +165,6 @@ public class SupportCard : Card
         this.isAttached = status;
         return 0;
     }
-
 
     public override void SetSprite()
     {
@@ -236,6 +237,7 @@ public class SupportCard : Card
         base.OnRightClickInHand();
         if(!deck.GetTablePlayer().isPlayer) return;
         /* 
+        TODO Rightclick on support hand attaches it to card in focus, if there is any
         if(this.status == 1 && deck.GetTablePlayer().GetCardInFocus() != null)
         {
             if(deck.GetTablePlayer().GetCardInFocus().OnDrop(GetComponent<Draggable>()))

@@ -60,8 +60,8 @@ public class Deck : MonoBehaviour
     }
 
     /*
-     * Saves the Deck into a text file using Json and a DeckManager.
-     */
+    * Saves the Deck into a text file using Json and a DeckManager.
+    */
     [ContextMenu("Save Deck")]
     public void SaveDeck()
     {
@@ -98,16 +98,12 @@ public class Deck : MonoBehaviour
         save.preferences = this.preferences;
         string savedDeck = JsonUtility.ToJson(save);
 
-        Debug.Log("Saved String: " + savedDeck);
-
         File.WriteAllText(filename_location, savedDeck);
-
     }
 
     /*
-     * Loads the Deck from a text file using Json and a DeckManager.
-     */
-
+    * Loads the Deck from a text file using Json and a DeckManager.
+    */
     public void LoadDeck(string filename)
     {
         //Read text from file and convert it into a DeckManager
@@ -163,8 +159,8 @@ public class Deck : MonoBehaviour
     }
 
     /*
-     * Loads the Deck saved under its deckname from a text file using Json and a DeckManager.
-     */
+    * Loads the Deck saved under its deckname from a text file using Json and a DeckManager.
+    */
     [ContextMenu("Load Deck")]
     public void LoadDeckFromEditor()
     {

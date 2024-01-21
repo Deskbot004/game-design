@@ -10,7 +10,9 @@ using System.Linq;
 public class NormalCard : Card, Droppable
 {
     private Dictionary<string, SupportCard> supportCards = new Dictionary<string, SupportCard>();
-    private int[] viableSlotTypes = { 0, 1, 2 , 3 }; // 0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
+    
+    // 0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
+    private int[] viableSlotTypes = { 0, 1, 2 , 3 }; 
     private bool dropActive = false;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
@@ -30,12 +32,11 @@ public class NormalCard : Card, Droppable
     }
 
     /*
-     * Checks, if the type of the SupportCard matches any of the slots of the NormalCard.
-     * If that is not the case, the function returns 1.
-     * Otherwise it assigns the SupportCard to its matching slot.
-     * Any SupportCards already in that slot will be removed.
-     */
-
+    * Checks, if the type of the SupportCard matches any of the slots of the NormalCard.
+    * If that is not the case, the function returns 1.
+    * Otherwise it assigns the SupportCard to its matching slot.
+    * Any SupportCards already in that slot will be removed.
+    */
     public int AttachSupportCard(SupportCard card)
     {
         int type = card.GetSlotType();
@@ -70,17 +71,15 @@ public class NormalCard : Card, Droppable
         }
         else
         {
-            //Debug.Log("Attached SupportCard doesn't have a matching type!");
             return 1;
         }
     }
 
     /*
-     * Checks, if any of the attached cards in the slot match the given SupportCard.
-     * If the slot containing the card is already known, its key can be given in the parameter slotName and this check will be skipped.
-     * The SupportCard is then removed from the slot.
-     */
-
+    * Checks, if any of the attached cards in the slot match the given SupportCard.
+    * If the slot containing the card is already known, its key can be given in the parameter slotName and this check will be skipped.
+    * The SupportCard is then removed from the slot.
+    */
     public int DetachSupportCard(SupportCard card, string slotName = "Unknown")
     {
         if (slotName == "Unknown")
@@ -163,25 +162,11 @@ public class NormalCard : Card, Droppable
         return false;
     }
 
-    public int OccupiedSlots() {
-        // 0: nothing occupied, 1: top slot occupied, 2: bottom slot occupied; 3: both slots occupied
-        var occupied = 0;
-        foreach(SupportCard card in supportCards.Values)
-        {
-            if(!card) continue;
-            if(card.GetSlotType() == 1 && occupied == 0) occupied = 1;
-            if(card.GetSlotType() == 1 && occupied == 2) occupied = 3;
-            if(card.GetSlotType() == 2 && occupied == 0) occupied = 2;
-            if(card.GetSlotType() == 2 && occupied == 1) occupied = 3;
-        }
-        return occupied;
-    }
-
     // ---------- Getter & Setter ------------------------------------------------------------------------------
 
     /*
-     * Sets the SlotType of the card according to the given integer and adds the corresponding slot-keys into the slot-dictionary
-     */
+    * Sets the SlotType of the card according to the given integer and adds the corresponding slot-keys into the slot-dictionary
+    */
 
     public override int SetSlotType(int type)
     {
@@ -269,14 +254,11 @@ public class NormalCard : Card, Droppable
         if (AttachSupportCard(draggedObject.GetComponent<SupportCard>()) == 0)
         {
             draggedObject.transform.SetParent(transform);
-            //draggedObject.transform.localPosition = new Vector3 (0, 0, 0.5f);
-            //draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
             draggedObject.GetComponent<SortingGroup>().sortingLayerName = "Cards Background";
             draggedObject.GetComponent<Card>().SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0.5f)));
             draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
             StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
             if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
-            //draggedObject.transform.eulerAngles = new Vector3 (0, 0, 0);
             return true;
         }
         return false;
@@ -288,5 +270,21 @@ public class NormalCard : Card, Droppable
     }
 
     public Transform GetTransform() { return this.transform; }
+
+    // --- unused ---------------------------------------------------------------------------
+    // Could be later used for replacing? But seems buggy...
+    public int OccupiedSlots() {
+        // 0: nothing occupied, 1: top slot occupied, 2: bottom slot occupied; 3: both slots occupied
+        var occupied = 0;
+        foreach(SupportCard card in supportCards.Values)
+        {
+            if(!card) continue;
+            if(card.GetSlotType() == 1 && occupied == 0) occupied = 1;
+            if(card.GetSlotType() == 1 && occupied == 2) occupied = 3;
+            if(card.GetSlotType() == 2 && occupied == 0) occupied = 2;
+            if(card.GetSlotType() == 2 && occupied == 1) occupied = 3;
+        }
+        return occupied;
+    }
 
 }
