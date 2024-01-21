@@ -25,6 +25,8 @@ public class MainMenu : MonoBehaviour
 
     private DeckSelectSprites sprites;
 
+    private FadeInOut fade;
+
     public void Awake()
     {
         this.selectedOpponentDeckName = "rpsOpponentStandard";
@@ -34,6 +36,7 @@ public class MainMenu : MonoBehaviour
         this.playerSelectedText.text = playerDeck.flavor;
         this.enemySelectedText.text = opponentDeck.flavor;
         this.sprites = GetComponent<DeckSelectSprites>();
+        this.fade = this.selection.transform.Find("SelectionPanel/Buttons/StartGame").GetComponent<FadeInOut>();
         HandleRPSOpponentSelection(0);
         HandleRPSPlayerSelection(0);
     }
@@ -46,6 +49,13 @@ public class MainMenu : MonoBehaviour
 
     public void LoadTable()
     {
+        StartCoroutine(LoadTableCor());  
+    }
+
+    public IEnumerator LoadTableCor()
+    {
+        fade.FadeIn();
+        yield return new WaitForSeconds(fade.timeToFade);
         GameObject opponentDeckObject = GameObject.Find(this.selectedOpponentDeckName);
         Deck opponentDeck = opponentDeckObject.GetComponent<Deck>();
         GameObject playerDeckObject = GameObject.Find(this.selectedPlayerDeckName);
@@ -56,9 +66,6 @@ public class MainMenu : MonoBehaviour
             playerDeck.SaveDeck();
             SceneManager.LoadSceneAsync("Main Game");
         }
-        
-
-        
     }
 
     /*
