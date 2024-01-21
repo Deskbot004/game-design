@@ -231,6 +231,22 @@ public class SupportCard : Card
         }
     }
 
+    public override void OnRightClickInHand()
+    {
+        base.OnRightClickInHand();
+        if(!deck.GetTablePlayer().isPlayer) return;
+        /* 
+        if(this.status == 1 && deck.GetTablePlayer().GetCardInFocus() != null)
+        {
+            if(deck.GetTablePlayer().GetCardInFocus().OnDrop(GetComponent<Draggable>()))
+            {
+                deck.GetTablePlayer().OnLeave(GetComponent<Draggable>());
+                GetComponent<Draggable>().SetCurrentDroppable(deck.GetTablePlayer().GetCardInFocus());
+            }
+        }
+        */
+    }
+
     // ---------- Dictionaries ------------------------------------------------------------------------------
 
     public void populateDictionaries()
