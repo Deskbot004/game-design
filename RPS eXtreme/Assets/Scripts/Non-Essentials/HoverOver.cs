@@ -9,7 +9,8 @@ public class HoverOver : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public GameObject GOButton;
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GOButton.GetComponent<Image>().color = Color.grey;
+        //GOButton.GetComponent<Image>().color = new Color(180f, 180f, 180f);
+        GOButton.GetComponent<Image>().color = new Color(0.9f, 0.9f, 0.9f);
         GOButton.GetComponent<AudioSource>().Play();
         GOButton.GetComponent<Button>().onClick.AddListener(delegate { OnClick(); });
     }
