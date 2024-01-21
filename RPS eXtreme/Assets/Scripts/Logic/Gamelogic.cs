@@ -78,7 +78,8 @@ public class Gamelogic : MonoBehaviour
     {
         foreach (TablePlayer p in players)
         {
-            p.DrawCards(turnDraw);
+            if(p.hand.GetCards().Count == 0) p.DrawCards(startDraw);
+            else p.DrawCards(turnDraw);
         }
     }
 
@@ -95,9 +96,9 @@ public class Gamelogic : MonoBehaviour
 
     public IEnumerator ResolveTurnCoroutine()
     {
-        float animationLength = table.TurnEnemySlotCards();
-        if(table.quickResolve) animationLength = 0;
-        yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
+        //float animationLength = table.TurnEnemySlotCards();
+        //if(table.quickResolve) animationLength = 0;
+        //yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
         table.dim.gameObject.SetActive(true);
 
         List<Slot> slotsUser = table.GetSlotsPlayer();

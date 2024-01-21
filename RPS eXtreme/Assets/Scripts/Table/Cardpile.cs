@@ -90,26 +90,33 @@ public class Cardpile : MonoBehaviour
     // On Mouse Hover darkens the deck
     void OnMouseEnter()
     {
-        GetComponent<SpriteRenderer>().color = hoverColor;
+        if(tablePlayer.isPlayer)
+            GetComponent<SpriteRenderer>().color = hoverColor;
     }
 
     void OnMouseExit()
     {
         //GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 255);
-        GetComponent<SpriteRenderer>().color = baseColor;
+        if(tablePlayer.isPlayer)
+            GetComponent<SpriteRenderer>().color = baseColor;
     }
 
     void OnMouseDown()
     {
-        GetComponent<SpriteRenderer>().color = clickColor;
+        if(tablePlayer.isPlayer)
+            GetComponent<SpriteRenderer>().color = clickColor;
     }
 
     // Displays the cards on the screen
     void OnMouseUpAsButton()
     {
-        if (!open) openPile();
-        else closePile();
-        GetComponent<SpriteRenderer>().color = hoverColor;
+        if(tablePlayer.isPlayer)
+        {
+            if (!open) openPile();
+            else closePile();
+            GetComponent<SpriteRenderer>().color = hoverColor;
+        }
+        
     }
 
     // ------ Getter und Setter -------------------------------------------------------------------

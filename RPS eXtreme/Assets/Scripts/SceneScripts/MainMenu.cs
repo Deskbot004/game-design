@@ -23,6 +23,9 @@ public class MainMenu : MonoBehaviour
     public GameObject playerSelectCard;
     public GameObject enemySelectCard;
 
+    [Header("Options")]
+    public Animator rgbAnimator;
+
     private DeckSelectSprites sprites;
 
     private FadeInOut fade;
@@ -178,5 +181,14 @@ public class MainMenu : MonoBehaviour
         Application.Quit();
     }
 
+    public void rgbMode()
+    {
+        rgbAnimator.SetBool("rgbMode", !rgbAnimator.GetBool("rgbMode"));
+    }
 
+    public void FullscreenMode()
+    {
+        if( Screen.fullScreen ) Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+        else Screen.fullScreenMode = FullScreenMode.Windowed;
+    }
 }
