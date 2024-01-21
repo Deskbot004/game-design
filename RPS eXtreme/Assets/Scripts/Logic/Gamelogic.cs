@@ -27,8 +27,7 @@ public class Gamelogic : MonoBehaviour
                                  { 0, -1, 1, 1, 0 }, 
                                  { 1, 0, -1, 0, 1 }, 
                                  { 0, 0, 1, -1, 1 }, 
-                                 { 1, 1, 0, 0, -1 } };
-    // TODO WIP translator of Symbol to Entry number 
+                                 { 1, 1, 0, 0, -1 } }; 
     public Dictionary<string, int> symbolToEntry = new Dictionary<string, int>();
 
 
@@ -41,10 +40,10 @@ public class Gamelogic : MonoBehaviour
 
 
     /* Initialises the Gamelogic for the current game
-     * 
-     * Input: Table from which the game started.
-     * Output: none
-     */
+    * 
+    * Input: Table from which the game started.
+    * Output: none
+    */
     public void init(Table table)
     {
         // rework?
@@ -70,10 +69,10 @@ public class Gamelogic : MonoBehaviour
     }
     
     /* Starts the turn by drawing cards.
-     * 
-     * Input: none
-     * Output: none
-     */
+    * 
+    * Input: none
+    * Output: none
+    */
     void StartTurn()
     {
         foreach (TablePlayer p in players)
@@ -84,21 +83,17 @@ public class Gamelogic : MonoBehaviour
     }
 
     /* Should get triggered after user is finished for the turn. Evaluates each slot.
-     * 
-     * Input: none
-     * Output: none
-     */
+    * 
+    * Input: none
+    * Output: none
+    */
     public void ResolveTurn()
     {
-        //Debug.Log("Turn resolve started");
         StartCoroutine(ResolveTurnCoroutine());
     }
 
     public IEnumerator ResolveTurnCoroutine()
     {
-        //float animationLength = table.TurnEnemySlotCards();
-        //if(table.quickResolve) animationLength = 0;
-        //yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
         table.dim.gameObject.SetActive(true);
 
         List<Slot> slotsUser = table.GetSlotsPlayer();
@@ -113,19 +108,15 @@ public class Gamelogic : MonoBehaviour
                     string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
                     yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
                     foreach (var item in stringToInput.Reverse()) {
-                    Action<Gamelogic,object> func = stringToFunc[item.Key];
-                    func(this, item.Value);
-        }
-        
-        stringToInput.Clear();
-        stringToFunc.Clear();
+                        Action<Gamelogic,object> func = stringToFunc[item.Key];
+                        func(this, item.Value);
+                    }
+                    stringToInput.Clear();
+                    stringToFunc.Clear();
                 }
             }
         }
         table.dim.gameObject.SetActive(false);
-
-        
-
         table.ClearSlots();
 
         if (currentLifepoints["user"] <= 0)
@@ -166,12 +157,12 @@ public class Gamelogic : MonoBehaviour
         {
             skipEval = true;
         }
-        else if (!cardsUser.Any()) //automatic win for enemy because user didnt't play cards
+        else if (!cardsUser.Any()) //automatic win for enemy because user didn't play cards
         {
             skipEval = true;
             attack = 1;
         }
-        else if (!cardsEnemy.Any()) //automatic win for user because enemy didnt't play cards
+        else if (!cardsEnemy.Any()) //automatic win for user because enemy didn't play cards
         {
             skipEval = true;
             attack = 0;
@@ -201,17 +192,14 @@ public class Gamelogic : MonoBehaviour
             }
         }
 
-        //Debug.Log("Enemy Cards");
         foreach (Card card in cardsEnemy)
         {
             if (card.IsBasic())
             {
                 symbolToEntryEnemy = symbolToEntry[card.GetSymbol()];
-                //Debug.Log(card.GetSymbol());
             }
             else
             {
-                //Debug.Log(card.GetSymbol());
                 if (card.GetFunctionsAR().Any())
                 {
                     enemyARfunctions.AddRange(card.GetFunctionsAR());
@@ -240,21 +228,11 @@ public class Gamelogic : MonoBehaviour
             attack = winMatrix[symbolToEntryUser, symbolToEntryEnemy];
         }
 
-        /* TODO: How to implement the call of the functions
-            A Card should know its function plus its intensity -> How? Dictionary?
-            This gets translated into a function -> How? IDK help
-            The Resulting list gets executed -> Problem Timing, Variable accessibility
-            
-            Save Dictionary with function -> Input parameter
-        */
-
         if (attack == -1)
         {
-            Debug.Log("Draw");
             return "none";
         } else if (attack == 0)
         {
-            Debug.Log("UserWon");
             if (userARfunctions.Any())
             {
                 libAR.RunAllAR(userARfunctions, this, "user");
@@ -271,7 +249,6 @@ public class Gamelogic : MonoBehaviour
             return "user";
         } else if (attack == 1)
         {
-            Debug.Log("EnemyWon");
             if (enemyARfunctions.Any())
             {
                 libAR.RunAllAR(enemyARfunctions, this, "enemy");
@@ -300,7 +277,6 @@ public class Gamelogic : MonoBehaviour
      */
     void GameEnd(string s)
     {
-        Debug.Log("Game ended with winner " + s);
         table.SetWinner(s);
     }
 
@@ -336,7 +312,7 @@ public class Gamelogic : MonoBehaviour
         }
     }
 
-    // Start of various getter stuff -------------------------------------------------------------------------------------------------
+    // Start of various setter stuff -------------------------------------------------------------------------------------------------
     public void SetStartDraw(int startDraw)
     {
         this.startDraw = startDraw;
@@ -361,7 +337,7 @@ public class Gamelogic : MonoBehaviour
         this.winMatrix = winMatrix;
     }
 
-    // Start of various setter stuff -------------------------------------------------------------------------------------------------
+    // Start of various getter stuff -------------------------------------------------------------------------------------------------
     public int GetStartDraw()
     {
         return this.startDraw;

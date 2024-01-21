@@ -12,9 +12,6 @@ public class Draggable : MonoBehaviour
     private Droppable currentDroppable; // The Droppable Object it's currently in
     private Droppable defaultDroppable; // Handles drops, when this Draggable isn't in a Droppable
 
-    //TODO: In Unity, layer the card properly
-
-
     // ---------- Main Functions -------------------------------------------------------------------------------------------
     void Start()
     {
