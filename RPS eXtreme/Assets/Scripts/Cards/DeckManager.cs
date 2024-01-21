@@ -15,5 +15,6 @@ public class DeckManager
     public List<int> cardTypes = new List<int>();
     public List<int> slotTypes = new List<int>();
     public List<string> functions = new List<string>();
+    public List<float> preferences = new List<float>();
 
 }
