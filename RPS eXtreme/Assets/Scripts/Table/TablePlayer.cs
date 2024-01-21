@@ -238,6 +238,10 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         List<Cardpile> allPiles  = new List<Cardpile> {drawpile, discardpile};
         return allPiles;
     }
+    public NormalCard GetCardInFocus()
+    {
+        return attachModeCardInFocus;
+    }
 
     // ------ Animation -------------------------------------------------------------------
     protected virtual IEnumerator DealCards(List<Card> cards, float timeOffset)
