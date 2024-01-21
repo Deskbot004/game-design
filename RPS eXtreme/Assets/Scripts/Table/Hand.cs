@@ -67,8 +67,6 @@ public class Hand : MonoBehaviour
         {
             currentPosition.z = currentZ;
             currentZ += 0.1f;
-            //card.transform.position = transform.TransformDirection(currentPosition) + transform.position;
-            //card.transform.eulerAngles = new Vector3(0, 0, currentDegree);
             card.SetWorldTargetPosition(transform.TransformDirection(currentPosition) + transform.position);
             card.SetTargetRotation(new Vector3(0, 0, currentDegree));
             if (moveInstantly) StartCoroutine(card.MoveToTarget(moveTime));
@@ -90,7 +88,6 @@ public class Hand : MonoBehaviour
         float m_13 = 2 * a * (Mathf.Pow(a, 2) + Mathf.Pow(b, 2));
 
         circleCenter.y = -m_13 / (2 * m_11);
-        //circleCenter = transform.TransformPoint(circleCenter);
         circleRadius = -circleCenter.y;
     }
 

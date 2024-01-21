@@ -119,8 +119,6 @@ public class Deck : MonoBehaviour
             return;
         }
 
-        Debug.Log("Loaded String: " + savedDeck);
-
         DeckManager save = JsonUtility.FromJson<DeckManager>(savedDeck);
         if (!(save.cardSymbols.Count == save.cardTypes.Count && save.cardSymbols.Count == save.functions.Count && save.cardSymbols.Count == save.slotTypes.Count))
         {

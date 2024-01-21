@@ -64,7 +64,7 @@ public class Cardpile : MonoBehaviour
         {
             card.GetComponent<Draggable>().enabled = false;
         }
-        // TODO: Also disable draggable for cards in hand
+        // TODO: Also disable draggable for cards in hand + EndTurn etc in background
         open = true;
     }
 
@@ -85,7 +85,6 @@ public class Cardpile : MonoBehaviour
         open = false;
     }
 
-    // TODO: Animation
     // ------ Animation Stuff -------------------------------------------------------------------
     // On Mouse Hover darkens the deck
     void OnMouseEnter()
@@ -96,7 +95,6 @@ public class Cardpile : MonoBehaviour
 
     void OnMouseExit()
     {
-        //GetComponent<SpriteRenderer>().color = new Color(255, 255, 255, 255);
         if(tablePlayer.isPlayer)
             GetComponent<SpriteRenderer>().color = baseColor;
     }
