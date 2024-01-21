@@ -230,8 +230,11 @@ public class Opponent : TablePlayer
             this.hand.RemoveCard(card);
         }
         this.hand.ArrangeHand();
-        yield return null;
 
+        yield return new WaitForSeconds(0.5f);
+        float animationLength = table.TurnEnemySlotCards();
+        if(table.quickResolve) animationLength = 0;
+        yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
     }
 
 

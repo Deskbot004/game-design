@@ -19,7 +19,7 @@ public class Card : MonoBehaviour
 
     public AudioClip playWhenMoved;
 
-    private int status = -1; //-1: outside of game, 0: in a pile, 1: in hand/slot // TODO sollte in verschiedenen funktionen angepass werden
+    protected int status = -1; //-1: outside of game, 0: in a pile, 1: in hand 2: in slot // TODO sollte in verschiedenen funktionen angepass werden
 
     // Animation stuff
     private Vector3 targetPosition; // WorldPosition
@@ -40,7 +40,7 @@ public class Card : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            if (this.status == 1)
+            if (this.status > 0)
             {
                 OnRightClickInHand();
             }

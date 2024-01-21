@@ -139,7 +139,18 @@ public class NormalCard : Card, Droppable
     {
         base.OnRightClickInHand();
         if(!deck.GetTablePlayer().isPlayer) return;
-        Debug.Log("hi");
+        if(this.status == 2)
+        {
+            foreach (Slot slot in deck.GetTablePlayer().GetSlots())
+            {
+                if(slot.GetCard() == this)
+                {
+                    slot.OnLeave(this.GetComponent<Draggable>());
+                    SetStatus(1);
+                    GetComponent<Draggable>().SetCurrentDroppable(deck.GetTablePlayer());
+                }
+            }
+        }
         this.deck.GetTablePlayer().StartAttach(this);
     }
 

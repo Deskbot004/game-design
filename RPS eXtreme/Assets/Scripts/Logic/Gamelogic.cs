@@ -95,9 +95,9 @@ public class Gamelogic : MonoBehaviour
 
     public IEnumerator ResolveTurnCoroutine()
     {
-        float animationLength = table.TurnEnemySlotCards();
-        if(table.quickResolve) animationLength = 0;
-        yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
+        //float animationLength = table.TurnEnemySlotCards();
+        //if(table.quickResolve) animationLength = 0;
+        //yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
         table.dim.gameObject.SetActive(true);
 
         List<Slot> slotsUser = table.GetSlotsPlayer();

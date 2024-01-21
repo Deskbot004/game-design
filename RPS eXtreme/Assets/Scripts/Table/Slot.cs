@@ -40,10 +40,7 @@ public class Slot : MonoBehaviour, Droppable
         }
         else // Yes the case
         {
-            card = draggedObject.GetComponent<NormalCard>();
-            card.SetWorldTargetPosition(transform.position + new Vector3(0f, 0f, -0.01f));
-            card.SetTargetRotation(new Vector3(0f, 0f, 0f));
-            StartCoroutine(card.MoveToTarget(0.1f));
+            SetCard(draggedObject.GetComponent<NormalCard>());
             return true;
         }
     }
@@ -71,11 +68,15 @@ public class Slot : MonoBehaviour, Droppable
         }
         return cardsInSlot;
     }
+
     public void SetCard(NormalCard newCard)
-    { 
-        newCard.SetWorldTargetPosition(this.transform.position);
-        //newCard.SetMoveSpeed(Vector3.Distance(newCard.transform.position, this.transform.position) / this.tablePlayer.GetTable().GetCardMoveTime());
-        card = newCard; // For Debugging
+    {
+        newCard.SetWorldTargetPosition(transform.position + new Vector3(0f, 0f, -0.01f));
+        newCard.SetTargetRotation(new Vector3(0f, 0f, 0f));
+        newCard.SetStatus(2);
+        card = newCard;
+
+        StartCoroutine(newCard.MoveToTarget(0.1f));
     }
     public TablePlayer GetTablePlayer() {return tablePlayer;}
 
