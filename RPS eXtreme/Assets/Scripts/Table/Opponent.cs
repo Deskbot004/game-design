@@ -5,6 +5,7 @@ using UnityEngine;
 public class Opponent : TablePlayer
 {
     Dictionary<string,float> preferences;
+    public float speed;
     public override void init(Table table)
     {
         this.preferences = new Dictionary<string, float>();
@@ -124,9 +125,8 @@ public class Opponent : TablePlayer
                             }
                             if(!support.IsBasic()){
                                 NormalCard normal = (NormalCard)card;
-                                bool cannotAttach = (normal.OccupiedSlots() == support.slotType) || normal.OccupiedSlots() == 3;
-                                if(!cannotAttach && normal.OnDrop(support.GetComponent<Draggable>())){
-                                    yield return new WaitForSeconds(1);
+                                if(normal.OnDrop(support.GetComponent<Draggable>())){
+                                    yield return new WaitForSeconds(speed);
                                     support.transform.localPosition = new Vector3(0,0,0.5f);
                                     playedCards.Add(support);
                                 }
@@ -134,11 +134,11 @@ public class Opponent : TablePlayer
                         }
                     }
                     playNormalCard(card, wantedSlots.Dequeue(), playedCards);
-                    yield return new WaitForSeconds(1);
+                    yield return new WaitForSeconds(speed);
                 }
             }
         }
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(speed);
         foreach(Card card in playedCards)
         {
             this.hand.RemoveCard(card);
