@@ -8,7 +8,7 @@ public class CardSprites : MonoBehaviour
     [UDictionary.Split(30, 70)]
     public UDictionary1 symbolSprites;
 
-    [UDictionary.Split(30, 70)]
+    [UDictionary.Split(50, 50)]
     public UDictionary1 supportWindowSprites;
 
     [UDictionary.Split(30, 70)]
