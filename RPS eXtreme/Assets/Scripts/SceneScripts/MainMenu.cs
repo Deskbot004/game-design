@@ -30,6 +30,12 @@ public class MainMenu : MonoBehaviour
 
     private FadeInOut fade;
 
+    [Header("Options")]
+
+    public GameObject audioSource;
+    public AudioClip drums;
+    public AudioClip party;
+
     public void Awake()
     {
         this.selectedOpponentDeckName = "rpsOpponentStandard";
@@ -174,13 +180,24 @@ public class MainMenu : MonoBehaviour
 
     public void rgbMode()
     {
-        rgbAnimator.SetBool("rgbMode", !rgbAnimator.GetBool("rgbMode"));
+        bool check = !rgbAnimator.GetBool("rgbMode");
+        rgbAnimator.SetBool("rgbMode", check);
+        var audios = audioSource.GetComponents<AudioSource>();
+        foreach (var audio in audios) {
+            if (check) {
+                if (audio.clip == party) audio.Play();
+                if (audio.clip == drums) audio.Stop();
+            }
+            if (!check) {
+                if (audio.clip == party) audio.Stop();
+                if (audio.clip == drums) audio.Play();
+            }
+        }
     }
 
     // untested
     public void FullscreenMode()
     {
-        if( Screen.fullScreen ) Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
-        else Screen.fullScreenMode = FullScreenMode.Windowed;
+        Screen.fullScreen = !Screen.fullScreen;
     }
 }

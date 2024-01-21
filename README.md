@@ -1,6 +1,7 @@
-# R P S Extreme
+# RPS Extreme (Working Title)
 
-A game project created in the context of "Einführung in die Spielentwicklung" in the LUH.
+_(RPS stands for Rock-Paper-Scissors.)_  
+A game project created in the context of "Einführung in die Spielentwicklung" in the LUH. We didn't include any of the requirements for the extra points.
 
 ## Created by:
 | Student | Matrikelnr. |
@@ -10,50 +11,54 @@ A game project created in the context of "Einführung in die Spielentwicklung" i
 | Krivorutski, Julia | 10012457 |
 
 #  Basic Description & Tutorial
-The current version of the game features a card-based rock, paper, scissors variant.
+The current version of the game features a card-based rock, paper, scissors variant. It is played with just the mouse.
 
 ## Main menu
 ### Play
-After pushing the **Play**-Button the user can chose a deck for himself and the enemy, each with unique card ratios.
-Furthermore the enemy has specific preferences of play depending on the chosen deck. E.g. Tries to play rock with the highest probability, likes to fill slots from left to right instead of right to left.
+After pushing the **Play**-Button, the player can chose a deck for themself and the enemy, each with unique card ratios.
+Furthermore, the enemy has specific preferences of play, depending on the chosen deck (like preferring to play rock over other cards, filling slots from left to right instead of right to left, etc).
 After pushing the **Start Game**-Button the game begins.
 
 ### Options
 For now there are two specific options listed.
-- *RGB-Mode*: Changes the RGB-Color of the background in the main menu gradually.
-- *Fullscreen*: Changes to Fullscreen (WIP)
+- *RGB-Mode*: Toggles ₊˚✧ Party ✧˚₊ Mode (only in main menu)
+- *Fullscreen*: Changes to Fullscreen
 
 ### Credits
-Here are the contributors and sources of assets listed.
+The contributors and asset sources are listed here.
 
 ### Quit
 Closes the game.
 
 ## Gameplay
+At any time, the player can press Esc to pause the game and open the menu.
+
 ### Types of Cards
-There are two card types. Distinguished by Form.
-- *Basic Cards*: Cards with a round window and a symbol corresponding to the rock, paper, scissors game. These cards have slots which can be filled with support cards. These cards can be played onto a slot in the middle of the table.
-- *Support Cards*: These cards can not be played on their own and need to be attached to a basic card. These cards have special effects which affect the resolution of play.
+There are two card types, distinguished by the form of the card window.
+- *Basic Cards*: Cards with a round window and a rock, paper or scissors symbol. These cards have slots which can be filled with support cards. These cards can be played onto a slot in the middle of the table.
+- *Support Cards*: These cards can not be played on their own and need to be attached to a basic card to give it special effects.
 
 ### Gameplay-Loop
-After the cards are dealt the Game-loop begins:
-1. Cards for the turn are drawn.
-2. The Enemy plays cards with (Based on enemy preference and hand cards) support cards attached.
-3. (Optional) The User can attach support cards by right clicking a basic card and then dragging a fitting support card (indicated by the slot to be filled) onto the card. If the user wants to remove the attached support card **Detach** should be clicked. Else the combination is to be confirmed by **Done**.
-4. The User can fill as many slots as he likes with basic cards, via drag and drop, and confirms the gamestate with **End Turn**.
-5. Basic cards with their support cards get evaluated and for each loss on each slot the loser takes damage.
-6. The Cycle repeats.
+1. The player and enemy draw cards.
+2. The Enemy plays cards which sometimes have support cards attached (based on enemy preference and hand cards). While the enemy is playing, the player can already proceed with step 3 and 4.
+3. (Optional) The player can attach support cards to basic cards. In order to do that, they need to right click on a basic card, then drag a support card into it. Support cards can only be attached, if their slot fits into the slot of the basic card. The player can remove all attached support cards by clicking **Detach**. Otherwise, the combination can be confirmed by clicking **Done**.
+4. The player can fill as many slots as they likes with basic cards (with or without attached support cards), via drag and drop, and confirm the gamestate with **End Turn**.
+5. Basic cards (with potential support cards) get evaluated and for each slot the loser takes damage.
+6. The Cycle repeats. 
 
-The loop ends after a player hits a lifetotal of 0 or below and the Option to **Restart** with the same decks or **Return** to the main menu is presented.
+The loop ends after the player or the enemy hits a life total of 0 or below. After that the player is presented with the options to **Play Again** with the same decks or return to the **Main Menu**.
 
 ### Special Rules
-After playing every card in the players hand a new set of cards (Amount equal to starting draw) is given to the player.
+If the hand of the player/enemy is empty in step 1, they draw extra cards (equal to the starting hand size). If the player/enemy played the "Draw Cards" support card, the extra cards are drawn before step 1 and this rule does not trigger.
+
+### Known Bugs
+- Clicking a button while an animation is playing can sometimes break stuff :(
 
 ## Planned Extensions
-- Rebuild the game to be a deck building tournament mode
+- Expand the game to be a deck building tournament mode
 - Rebuild gameplay to take turns "playing first"
 - Add ingame Tutorial with one slot and hardcoded hands
 - Extend with "Lizard, Spock" Rules
 - More Arenas
 - More Effects
-- Effects bound on slots
+- Effects bound to slots
