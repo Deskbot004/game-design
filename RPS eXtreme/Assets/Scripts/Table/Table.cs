@@ -24,6 +24,13 @@ public class Table : MonoBehaviour
 
     private float cardMoveTime = 0.5f;
 
+    private FadeInOut fade;
+
+    void Awake(){
+        this.fade = this.GetComponent<FadeInOut>();
+        fade.FadeOut();
+    }
+
     void Start()
     {
         if (waitTimer < 0) waitTimer = quickResolve? 0.3f : 1f;
@@ -45,7 +52,7 @@ public class Table : MonoBehaviour
         }
         return animationLength;
     }
-
+    
     // Removes the card from every slot and puts them into the Discard Pile
     public void ClearSlots()
     {
