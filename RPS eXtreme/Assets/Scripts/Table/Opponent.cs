@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Opponent : TablePlayer
 {
-    Dictionary<string,float> preferences;
+    public Dictionary<string,float> preferences;
+    [Header("[resourcing,right,rock,paper,scissors,random,support]")]
+    public List<float> preferenceList;
+
     public float speed;
     public override void init(Table table)
     {
@@ -16,6 +19,8 @@ public class Opponent : TablePlayer
         this.preferences["paper"] = 1;
         this.preferences["random"] = 0;
         this.preferences["support"] = 1;
+        this.normalizeDict();
+        this.SetPreferenceList();
         base.init(table);
         this.isPlayer = false;
     }
@@ -32,6 +37,52 @@ public class Opponent : TablePlayer
         this.preferences["paper"] = preferences[4];
         this.preferences["random"] = preferences[5];
         this.preferences["support"] = preferences[6];
+        this.normalizeDict();
+        //Make sure no Card has a probability of much less than 10%
+        if(this.preferences["rock"] < 0.1)
+        {
+            this.preferences["rock"] = 0.1f;
+        }
+        if (this.preferences["scissors"] < 0.1)
+        {
+            this.preferences["scissors"] = 0.1f;
+        }
+        if (this.preferences["paper"] < 0.1)
+        {
+            this.preferences["paper"] = 0.1f;
+        }
+        this.normalizeDict();
+        this.SetPreferenceList();
+    }
+    //Only for looking at the Dictionary values in the editor
+    public void SetPreferenceList()
+    {
+        this.preferenceList.Clear();
+        foreach(KeyValuePair<string, float> pref in this.preferences)
+        {
+            this.preferenceList.Add(pref.Value);
+        }
+    }
+
+    private void normalizeDict()
+    {
+        float total = 0f;
+        total += this.preferences["rock"];
+        total += this.preferences["scissors"];
+        total += this.preferences["paper"];
+        total += this.preferences["random"];
+        if(total == 0)
+        {
+            Debug.Log("can't have all 0 preferences");
+            this.preferences["rock"] = 1f / 3f;
+            this.preferences["scissors"] = 1f / 3f;
+            this.preferences["paper"] = 1f / 3f;
+
+        }
+        this.preferences["rock"] /= total;
+        this.preferences["scissors"] /= total;
+        this.preferences["paper"] /= total;
+        this.preferences["random"] /= total;
     }
 
     private Dictionary<string,int> AnalyzeHand(List<Card> cards) {  
@@ -89,31 +140,66 @@ public class Opponent : TablePlayer
 
         var wantedSlots = new Queue<int>();
         var slotfill = stats["numSlots"];
+        bool beResourceful = false;
+
+        if(stats["numBasic"] <= 3)
+        {
+            beResourceful = true;
+        }
+
+
         if (stats["numBasic"] < stats["numSlots"]) {
-            slotfill = slotfill - stats["numSlots"] + stats["numBasic"];
+            slotfill = stats["numBasic"];
         }
+        
 
-        // -> pref right und pref resourcing
+        //pref resourcing
         //-> Anpassen wie viel wollen wir spielen
-        for (int i = 0;i<=slotfill-1;i++) {
-            wantedSlots.Enqueue(i);
+        float decisionPrefRight = Random.Range(0.0f,1.0f);
+        if(decisionPrefRight <= this.preferences["right"])
+        {
+            for (int i = 0; i <= slotfill - 1; i++)
+            {
+                float decisionPrefResource = Random.Range(0.0f, 1.0f);
+                if (beResourceful && decisionPrefResource <= this.preferences["resourcing"])
+                {
+                    continue;
+                }
+                wantedSlots.Enqueue(i);
+            }
         }
+        else
+        {
+            for (int i = slotfill - 1; i >= 0; i--)
+            {
+                float decisionPrefResource = Random.Range(0.0f, 1.0f);
+                if (beResourceful && decisionPrefResource <= this.preferences["resourcing"])
+                {
+                    continue;
+                }
+                wantedSlots.Enqueue(i);
+            }
+        }
+        
 
+
+
+        //TODO: Handle case, that the picked Card doesn't exist in the hand. Right now it takes the next Card with higher Prob and Cards available.
         // Handpicking cards
         while(wantedSlots.Count > 0) {
-            float decision = Random.Range(0.0f, preferences["rock"]+preferences["scissors"]+preferences["paper"]+preferences["random"]);
+            float decisionCardToPlay = Random.Range(0.0f, preferences["rock"]+preferences["scissors"]+preferences["paper"]+preferences["random"]);
             string cardToPlay = "random";
-            if(decision <= preferences["rock"] && stats["numRock"] > 0){
+            if(decisionCardToPlay <= preferences["rock"] && stats["numRock"] > 0){
                 stats["numRock"] -= 1;
                 cardToPlay = "rock";
-            } else if(decision <= preferences["rock"] + preferences["scissors"] && stats["numScissors"] > 0){
+            } else if(decisionCardToPlay <= preferences["rock"] + preferences["scissors"] && stats["numScissors"] > 0 && decisionCardToPlay > preferences["rock"]){
                 stats["numScissors"] -= 1;
                 cardToPlay = "scissors";
-            } else if(decision <= preferences["rock"] + preferences["scissors"] + preferences["paper"] && stats["numPaper"] > 0){
+            } else if(decisionCardToPlay <= preferences["rock"] + preferences["scissors"] + preferences["paper"] && stats["numPaper"] > 0 && decisionCardToPlay > preferences["rock"] + preferences["scissors"])
+            {
                 stats["numPaper"] -= 1;
                 cardToPlay = "paper";
-            } 
-
+            }
 
             foreach(Card card in cards) {
                 if (card.symbol == cardToPlay && wantedSlots.Count > 0){
