@@ -30,7 +30,6 @@ public class Slot : MonoBehaviour, Droppable
         set {dropActive = value;}
     }
     
-    // TODO: Alle Droppables �berarbeiten, wenn Karten kombinieren implementiert ist (card -> cards)
     public bool OnDrop(Draggable draggedObject)
     {
         // Check whether the Slot is empty and the dropped Object is a Basic Card
