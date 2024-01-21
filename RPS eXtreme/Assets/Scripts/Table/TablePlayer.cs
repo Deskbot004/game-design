@@ -78,8 +78,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         return drawnCards;
     }
 
-// TODO: Avoid pressing multiple times right click on card in focus
-
     // Shuffles all cards from the Discardpile into the Drawpile
     public void DiscardToDrawpile()
     {
@@ -175,8 +173,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         focusCard.SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0)));
         focusCard.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
         StartCoroutine(focusCard.MoveToTarget(0.1f));
-        //focusCard.transform.localPosition = new Vector3 (0f, 0f, 0f);
-        //focusCard.transform.eulerAngles = new Vector3(0, 0, 0);
         focusCard.transform.SetParent(playerDeck.transform);
 
         // Bring card in front of dim layer
@@ -214,7 +210,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     public bool OnDrop(Draggable draggedObject)
     {
         hand.GetCards().Add(draggedObject.GetComponent<Card>());
-        //draggedObject.transform.localPosition = hand.transform.localPosition;
         hand.ArrangeHand();
         return true;
     }
@@ -256,7 +251,6 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
                 card.transform.position = drawpile.transform.position;
                 card.GetComponent<Animator>().SetBool("faceFront", false);
                 card.GetComponent<Animator>().SetBool("flip", isPlayer);
-                //card.GetComponent<Animator>().SetBool("flip", true); // TODO: Change back to hide enemy cards
             }
             StartCoroutine(card.MoveToTarget(0.5f));
             float actualOffset = cards.Contains(card)? timeOffset : 0f;
@@ -302,9 +296,4 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
             slot.ClearCard();
         }
     }
-
-    
-
-
-
 }

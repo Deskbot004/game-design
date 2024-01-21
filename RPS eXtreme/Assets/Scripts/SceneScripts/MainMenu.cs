@@ -46,10 +46,9 @@ public class MainMenu : MonoBehaviour
 
 
     /*
-     * Finds the selected deck and saves them for later use.
-     * Then it loads the TableScene.
-     */
-
+    * Finds the selected deck and saves them for later use.
+    * Then it loads the TableScene.
+    */
     public void LoadTable()
     {
         StartCoroutine(LoadTableCor());  
@@ -72,10 +71,9 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Converts the selected value in the Opponent DropDown Menu into its corresponding DeckName.
-     * It then set the DeckName as the currently selected Deck.
-     */
-
+    * Converts the selected value in the Opponent DropDown Menu into its corresponding DeckName.
+    * It then set the DeckName as the currently selected Deck.
+    */
     public void HandleRPSOpponentSelection(int value)
     {
         Dictionary<int, string> valueToDeckname = new Dictionary<int, string>();
@@ -94,10 +92,9 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Converts the selected value in the Player DropDown Menu into its corresponding DeckName.
-     * It then set the DeckName as the currently selected Deck.
-     */
-
+    * Converts the selected value in the Player DropDown Menu into its corresponding DeckName.
+    * It then set the DeckName as the currently selected Deck.
+    */
     public void HandleRPSPlayerSelection(int value)
     {
         Dictionary<int, string> valueToDeckname = new Dictionary<int, string>();
@@ -117,9 +114,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Opens the Selection Menu.
-     */
-
+    * Opens the Selection Menu.
+    */
     public void openSelection()
     {
         this.menu.SetActive(false);
@@ -127,9 +123,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Closes the Selection Menu.
-     */
-
+    * Closes the Selection Menu.
+    */
     public void closeSelection()
     {
         this.selection.SetActive(false);
@@ -137,9 +132,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Opens the Options Menu.
-     */
-
+    * Opens the Options Menu.
+    */
     public void openOptions()
     {
         this.menu.SetActive(false);
@@ -147,9 +141,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Closes the Options Menu.
-     */
-
+    * Closes the Options Menu.
+    */
     public void closeOptions()
     {
         this.options.SetActive(false);
@@ -157,9 +150,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Opens the Credits Menu.
-     */
-
+    * Opens the Credits Menu.
+    */
     public void openCredits()
     {
         this.menu.SetActive(false);
@@ -167,9 +159,8 @@ public class MainMenu : MonoBehaviour
     }
 
     /*
-     * Closes the Credits Menu.
-     */
-
+    * Closes the Credits Menu.
+    */
     public void closeCredits()
     {
         this.credits.SetActive(false);
@@ -186,6 +177,7 @@ public class MainMenu : MonoBehaviour
         rgbAnimator.SetBool("rgbMode", !rgbAnimator.GetBool("rgbMode"));
     }
 
+    // untested
     public void FullscreenMode()
     {
         if( Screen.fullScreen ) Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;

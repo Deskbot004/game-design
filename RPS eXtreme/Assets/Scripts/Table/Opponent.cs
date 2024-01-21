@@ -95,6 +95,8 @@ public class Opponent : TablePlayer
         int rock = 0;
         int paper = 0;
         int scissor = 0;
+        int lizard = 0;
+        int spock = 0;
         foreach(Card card in cards){
             if(!card.IsBasic()){
                 support += 1;
@@ -111,10 +113,10 @@ public class Opponent : TablePlayer
                         scissor+=1;
                         break;
                     case "lizard":
-
+                        lizard+=1;
                         break;
                     case "spock":
-
+                        spock+=1;
                         break;
                     default:
                         Debug.Log("AnalyzeHand: Unexpected card symbol: " + card.symbol);break;
@@ -126,10 +128,12 @@ public class Opponent : TablePlayer
         stats["numRock"] = rock;
         stats["numPaper"] = paper;
         stats["numScissors"] = scissor;
+        stats["numLizard"] = lizard;
+        stats["numSpock"] = spock;
         stats["numBasic"] = basic;
         stats["numSupport"] = support;
+        // TODO Rework expected Cards
         stats["numExpectedCards"] = stats["numCards"] + this.table.logic.turnDraw;
-        //Debug.Log("I have "+rock+" Rocks "+scissor+" Scissors "+paper+" Papers =>"+basic+" Basics "+support+" Support "+stats["numExpectedCards"]+" Cards next turn!");
         return stats;
     }
 
@@ -153,18 +157,18 @@ public class Opponent : TablePlayer
         }
         
 
-        //pref resourcing
-        //-> Anpassen wie viel wollen wir spielen
+        // TODO Rework Resourcing after Turn change functionality
         float decisionPrefRight = Random.Range(0.0f,1.0f);
         if(decisionPrefRight <= this.preferences["right"])
         {
             for (int i = 0; i <= slotfill - 1; i++)
             {
+                /*
                 float decisionPrefResource = Random.Range(0.0f, 1.0f);
                 if (beResourceful && decisionPrefResource <= this.preferences["resourcing"])
                 {
                     continue;
-                }
+                }*/
                 wantedSlots.Enqueue(i);
             }
         }
@@ -172,19 +176,16 @@ public class Opponent : TablePlayer
         {
             for (int i = slotfill - 1; i >= 0; i--)
             {
+                /*
                 float decisionPrefResource = Random.Range(0.0f, 1.0f);
                 if (beResourceful && decisionPrefResource <= this.preferences["resourcing"])
                 {
                     continue;
-                }
+                }*/
                 wantedSlots.Enqueue(i);
             }
         }
         
-
-
-
-        //TODO: Handle case, that the picked Card doesn't exist in the hand. Right now it takes the next Card with higher Prob and Cards available.
         // Handpicking cards
         while(wantedSlots.Count > 0) {
             float decisionCardToPlay = Random.Range(0.0f, preferences["rock"]+preferences["scissors"]+preferences["paper"]+preferences["random"]);
@@ -240,7 +241,6 @@ public class Opponent : TablePlayer
 
     public int playNormalCard(Card card, int slot, List<Card> playedCards)
     {
-        //Debug.Log("playing Normal Card with symbol " + card.GetSymbol());
         if (this.slots[slot].GetNormalAndSuppCards().Count == 0) 
         {
             NormalCard norm = (NormalCard)card;

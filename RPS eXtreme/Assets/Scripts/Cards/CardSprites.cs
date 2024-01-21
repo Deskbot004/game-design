@@ -24,6 +24,4 @@ public class CardSprites : MonoBehaviour
 
     [Serializable]
     public class UDictionary2 : UDictionary<string, Color> { }
-
-    //public Dictionary<string, Sprite> symbolSprites;
 }

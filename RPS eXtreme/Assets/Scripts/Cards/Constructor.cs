@@ -6,9 +6,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 /*
- * A class to generate new cards and decks using the prefabs
- */
-
+* A class to generate new cards and decks using the prefabs
+*/
 public class Constructor : MonoBehaviour
 {
     public GameObject NormalCard;
@@ -24,8 +23,8 @@ public class Constructor : MonoBehaviour
     public int lizardAmount;
     public int supportAmount;
     public string deckName;
-    public List<string> possibleSupportFunctions; //List of possible SupportFunctions
-    public List<string> deckSupportFunctions; //SupportFunctions actually in the deck
+    public List<string> possibleSupportFunctions; // List of possible SupportFunctions
+    public List<string> deckSupportFunctions; // SupportFunctions actually in the deck
 
     public void Awake()
     {
@@ -33,9 +32,8 @@ public class Constructor : MonoBehaviour
     }
     
     /*
-     *  Creates a NormalCard but doesn't initialize it
-     */
-
+    *  Creates a NormalCard but doesn't initialize it
+    */
     public NormalCard CreateEmptyNormalCard()
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
@@ -45,9 +43,8 @@ public class Constructor : MonoBehaviour
     }
 
     /*
-     *  Creates a NormalCard and initializes it
-     */
-
+    *  Creates a NormalCard and initializes it
+    */
     public NormalCard CreateNormalCard(string symbol, int type)
     {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
@@ -62,9 +59,8 @@ public class Constructor : MonoBehaviour
     }
 
     /*
-     *  Creates a SupportCard but doesn't initialize it,except for its symbol
-     */
-
+    *  Creates a SupportCard but doesn't initialize it,except for its symbol
+    */
     public SupportCard CreateEmptySupportCard()
     {
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
@@ -77,9 +73,8 @@ public class Constructor : MonoBehaviour
     }
 
     /*
-     *  Creates a SupportCard and initializes it
-     */
-
+    *  Creates a SupportCard and initializes it
+    */
     public SupportCard CreateSupportCard(int type, List<string> names)
     {
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
@@ -96,9 +91,8 @@ public class Constructor : MonoBehaviour
     }
 
     /*
-     *  Creates a Deck but doesn't initialize it
-     */
-
+    *  Creates a Deck but doesn't initialize it
+    */
     public Deck CreateEmptyDeck()
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
@@ -107,9 +101,8 @@ public class Constructor : MonoBehaviour
     }
 
     /*
-     *  Creates a Deck and initializes it
-     */
-
+    *  Creates a Deck and initializes it
+    */
     public Deck CreateDeck(List<Card> cards, string deckname)
     {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
@@ -166,10 +159,5 @@ public class Constructor : MonoBehaviour
 
         List<Card> deckCards = deck.GetCards();
 
-    }
-
-    public void Test()
-    {
-        Debug.Log("Hello");
     }
 }

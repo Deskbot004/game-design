@@ -4,9 +4,8 @@ using System;
 using UnityEngine;
 
 /*
- * A DeckManager is used to save a Deck into a Jsonfile.
- */
-
+* A DeckManager is used to save a Deck into a Jsonfile.
+*/
 [Serializable]
 public class DeckManager 
 {

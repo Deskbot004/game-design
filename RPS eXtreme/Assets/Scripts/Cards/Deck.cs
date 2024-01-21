@@ -13,6 +13,8 @@ public class Deck : MonoBehaviour
     private Constructor constructor;
     public List<Card> cards = new List<Card>();
     public string deckName;
+
+    [TextArea(3,20)]
     public string flavor;
     private TablePlayer tablePlayer;
     [Header("[resourcing,right,rock,paper,scissors,random,support]")]
@@ -58,8 +60,8 @@ public class Deck : MonoBehaviour
     }
 
     /*
-     * Saves the Deck into a text file using Json and a DeckManager.
-     */
+    * Saves the Deck into a text file using Json and a DeckManager.
+    */
     [ContextMenu("Save Deck")]
     public void SaveDeck()
     {
@@ -96,16 +98,12 @@ public class Deck : MonoBehaviour
         save.preferences = this.preferences;
         string savedDeck = JsonUtility.ToJson(save);
 
-        Debug.Log("Saved String: " + savedDeck);
-
         File.WriteAllText(filename_location, savedDeck);
-
     }
 
     /*
-     * Loads the Deck from a text file using Json and a DeckManager.
-     */
-
+    * Loads the Deck from a text file using Json and a DeckManager.
+    */
     public void LoadDeck(string filename)
     {
         //Read text from file and convert it into a DeckManager
@@ -120,8 +118,6 @@ public class Deck : MonoBehaviour
             Debug.Log("Something went wrong while saving the deck. The savefile was not found.");
             return;
         }
-
-        Debug.Log("Loaded String: " + savedDeck);
 
         DeckManager save = JsonUtility.FromJson<DeckManager>(savedDeck);
         if (!(save.cardSymbols.Count == save.cardTypes.Count && save.cardSymbols.Count == save.functions.Count && save.cardSymbols.Count == save.slotTypes.Count))
@@ -161,8 +157,8 @@ public class Deck : MonoBehaviour
     }
 
     /*
-     * Loads the Deck saved under its deckname from a text file using Json and a DeckManager.
-     */
+    * Loads the Deck saved under its deckname from a text file using Json and a DeckManager.
+    */
     [ContextMenu("Load Deck")]
     public void LoadDeckFromEditor()
     {

@@ -7,10 +7,8 @@ public class LibBR : MonoBehaviour
 {
     public void RunAllBR(List<(Action<Gamelogic, string, object>, object)> actions, Gamelogic logic, String caller)
     {
-        //Debug.Log("running BR for " + caller);
         foreach (var entry in actions)
         {
-            //Debug.Log("Calling a function for " + caller);
             Action<Gamelogic, String, object> func = entry.Item1;
             object input = entry.Item2;
             func(logic, caller, input);
@@ -195,7 +193,7 @@ public class LibBR : MonoBehaviour
     }
 
     /*
-    The caller loses all draws.
+    The caller loses all draws. -> The not caller!
     The reset gets thrown into stringToFunc and stringToInput from Gamelogic titled "LossD".
     input: Gamelogic: the overarching Gamelogic
            caller: the player who used the card
