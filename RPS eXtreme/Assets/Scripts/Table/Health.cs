@@ -30,7 +30,7 @@ public class Health : MonoBehaviour
         healthbars[loser].GetComponent<Animator>().SetBool("isDamaged", true);
         healthbars[loser].GetComponentInChildren<TextMeshPro>().text = health.ToString();
         float animationLength = healthbars[loser].GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
-        yield return new WaitForSecondsRealtime(animationLength);
+        yield return new WaitForSecondsRealtime(animationLength + 1f);
         healthbars[loser].GetComponent<SortingGroup>().sortingLayerName = "Default";
         healthbars[loser].GetComponent<Animator>().SetBool("isDamaged", false);
     }
