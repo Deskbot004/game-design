@@ -15,6 +15,7 @@ public class Table : MonoBehaviour
 
     [Header("Visual Stuff")]
     public SpriteRenderer dim;
+    public Animator resolveTurnAnimator;
     public Health healthUI;
     public WinLoseScreen winLoseScreen;
 
@@ -84,33 +85,68 @@ public class Table : MonoBehaviour
     // TODO: Set all waitforseconds higher
     public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
     {
+        List<string> winnerToInt = new() {"user", "enemy", "none"};
+        int winnerInt = winnerToInt.FindIndex(a => a == winner);
+
+        // Setup position of animation box
+        if(slotNr == 0)
+        {
+            resolveTurnAnimator.transform.Find("PlayerCard/Rotation").localPosition = Vector3.zero;
+            resolveTurnAnimator.transform.Find("EnemyCard/Rotation").localPosition = Vector3.zero;
+        }
+        else
+        {
+            resolveTurnAnimator.transform.Find("PlayerCard/Rotation").localPosition = new Vector3(7.07f, 0, 0);
+            resolveTurnAnimator.transform.Find("EnemyCard/Rotation").localPosition = new Vector3(7.07f, 0, 0);
+        }
+
+        // Bring all cards to front
         Dictionary<string, Slot> slots = GetSlotByNr(slotNr);
         foreach (Slot slot in slots.Values)
         {
-            if(slot.GetCard() != null)
-                slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+            Card card = slot.GetCard();
+            if(card != null)
+            {
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+                string newParent = "";
+                if(card.GetDeck().GetTablePlayer().isPlayer) newParent = "PlayerCard/Rotation";
+                else newParent = "EnemyCard/Rotation";
+                card.transform.SetParent(resolveTurnAnimator.transform.Find(newParent));
+            }
         }
-        yield return new WaitForSeconds(waitTimer);
+        yield return new WaitForSeconds(0.5f);
+
+        // Play animation of cards and wait until it's done
+        resolveTurnAnimator.SetInteger("winner", winnerInt);
+        resolveTurnAnimator.SetBool("playAnim", true);
+        float animationLength = resolveTurnAnimator.GetCurrentAnimatorStateInfo(0).length;
+
+        yield return new WaitForSecondsRealtime(animationLength + 0.5f);
+
+        // Play animation for life
         if(winner == "user")
         {
-            if(slots["enemy"].GetCard() != null)
-                slots["enemy"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-            healthUI.Damage(lifePoints["enemy"], "enemy");
+            yield return healthUI.PlayDamageAnimation(lifePoints["enemy"], "enemy");
             healthUI.SetHealth(lifePoints["user"], "user");
         }
         else if (winner == "enemy")
         {
-            if(slots["user"].GetCard() != null)
-                slots["user"].GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-            healthUI.Damage(lifePoints["user"], "user");
+            yield return healthUI.PlayDamageAnimation(lifePoints["user"], "user");
             healthUI.SetHealth(lifePoints["enemy"], "enemy");
         }
-        yield return new WaitForSeconds(waitTimer);
+
+        // Return Cards to previous state
         foreach (Slot slot in slots.Values)
         {
-            if(slot.GetCard() != null)
-                slot.GetCard().GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+            Card card = slot.GetCard();
+            if(card != null)
+            {
+                card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
+                card.transform.SetParent(card.GetDeck().transform);
+            }
         }
+        resolveTurnAnimator.SetBool("playAnim", false);
+        yield return new WaitForSeconds(0.5f);
     }
 
     public void SetWinner(string name)
