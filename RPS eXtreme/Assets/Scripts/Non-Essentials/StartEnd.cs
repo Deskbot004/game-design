@@ -7,7 +7,7 @@ public class StartEnd : MonoBehaviour
     // Only works in Editor
     private void OnApplicationQuit()
     {
-        Debug.Log("The program would now close itself");
+        //Debug.Log("Editor stopped playing");
     }
 
     // Gets called if user leaves through button
@@ -15,6 +15,7 @@ public class StartEnd : MonoBehaviour
     public void exitGame()
     {
         //Screen.SetResolution(1920, 1080, false);
+        //Debug.Log("The program would now close itself");
         Application.Quit();
     }
 
