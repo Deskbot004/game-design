@@ -116,6 +116,7 @@ public class NormalCard : Card, Droppable
                 supCard.transform.SetParent(supCard.GetDeck().transform);
                 supCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
                 supCards.Add(supCard);
+                supCard.GetComponent<Draggable>().enabled = true;
             }
         }
         return supCards;
@@ -258,6 +259,7 @@ public class NormalCard : Card, Droppable
             draggedObject.GetComponent<Card>().SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0.5f)));
             draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
             StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
+            draggedObject.enabled = false;
             if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
             return true;
         }

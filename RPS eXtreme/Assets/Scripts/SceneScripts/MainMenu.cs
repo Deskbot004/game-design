@@ -38,6 +38,7 @@ public class MainMenu : MonoBehaviour
 
     public void Awake()
     {
+        Screen.fullScreen = false;
         this.selectedOpponentDeckName = "rpsOpponentStandard";
         this.selectedPlayerDeckName = "rpsPlayerStandard";
         Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();

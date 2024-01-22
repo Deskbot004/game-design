@@ -219,7 +219,7 @@ public class SupportCard : Card
                 this.description = "Do  " + value + " extra damage on win";
                 break;
             case "lifesteal":
-                this.description = "Lifesteal " + value;
+                this.description = "Heal " + value + " on win";
                 break;
             case "win on draw":
                 this.description = "Win on Draw";

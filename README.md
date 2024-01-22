@@ -52,7 +52,11 @@ The loop ends after the player or the enemy hits a life total of 0 or below. Aft
 If the hand of the player/enemy is empty in step 1, they draw extra cards (equal to the starting hand size). If the player/enemy played the "Draw Cards" support card, the extra cards are drawn before step 1 and this rule does not trigger.
 
 ### Known Bugs
-- Clicking a button while an animation is playing can sometimes break stuff :(
+- "Catching" cards while they are moving causes unwanted behavior that might break the game. In that case it needs to be restarted. Best not to touch cards while they're moving.
+- Cards on hand are sometimes wrongly aligned
+- Cards with multiple same support cards attached cause unwanted game states
+- Two "Win on draw" cards clashing always grants the enemy the win instead of a draw
+- Escape menu **Return** is buggy thus disabled
 
 ## Planned Extensions
 - Expand the game to be a deck building tournament mode
