@@ -24,11 +24,13 @@ public class Gamelogic : MonoBehaviour
     public Health healthUI;
 
     // Determines the Win of a symbol on attack
-    private int[,] winMatrix = { { -1, 1, 0, 1, 0 }, 
-                                 { 0, -1, 1, 1, 0 }, 
-                                 { 1, 0, -1, 0, 1 }, 
-                                 { 0, 0, 1, -1, 1 }, 
-                                 { 1, 1, 0, 0, -1 } }; 
+    // Currently -1 Draw; 0 User win; 1 enemy win
+    // Want: User > 0; Draw = 0; Enemy < 0
+    private int[,] winMatrix = { { 0, -1, 1, -1, 1 }, 
+                                 { 1, 0, -1, -1, 1 }, 
+                                 { -1, 1, 0, 1, -1 }, 
+                                 { 1, 1, -1, 0, -1 }, 
+                                 { -1, -1, 1, 1, 0 } };
     public Dictionary<string, int> symbolToEntry = new Dictionary<string, int>();
 
 
@@ -109,7 +111,8 @@ public class Gamelogic : MonoBehaviour
                 {
                     string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
                     yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
-                    foreach (var item in stringToInput.Reverse()) {
+                    stringToInput.Reverse();
+                    foreach (var item in stringToInput) {
                         Action<Gamelogic,object> func = stringToFunc[item.Key];
                         func(this, item.Value);
                     }
@@ -140,7 +143,7 @@ public class Gamelogic : MonoBehaviour
     */
     private string EvaluateCards(List<Card> cardsUser, List<Card> cardsEnemy)
     {
-        int attack = -1;
+        int attack = 0;
         bool skipEval = false;
 
         int symbolToEntryUser = 0;
@@ -162,12 +165,12 @@ public class Gamelogic : MonoBehaviour
         else if (!cardsUser.Any()) //automatic win for enemy because user didn't play cards
         {
             skipEval = true;
-            attack = 1;
+            attack = -99;
         }
         else if (!cardsEnemy.Any()) //automatic win for user because enemy didn't play cards
         {
             skipEval = true;
-            attack = 0;
+            attack = 99;
         }
 
         foreach (Card card in cardsUser)
@@ -230,10 +233,10 @@ public class Gamelogic : MonoBehaviour
             attack = winMatrix[symbolToEntryUser, symbolToEntryEnemy];
         }
 
-        if (attack == -1)
+        if (attack == 0)
         {
             return "none";
-        } else if (attack == 0)
+        } else if (attack > 0)
         {
             if (userARfunctions.Any())
             {
@@ -249,7 +252,7 @@ public class Gamelogic : MonoBehaviour
             }
             DamageEnemy(dmgOnLoss);
             return "user";
-        } else if (attack == 1)
+        } else if (attack < 0)
         {
             if (enemyARfunctions.Any())
             {

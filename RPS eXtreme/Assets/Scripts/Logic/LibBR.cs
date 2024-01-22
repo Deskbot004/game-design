@@ -29,21 +29,22 @@ public class LibBR : MonoBehaviour
         var mat = logic.GetwinMatrix();
         logic.stringToInput["Win"] = mat.Clone();
         var win = Convert.ToString(value);
-        int winner = -1;
+        int winner = 0;
         if(caller == "user")
         {
-            winner = 0;
+            winner = 3;
         }
         else
         {
-            winner = 1;
+            winner = -3;
         }
         /* 
-         * { -1, 1, 0, 1, 0 },
-         * { 0, -1, 1, 1, 0 },
-         * { 1, 0, -1, 0, 1 },
-         * { 0, 0, 1, -1, 1 },
-         * { 1, 1, 0, 0, -1 }
+            { -1, 1, 0, 1, 0 },
+            { 0, -1, 1, -1, 1 }, 
+            { 1, 0, -1, -1, 1 }, 
+            { -1, 1, 0, 1, -1 }, 
+            { 1, 1, -1, 0, -1 }, 
+            { -1, -1, 1, 1, 0 }
          * 
          * [User, Enemy]
          * 
@@ -77,7 +78,7 @@ public class LibBR : MonoBehaviour
         }
         for (int i = 0; i < mat.GetLength(0); i++)
         {
-            mat[i, entry] = winner;
+            mat[i, entry] += winner;
         }
         logic.SetwinMatrix(mat);
     }
@@ -94,18 +95,18 @@ public class LibBR : MonoBehaviour
         logic.stringToFunc["WinD"] = ResetMatrix;
         var mat = logic.GetwinMatrix();
         logic.stringToInput["WinD"] = mat.Clone();
-        int winner = -1;
+        int winner = 0;
         if (caller == "user")
         {
-            winner = 0;
+            winner = 3;
         }
         else
         {
-            winner = 1;
+            winner = -3;
         }
         for (int i = 0; i < mat.GetLength(0); i++)
         {
-            mat[i, i] = winner;
+            mat[i, i] += winner;
         }
         logic.SetwinMatrix(mat);
     }
@@ -139,21 +140,21 @@ public class LibBR : MonoBehaviour
         var mat = logic.GetwinMatrix();
         logic.stringToInput["Loss"] = mat.Clone();
         var win = Convert.ToString(value);
-        int winner = -1;
+        int winner = 0;
         if(caller == "user")
         {
-            winner = 1;
+            winner = 3;
         }
         else
         {
-            winner = 0;
+            winner = -3;
         }
         /* 
-         * { -1, 1, 0, 1, 0 },
-         * { 0, -1, 1, 1, 0 },
-         * { 1, 0, -1, 0, 1 },
-         * { 0, 0, 1, -1, 1 },
-         * { 1, 1, 0, 0, -1 }
+         *  { 0, -1, 1, -1, 1 }, 
+            { 1, 0, -1, -1, 1 }, 
+            { -1, 1, 0, 1, -1 }, 
+            { 1, 1, -1, 0, -1 }, 
+            { -1, -1, 1, 1, 0 }
          * 
          * [User, Enemy]
          * 
@@ -187,7 +188,7 @@ public class LibBR : MonoBehaviour
         }
         for (int i = 0; i < mat.GetLength(0); i++)
         {
-            mat[entry, i] = winner;
+            mat[entry, i] += winner;
         }
         logic.SetwinMatrix(mat);
     }
@@ -204,18 +205,18 @@ public class LibBR : MonoBehaviour
         logic.stringToFunc["LossD"] = ResetMatrix;
         var mat = logic.GetwinMatrix();
         logic.stringToInput["LossD"] = mat;
-        int winner = -1;
+        int winner = 0;
         if (caller == "user")
         {
-            winner = 1;
+            winner = 3;
         }
         else
         {
-            winner = 0;
+            winner = -3;
         }
         for (int i = 0; i < mat.GetLength(0); i++)
         {
-            mat[i, i] = winner;
+            mat[i, i] += winner;
         }
         logic.SetwinMatrix(mat);
     }
