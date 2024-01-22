@@ -21,8 +21,10 @@ After pushing the **Start Game**-Button the game begins.
 
 ### Options
 For now there are two specific options listed.
+- *Resolution*: Changes the resolution
+- *Fullscreen*: Changes to fullscreen
 - *RGB-Mode*: Toggles ₊˚✧ Party ✧˚₊ Mode (only in main menu)
-- *Fullscreen*: Changes to Fullscreen
+
 
 ### Credits
 The contributors and asset sources are listed here.
@@ -54,8 +56,6 @@ If the hand of the player/enemy is empty in step 1, they draw extra cards (equal
 ### Known Bugs
 - "Catching" cards while they are moving causes unwanted behavior that might break the game. In that case it needs to be restarted. Best not to touch cards while they're moving.
 - Cards on hand are sometimes wrongly aligned
-- Cards with multiple same support cards attached cause unwanted game states
-- Two "Win on draw" cards clashing always grants the enemy the win instead of a draw
 - Escape menu **Return** is buggy thus disabled
 
 ## Planned Extensions
