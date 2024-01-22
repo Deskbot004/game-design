@@ -38,7 +38,6 @@ public class MainMenu : MonoBehaviour
 
     public void Awake()
     {
-        Screen.fullScreen = false;
         this.selectedOpponentDeckName = "rpsOpponentStandard";
         this.selectedPlayerDeckName = "rpsPlayerStandard";
         Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
@@ -174,11 +173,6 @@ public class MainMenu : MonoBehaviour
         this.menu.SetActive(true);
     }
 
-    public void exitGame()
-    {
-        Application.Quit();
-    }
-
     public void rgbMode()
     {
         bool check = !rgbAnimator.GetBool("rgbMode");
@@ -194,11 +188,5 @@ public class MainMenu : MonoBehaviour
                 if (audio.clip == drums) audio.Play();
             }
         }
-    }
-
-    // untested
-    public void FullscreenMode()
-    {
-        Screen.fullScreen = !Screen.fullScreen;
     }
 }
