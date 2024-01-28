@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,11 +14,12 @@ public class Resolution : MonoBehaviour
 
     public void Awake()
     {
+        if (!PlayerPrefs.HasKey("ScreenWidth")) Save(1920);
         if (dropdown != null) { 
             dropdown.value = 0;
             for (int i = 0; i < dropdown.options.Count; i++)
             {
-                if (dropdown.options[i].text.StartsWith(Screen.width.ToString())) dropdown.value = i;
+                if (dropdown.options[i].text.StartsWith(Load().ToString())) dropdown.value = i;
             }
         }
         if (check != null) check.GetComponent<Toggle>().isOn = Screen.fullScreen;
@@ -34,6 +36,8 @@ public class Resolution : MonoBehaviour
             int width = Int32.Parse(resolutions[0]);
             int height = Int32.Parse(resolutions[1]);
             Screen.SetResolution(width, height, Screen.fullScreen);
+
+            Save(width);
         }
         catch (Exception e)
         {
@@ -44,5 +48,15 @@ public class Resolution : MonoBehaviour
     public void FullscreenMode()
     {
         Screen.fullScreen = !Screen.fullScreen;
+    }
+
+    private void Save(int width)
+    {
+        PlayerPrefs.SetInt("ScreenWidth", width);
+    }
+
+    private int Load()
+    {
+        return PlayerPrefs.GetInt("ScreenWidth");
     }
 }
