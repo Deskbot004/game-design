@@ -14,6 +14,7 @@ public class NormalCard : Card, Droppable
     // 0: has no slots, 1: has a top slot, 2: has a bottom slot; 3: has both
     private int[] viableSlotTypes = { 0, 1, 2 , 3 }; 
     private bool dropActive = false;
+    private int priority = (int) DroppablePriorities.CARD;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
 
@@ -247,6 +248,11 @@ public class NormalCard : Card, Droppable
                 this.gameObject.layer = LayerMask.NameToLayer("Default");
             }
         }
+    }
+
+    public int Priority {
+        get {return priority;}
+        set {priority = value;}
     }
 
     public bool OnDrop(Draggable draggedObject)

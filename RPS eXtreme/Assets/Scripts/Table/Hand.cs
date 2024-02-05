@@ -66,7 +66,7 @@ public class Hand : MonoBehaviour
         foreach (Card card in cards)
         {
             currentPosition.z = currentZ;
-            currentZ += 0.1f;
+            currentZ -= 0.1f;
             card.SetWorldTargetPosition(transform.TransformDirection(currentPosition) + transform.position);
             card.SetTargetRotation(new Vector3(0, 0, currentDegree));
             if (moveInstantly) StartCoroutine(card.MoveToTarget(moveTime));

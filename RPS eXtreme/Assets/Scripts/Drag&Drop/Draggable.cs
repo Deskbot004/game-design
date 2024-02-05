@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,121 +6,113 @@ using UnityEngine;
 
 public class Draggable : MonoBehaviour
 {
-    private int maxCollidors = 10; // How many overlapping colliders can be checked
+    // How many overlapping colliders can be checked
+    // This is needed, because Unity's collider overlap function needs an initiated array of this size
+    private int maxCollidors = 10; 
 
-    private Vector3 startPosition;
-    private Vector3 startRotation;
-    private Droppable currentDroppable; // The Droppable Object it's currently in
-    private Droppable defaultDroppable; // Handles drops, when this Draggable isn't in a Droppable
+    private Vector3 positionBeforePickup;
+    private Vector3 rotationBeforePickup;
+    private Droppable currentDroppable;
 
-    // ---------- Main Functions -------------------------------------------------------------------------------------------
-    void Start()
-    {
-        // Make sure that the draggable Object has a Box Collider 
+    #region Main Functions ---------------------------------------------------------------------------------------------
+    
+    void Start() {
         Debug.Assert(GetComponent<Collider2D>() != null, "Draggable Object is missing a 2D Collider!", this);
-
-        // Find and set default Droppable
-        defaultDroppable = GetComponentInParent<DefaultDroppable>();
-        Debug.Assert(defaultDroppable != null, "Couldn't find default Droppable", this);
-
-        // Check whether Object is already inside a Droppable
-        (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
-        Debug.Assert(colAmount < 2, "Multiple Start-Droppables found", this);
-        if (colAmount > 0)
-            currentDroppable = colliders[0].GetComponent<Droppable>();
-        else
-            currentDroppable = defaultDroppable;
+        FindStartingDroppable();
     }
 
     // Is called on Pickup
-    void OnMouseDown()
-    {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //Prevents Dragging when this component is disabled
+    void OnMouseDown() {
+        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //Prevents Dragging when this component is disabled //TODO: Train Wreck: Card -> isPlayer
         SavePosition();
         transform.eulerAngles = new Vector3(0, 0, 0);
     }
 
     // Is called while Dragging
-    void OnMouseDrag()
-    {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return;
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = -7;
-        transform.position = mousePos;
+    void OnMouseDrag() {
+        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //TODO: Train Wreck: Card -> isPlayer
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mousePosition.z = -7;
+        transform.position = mousePosition;
     }
 
     // Is called on Drop
-    void OnMouseUp() 
-    {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return;
-        (int colAmount, Collider2D[] colliders) = GetOverlappedDroppable();
-        Droppable newDroppable;
+    void OnMouseUp() {
+        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //TODO: Train Wreck: Card -> isPlayer
+        Collider2D[] colliders = GetOverlappedDroppables();
+        foreach (Collider2D collider in colliders) {
+            Droppable newDroppable = collider.GetComponent<Droppable>();
+            bool dropSuccess = DropInto(newDroppable);
+            if (dropSuccess)
+                return;
+        }
+        RestorePosition();
+    }
+    
+    #endregion
 
-        // Check whether it was dropped inside a Droppable that's a child of the default Droppable
-        if(colAmount == 0) // Not the case
-        {
-            newDroppable = defaultDroppable;
-        }
-        else // Yes the case
-        {
-            Debug.Assert(colliders[0].GetComponent<Droppable>() != null, "Destination Object doesn't have Droppable Component", colliders[0]);
-            newDroppable = colliders[0].GetComponent<Droppable>();
-        }
-
-        // Handle the drop itself
-        if (newDroppable == currentDroppable) RestorePosition();
-        else
-        {
-            if (newDroppable.OnDrop(this))
-            {
-                currentDroppable.OnLeave(this);
-                currentDroppable = newDroppable;
-            }
-            else RestorePosition();
-        }
+    #region Helper Functions ---------------------------------------------------------------------------------------------
+    
+    public void SavePosition() {
+        positionBeforePickup = transform.position;
+        rotationBeforePickup = transform.eulerAngles;
     }
 
-    // ---------- Helper Functions -------------------------------------------------------------------------------------------
-    // Saves the current global position to the startPosition/Rotation Variables
-    public void SavePosition()
-    {
-        startPosition = transform.position;
-        startRotation = transform.eulerAngles;
+    public void RestorePosition() {
+        transform.position = positionBeforePickup;
+        transform.eulerAngles = rotationBeforePickup;
     }
 
-    // Restores the position from the startPosition/Rotation Variables
-    public void RestorePosition()
-    {
-        transform.position = startPosition;
-        transform.eulerAngles = startRotation;
-    }
-
-    // Returns all Droppable Components on the "Droppable" Layer, that collide with this Draggable
-    public (int, Collider2D[]) GetOverlappedDroppable()
-    {
-        // Create Mask to Filter items that aren't on layer "Droppable"
-        int dropLayer = LayerMask.NameToLayer("Droppable");
-        Debug.Assert(dropLayer > 0, "Droppable Layer not found");
-        LayerMask layerMask = 1 << dropLayer;
-
-        // Find all overlapping Colliders
-        ContactFilter2D contactFilter = new ContactFilter2D();
-        contactFilter.SetLayerMask(layerMask);
+    public Collider2D[] GetOverlappedDroppables() { 
+        // Find all overlapping Colliders on Droppable layer
         Collider2D[] colliders = new Collider2D[maxCollidors];
-        int collidersAmount = GetComponent<Collider2D>().OverlapCollider(contactFilter, colliders);
+        LayerMask droppableLayerMask = LayerMask.GetMask("Droppable");
+        ContactFilter2D contactFilter = new ContactFilter2D();
+        contactFilter.SetLayerMask(droppableLayerMask);
+        GetComponent<Collider2D>().OverlapCollider(contactFilter, colliders);
 
-        // Filter out null entries and inactive droppables
-        colliders = colliders.Where(c => c != null).ToArray();
-        if (collidersAmount > 0) colliders = colliders.Where(c => c.GetComponent<Droppable>().DropActive).ToArray(); //Filter out inactive droppables
-        if (collidersAmount > 0) colliders = colliders.Where(c => c.transform.IsChildOf(defaultDroppable.GetTransform())).ToArray(); //Filter out droppables from other parents
-        collidersAmount = colliders.Length;
+        // Filter and Sort
+        colliders = colliders.Where(c => c != null).ToArray(); // null entries
+        colliders = colliders.Where(c => c.GetComponent<Droppable>() != null).ToArray(); // non droppables
+        colliders = colliders.Where(c => c.GetComponent<Droppable>().DropActive).ToArray(); // inactive doppables
+        colliders = colliders.OrderBy(c => c.GetComponent<Droppable>().Priority).ToArray();
 
-        return (collidersAmount, colliders);
+        return  colliders;
     }
 
-    public void SetCurrentDroppable(Droppable droppable)
-    {
+    public bool DropInto(Droppable newDroppable) {
+        if (newDroppable == currentDroppable) {
+            RestorePosition();
+            return true;
+        }
+
+        bool dropSuccess = newDroppable.OnDrop(this);
+        if (dropSuccess) {
+            currentDroppable.OnLeave(this);
+            currentDroppable = newDroppable;
+        }
+        return dropSuccess;
+    }
+
+    #endregion
+
+    #region Getter und Setter ---------------------------------------------------------------------------------------------
+
+    public void FindStartingDroppable() {
+        Collider2D[] colliders = GetOverlappedDroppables();
+        int colAmount = colliders.Length;
+        Debug.Assert(colAmount < 2, "Multiple Start-Droppables found", this);
+        if (colAmount > 0)
+            currentDroppable = colliders[0].GetComponent<Droppable>();
+
+        Debug.Assert(1 == 1, "test");
+    }
+
+    // TODO: This shouldn't be needed anymore after refactoring -> DropInto should call it
+    public void SetCurrentDroppable(Droppable droppable) {
         currentDroppable = droppable;
     }
+
+    #endregion
         
 }

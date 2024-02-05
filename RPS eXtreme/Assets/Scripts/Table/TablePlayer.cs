@@ -21,12 +21,14 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
 
     protected Table table;
     private bool dropActive = true;
+    private int priority = (int) DroppablePriorities.TABLE;
     private NormalCard attachModeCardInFocus;
 
     // ---------- Main Functions ----------------------------------------------------------------------------------
     public virtual void init(Table table)
     {
         this.table = table;
+        dropActive = isPlayer;
         playerDeck.init(this);
         playerDeck.transform.localPosition = drawpile.transform.localPosition;
         drawpile.SetCards(playerDeck.GetCards());
@@ -205,6 +207,11 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
     {
         get {return dropActive;}
         set {dropActive = value;}
+    }
+
+    public int Priority {
+        get {return priority;}
+        set {priority = value;}
     }
     
     public bool OnDrop(Draggable draggedObject)

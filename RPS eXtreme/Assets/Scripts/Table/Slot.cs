@@ -11,10 +11,12 @@ public class Slot : MonoBehaviour, Droppable
     private TablePlayer tablePlayer;
     private bool dropActive = true;
     private NormalCard card;
+    private int priority = (int) DroppablePriorities.SLOT;
 
     public void init(TablePlayer tablePlayer) 
     {
         this.tablePlayer = tablePlayer;
+        dropActive = tablePlayer.isPlayer;
     }
 
     // ---------- Slot Functions ----------------------------------------------
@@ -28,6 +30,11 @@ public class Slot : MonoBehaviour, Droppable
     {
         get {return dropActive;}
         set {dropActive = value;}
+    }
+
+    public int Priority {
+        get {return priority;}
+        set {priority = value;}
     }
     
     public bool OnDrop(Draggable draggedObject)
