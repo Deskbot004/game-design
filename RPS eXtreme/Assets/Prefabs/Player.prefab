@@ -97,9 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0795cede2d708042ad049e0aa0f2421, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  borderDistance: 0.5
-  margin: -0.2
-  deck: {fileID: 0}
 --- !u!1 &1802453394693249130
 GameObject:
   m_ObjectHideFlags: 0
@@ -109,8 +106,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6515485187003097866}
-  - component: {fileID: 5434558424096136984}
   - component: {fileID: 5820996346870112877}
+  - component: {fileID: 5434558424096136984}
   m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
@@ -137,29 +134,6 @@ Transform:
   - {fileID: 3043424219822528617}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5434558424096136984
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1802453394693249130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b2deaef83944254e9822c0c06c36d81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerDeck: {fileID: 0}
-  drawpile: {fileID: 8651575762144826562}
-  discardpile: {fileID: 603551095673862838}
-  hand: {fileID: 6206022835028041681}
-  slots:
-  - {fileID: 5809674141299762854}
-  - {fileID: 2433592845975818760}
-  isPlayer: 0
-  endTurnButton: {fileID: 0}
-  attachDoneButton: {fileID: 0}
-  detachButton: {fileID: 0}
 --- !u!61 &5820996346870112877
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -205,6 +179,25 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 20, y: 12}
   m_EdgeRadius: 0
+--- !u!114 &5434558424096136984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1802453394693249130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b2deaef83944254e9822c0c06c36d81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  drawpile: {fileID: 8651575762144826562}
+  discardpile: {fileID: 603551095673862838}
+  hand: {fileID: 6206022835028041681}
+  slots:
+  - {fileID: 5809674141299762854}
+  - {fileID: 2433592845975818760}
+  isPlayer: 1
 --- !u!1 &2432206791776543006
 GameObject:
   m_ObjectHideFlags: 0

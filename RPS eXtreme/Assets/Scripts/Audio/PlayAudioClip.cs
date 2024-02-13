@@ -2,6 +2,7 @@
 
 namespace BrightLib.Animation.Runtime
 {
+	/*
 	public class PlayAudioClip : StateMachineBehaviour
 	{
 		public bool useMultiple;
@@ -98,5 +99,5 @@ namespace BrightLib.Animation.Runtime
 		}
 
 	}
-
+ */
 }

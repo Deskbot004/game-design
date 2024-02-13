@@ -5,7 +5,8 @@ using TMPro;
 using System;
 using UnityEngine.Rendering;
 
-public class Health : MonoBehaviour
+// TODO: Merge into TableUI
+public class Health : MonoBehaviour 
 {
     [UDictionary.Split(30, 70)]
     public UDictionary1 healthbars;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEditor;
+using UnityEngine.Rendering;
 
 [Serializable]
 public class Card : MonoBehaviour
@@ -24,9 +25,18 @@ public class Card : MonoBehaviour
     // -1: outside of game, 0: in a pile, 1: in hand 2: in slot
     protected int status = -1;
 
+    private bool rightClickEnabled = true;
+
     // Animation stuff
     private Vector3 targetPosition; // WorldPosition
     private Vector3 targetRotation;
+
+    #region New Functions (To be sorted) --------------------------------------------------------------------
+    public void EnableDrag(bool enabled) {
+        GetComponent<Draggable>().enabled = enabled;
+    }
+    #endregion
+    
 
     // ---------- Main Functions ------------------------------------------------------------------------------
     public virtual void init(Deck deck)
@@ -34,7 +44,7 @@ public class Card : MonoBehaviour
         if(!deck.GetTablePlayer().isPlayer)
             transform.eulerAngles = new Vector3(0f, 0f, 180f);
         this.deck = deck;
-        this.gamelogic = deck.GetTablePlayer().GetTable().GetGamelogic();
+        //this.gamelogic = deck.GetTablePlayer().GetTable().GetGamelogic();
         this.targetPosition = this.transform.position;
         SetSprite();
     }
@@ -43,16 +53,18 @@ public class Card : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            if (this.status > 0)
-            {
-                OnRightClickInHand();
-            }
+            OnRightClickInHand();
         }
     }
 
     public virtual void OnRightClickInHand() 
     { 
         if(!deck.GetTablePlayer().isPlayer) return;
+        if(!rightClickEnabled) return;
+    }
+
+    public void EnableRightClick(bool enabled) {
+        rightClickEnabled = enabled;
     }
 
     /*
@@ -142,6 +154,14 @@ public class Card : MonoBehaviour
     public void SetTargetRotation(Vector3 rotation)
     {
         targetRotation = rotation;
+    }
+
+    public bool BelongsToPlayer() {
+        return deck.GetTablePlayer().isPlayer;
+    }
+
+    public void SetSortingLayer(string layerName) {
+        GetComponent<SortingGroup>().sortingLayerName = layerName;
     }
 
     public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR() { return null; }

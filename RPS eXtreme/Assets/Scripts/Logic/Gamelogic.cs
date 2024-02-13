@@ -21,7 +21,7 @@ public class Gamelogic : MonoBehaviour
     public Table table;
 
     [Header("UI Connection")]
-    public Health healthUI;
+    public Health healthUI; // TODO: This should move to Animation
 
     // Determines the Win of a symbol on attack
     // Currently -1 Draw; 0 User win; 1 enemy win
@@ -92,14 +92,15 @@ public class Gamelogic : MonoBehaviour
     */
     public void ResolveTurn()
     {
-        table.player.endTurnButton.GetComponent<Button>().interactable = false;
+        //table.player.endTurnButton.GetComponent<Button>().interactable = false;
         StartCoroutine(ResolveTurnCoroutine());
     }
 
     public IEnumerator ResolveTurnCoroutine()
     {
-        table.dim.gameObject.SetActive(true);
-
+        yield return null;
+        //table.dim.gameObject.SetActive(true);
+        /*
         List<Slot> slotsUser = table.GetSlotsPlayer();
         List<Slot> slotsEnemy = table.GetSlotsEnemy();
 
@@ -134,6 +135,7 @@ public class Gamelogic : MonoBehaviour
         {
             StartTurn();
         }
+         */
     }
 
     /* Evaluation of the slots and deduction of life points for loss or empty slot.

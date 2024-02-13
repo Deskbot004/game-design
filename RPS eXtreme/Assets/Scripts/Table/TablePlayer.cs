@@ -5,28 +5,171 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class TablePlayer : MonoBehaviour, DefaultDroppable
+// TESTED
+public class TablePlayer : MonoBehaviour, Droppable
 {
-    public Deck playerDeck;
+    public Deck deck;
     public Cardpile drawpile;
     public Cardpile discardpile;
     public Hand hand;
     public List<Slot> slots;
     public bool isPlayer;
+    
+    private AnimationHandler animHandler;
+    private Table table;
 
-    [Header("UI Connections")]
-    public GameObject endTurnButton;
-    public GameObject attachDoneButton;
-    public GameObject detachButton;
-
-    protected Table table;
+    // Droppable
     private bool dropActive = true;
-    private int priority = (int) DroppablePriorities.TABLE;
-    private NormalCard attachModeCardInFocus;
+    private readonly int priority = (int) DroppablePriorities.TABLE;
 
-    // ---------- Main Functions ----------------------------------------------------------------------------------
-    public virtual void init(Table table)
+    #region Main Functions -------------------------------------------------------------------------------------------
+    public virtual void Init(Table table) {
+        // TODO: Cleanup the deck functions
+        deck.init(this);
+        deck.transform.localPosition = drawpile.transform.localPosition;
+
+        animHandler = table.animHandler;
+        this.table = table;
+        dropActive = isPlayer;
+        drawpile.AddCards(deck.GetCards());
+        drawpile.Shuffle();
+        foreach (Slot slot in slots) {
+            slot.Init(table, this);
+        }
+    }
+
+    public void DrawCards(int amount) {
+        FlipCardAnim anim = animHandler.CreateAnim<FlipCardAnim>();
+        anim.flippedCards = new();
+        anim.offsetTime = 0.2f;
+
+        for(int i=0; i<amount; i++) {
+            try {
+                Card drawnCard = drawpile.PopCard();
+                AddToHandWithAnimation(drawnCard);
+
+                anim.flippedCards.Add(drawnCard);
+            } catch {
+                ShuffleDiscardIntoDraw();
+                i--;
+            }
+        }
+        animHandler.QueueAnimation(anim);
+    }
+
+    public void ShuffleDiscardIntoDraw() {
+        MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
+        anim.cards = discardpile.PopAllCards();
+        drawpile.AddCards(anim.cards);
+        drawpile.Shuffle();
+
+        foreach (Card card in anim.cards) {
+            card.transform.SetPositionAndRotation(discardpile.transform.position, discardpile.transform.rotation);
+        }
+        anim.destinationObject = drawpile.transform;
+        anim.moveTime = 0.5f;
+        anim.offsetTime = 0.1f;
+        anim.disableOnArrival = true;
+        animHandler.QueueAnimation(anim); // TODO: This animation sucks! (But it works, so I'll leave it for now)
+    }
+
+    // TODO: Test
+    public void ClearSlots() {
+        MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
+        List<Card> clearedCards = new();
+        foreach (Slot slot in slots) {
+            if(!slot.isEmpty()) {
+                NormalCard baseCard = slot.PopCard();
+                List<SupportCard> attachedCards = baseCard.DetachAllCards();
+                clearedCards.Add(baseCard);
+                clearedCards.AddRange(attachedCards);
+            }            
+        }
+
+        anim.cards = clearedCards;
+        anim.destinationObject = discardpile.transform;
+        anim.moveTime = 0.5f;
+        anim.disableOnArrival = true;
+        animHandler.QueueAnimation(anim);
+    }
+    #endregion
+
+    #region Droppable -------------------------------------------------------------------------------------------
+    public bool DropActive {
+        get {return dropActive;}
+        set {dropActive = value;}
+    }
+
+    public int Priority {
+        get {return priority;}
+    }
+
+    public Transform Transform {
+        get {return transform;}
+    }
+
+    public bool OnDrop(Draggable draggedObject) {
+        AddToHandWithAnimation(draggedObject.GetComponent<Card>());
+        return true;
+    }
+
+    public void OnLeave(Draggable draggedObject) {
+        RemoveFromHandWithAnimation(draggedObject.GetComponent<Card>());
+    }
+    #endregion
+
+    #region Shorthands -------------------------------------------------------------------------------------------
+    public void AddToHand(Card card) {
+        hand.AddCard(card);
+    }
+    
+    public void AddToHandWithAnimation(Card card) {
+        AddToHand(card);
+
+        ArrangeHandAnim anim = animHandler.CreateAnim<ArrangeHandAnim>();
+        anim.animHandler = animHandler;
+        anim.hand = hand;
+        anim.cardsInHand = GetCardsInHand();
+        animHandler.QueueAnimation(anim);
+    }
+    
+    public void EnableSlots(bool enabled) {
+        foreach (Slot slot in slots) 
+            slot.DropActive = enabled;
+    }
+
+    public List<Card> GetAllCards() {
+        return new(deck.cards);
+    }
+    
+    public List<Card> GetCardsInHand() {
+        return hand.GetCards();
+    }
+
+    // TODO
+    public List<Card> GetMatchingSupportCards(NormalCard baseCard) {
+        return new();
+    }
+
+    public void RemoveFromHand(Card card) {
+        hand.RemoveCard(card);
+    }
+
+    public void RemoveFromHandWithAnimation(Card card) {
+        RemoveFromHand(card);
+
+        ArrangeHandAnim anim = animHandler.CreateAnim<ArrangeHandAnim>();
+        anim.animHandler = animHandler;
+        anim.hand = hand;
+        anim.cardsInHand = GetCardsInHand();
+        animHandler.QueueAnimation(anim);
+    }
+    #endregion
+
+    // TODO LIST ---------------------------------------------------
+    public virtual void init(Table table) // TODO
     {
+        /*
         this.table = table;
         dropActive = isPlayer;
         playerDeck.init(this);
@@ -44,211 +187,19 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         {
             slot.init(this);
         }
+        animHandler = table.animHandler;
+         */
     }
 
-    public void DrawCardsButton(int amount)
-    {
-        DrawCards(amount);
-    }
-
-    // Draws an amount of cards from the Drawpile into the Hand
-    public List<Card> DrawCards(int amount, bool playAnimation = true)
-    {
-        // Not enough cards in the drawpile
-        if (drawpile.GetCards().Count < amount)
-        {
-            int amountMissing = amount - drawpile.GetCards().Count;
-            List<Card> allDrawnCards = new();
-            List<Card> discardToDraw = new();
-            discardToDraw.AddRange(discardpile.GetCards());
-            allDrawnCards.AddRange(DrawCards(drawpile.GetCards().Count, false));
-            DiscardToDrawpile();
-            allDrawnCards.AddRange(DrawCards(amountMissing, false));
-            hand.ArrangeHand(false);
-            StartCoroutine(MoveCardsToDrawpileThenDraw(discardToDraw, allDrawnCards, 0.1f));
-            return allDrawnCards;
-        }
-
-        // Draw abstract Cards
-        List<Card> drawnCards = drawpile.GetCards().Take(amount).ToList();
-        drawpile.SetCards(drawpile.GetCards().Except(drawnCards).ToList()); 
-        hand.AddCards(drawnCards);
-
-        // Add those Cards as GameObjects
-        hand.ArrangeHand(false);
-        if(playAnimation) StartCoroutine(DealCards(drawnCards, 0.3f));
-        return drawnCards;
-    }
-
-    // Shuffles all cards from the Discardpile into the Drawpile
-    public void DiscardToDrawpile()
-    {
-        drawpile.GetCards().AddRange(discardpile.GetCards());
-        discardpile.GetCards().Clear();
-        drawpile.Shuffle();
-    }
-
+    // TODO: Remove once Opponent is refactored
     public virtual IEnumerator playCards() 
     {
         yield return new WaitForSeconds(0.3f); 
     }
 
-    // ---------- Attaching Cards ----------------------------------------------------------------------------------
-    // ----- Main Functions -----
-
-    public void StartAttach(NormalCard baseCard)
-    {
-        OpenAttachMode();
-        if(attachModeCardInFocus == baseCard)
-        {
-            FinishAttach();
-            return;
-        }
-        else if(attachModeCardInFocus != null)
-        {
-            RemoveAttachFocusFrom(attachModeCardInFocus);
-        }
-        SetAttachFocusOn(baseCard);
-        endTurnButton.SetActive(false);
-        attachDoneButton.SetActive(true);
-        detachButton.SetActive(baseCard.HasAttachedCards());
-        hand.ArrangeHand(true, 0.3f);
-    }
-
-    public void DetachAllCards() 
-    {
-        List<SupportCard> supCards = attachModeCardInFocus.DetachAllCards();
-        foreach (SupportCard supCard in supCards)
-        {
-            OnDrop(supCard.GetComponent<Draggable>());
-            supCard.GetComponent<Draggable>().SetCurrentDroppable(this);
-        }
-    }
-
-    public void FinishAttach()
-    {
-        detachButton.SetActive(false);
-        attachDoneButton.SetActive(false);
-        endTurnButton.SetActive(true);
-        RemoveAttachFocusFrom(attachModeCardInFocus);
-        CloseAttachMode();
-        hand.ArrangeHand(true, 0.3f);
-    }
-
-    // ----- Helper Functions -----
-
-    public void OpenAttachMode()
-    {
-        foreach (Slot slot in slots) 
-            slot.DropActive = false;
-        table.dim.gameObject.SetActive(true);
-        foreach (Card card in hand.GetCards())
-        {
-            if(card is NormalCard)
-                card.GetComponent<Draggable>().enabled = false;
-            else
-                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-        }
-    }
-
-    public void CloseAttachMode()
-    {
-        foreach (Slot slot in slots) 
-            slot.DropActive = true;
-        table.dim.gameObject.SetActive(false);
-        foreach (Card card in hand.GetCards())
-        {
-            if(card is NormalCard)
-                card.GetComponent<Draggable>().enabled = true;
-            else
-                card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-        }
-    }
-
-    public void SetAttachFocusOn(NormalCard focusCard)
-    {
-        // Remove card from Hand
-        hand.RemoveCard(focusCard);
-
-        // Bring card to the middle of screen
-        focusCard.transform.SetParent(transform);
-        focusCard.SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0)));
-        focusCard.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
-        StartCoroutine(focusCard.MoveToTarget(0.1f));
-        focusCard.transform.SetParent(playerDeck.transform);
-
-        // Bring card in front of dim layer
-        focusCard.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-
-        // Make the card a Droppable
-        focusCard.DropActive = true;
-
-        // Everything succeeded
-        attachModeCardInFocus = focusCard;
-    }
-
-    public void RemoveAttachFocusFrom(NormalCard focusCard)
-    {
-        // Add card back to Hand
-        hand.AddCard(focusCard);
-
-        // Put card back on proper layer
-        focusCard.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-
-        // Disable Droppable
-        focusCard.DropActive = false;
-
-        // Everything succeeded
-        attachModeCardInFocus = null;
-    }
-
-    // ---------- Droppable -------------------------------------------------------------------------------------
-    public bool DropActive
-    {
-        get {return dropActive;}
-        set {dropActive = value;}
-    }
-
-    public int Priority {
-        get {return priority;}
-        set {priority = value;}
-    }
-    
-    public bool OnDrop(Draggable draggedObject)
-    {
-        hand.GetCards().Add(draggedObject.GetComponent<Card>());
-        hand.ArrangeHand();
-        return true;
-    }
-
-    public void OnLeave(Draggable draggedObject)
-    {
-        hand.RemoveCard(draggedObject.GetComponent<Card>());
-        hand.ArrangeHand();
-    }
-
-    public Transform GetTransform()
-    {
-        return transform;
-    }
-
-    // ------ Getter und Setter -------------------------------------------------------------------
-    public List<Slot> GetSlots() { return slots; }
-    public Table GetTable() { return table; }
-    public Hand GetHand() { return hand; }
-    public List<Cardpile> GetAllCardpiles() {
-        List<Cardpile> allPiles  = new List<Cardpile> {drawpile, discardpile};
-        return allPiles;
-    }
-    public NormalCard GetCardInFocus()
-    {
-        return attachModeCardInFocus;
-    }
-
-    // ------ Animation -------------------------------------------------------------------
     protected virtual IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
-        hand.ArrangeHand(false);
+        //hand.ArrangeHand(false);
         foreach (Card card in hand.GetCards())
         {  
             card.GetComponent<Draggable>().enabled = false;
@@ -266,41 +217,7 @@ public class TablePlayer : MonoBehaviour, DefaultDroppable
         foreach (Card card in hand.GetCards()) card.GetComponent<Draggable>().enabled = true;
     }
 
-    public IEnumerator DiscardCard(Card card)
-    {
-        card.GetComponent<Draggable>().enabled = false;
-        card.SetWorldTargetPosition(discardpile.transform.TransformPoint(new Vector3(0,0,0)));
-        card.GetComponent<Animator>().SetBool("faceFront", false);
-        card.GetComponent<Animator>().SetBool("flip", true);
-        yield return card.MoveToTarget(0.5f);
-        card.gameObject.SetActive(false);
-    }
-
-    IEnumerator MoveCardsToDrawpileThenDraw(List<Card> shuffledCard, List<Card> drawnCards, float timeOffset)
-    {
-        foreach(Card card in shuffledCard)
-        {   
-            card.transform.position = discardpile.transform.position;
-            card.transform.eulerAngles = Vector3.zero;
-            card.gameObject.SetActive(true);
-            card.GetComponent<Animator>().SetBool("faceFront", false);
-            card.SetWorldTargetPosition(drawpile.transform.TransformPoint(Vector3.zero));
-            card.SetTargetRotation(Vector3.zero);
-            StartCoroutine(card.MoveToTarget(0.5f, false));
-            yield return new WaitForSeconds(timeOffset);
-        }
-        yield return new WaitForSeconds(0.5f);
-        StartCoroutine(DealCards(drawnCards, 0.3f));
-    }
-
-    // ---------- For Debugging --------------------------------------------------------------------------------
-    public void fakeResolve()
-    {
-        foreach (Slot slot in slots)
-        {
-            discardpile.GetCards().Add(slot.GetCard());
-            slot.GetCard().gameObject.SetActive(false);
-            slot.ClearCard();
-        }
+    public Table GetTable() {
+        return table;
     }
 }

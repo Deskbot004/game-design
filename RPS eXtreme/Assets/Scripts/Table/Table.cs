@@ -7,151 +7,47 @@ using UnityEngine.Android;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 
+// TODO: Test
 public class Table : MonoBehaviour
 {
     public Gamelogic logic;
     public TablePlayer player;
     public TablePlayer enemy;
+    public TableUI ui;
+    public AnimationHandler animHandler;
 
-    [Header("Visual Stuff")]
-    public SpriteRenderer dim;
-    public Animator resolveTurnAnimator;
-    public Health healthUI;
-    public WinLoseScreen winLoseScreen;
-
-    [Header("Debugging")]
-    public bool quickResolve;
-    public float waitTimer = -1;
-
-    private float cardMoveTime = 0.5f;
-
-    private FadeInOut fade;
-
-    void Awake(){
-        this.fade = this.GetComponent<FadeInOut>();
-        fade.FadeOut();
+    #region Main Functions ----------------------------------------------------------------------------------------
+    void Start() {
+        TestClass.table = this; // Debugging
+        player.Init(this);
+        enemy.Init(this);
+        ui.Init(this);
+        //logic.init(this); // TODO: Rename to Init (capital letter)
     }
 
-    void Start()
-    {
-        if (waitTimer < 0) waitTimer = quickResolve? 0.3f : 1f;
-        player.init(this);
-        enemy.init(this);
-        logic.init(this);
+    public void DrawCards(int amount, bool forPlayer) {
+        TablePlayer cardDrawer = forPlayer? player : enemy;
+        cardDrawer.DrawCards(amount);
     }
 
-    public float TurnEnemySlotCards()
-    {
-        float animationLength = 1f;
-        foreach (Slot slot in enemy.GetSlots())
-        {
-            foreach(Card card in slot.GetNormalAndSuppCards())
-            {
-                card.GetComponent<Animator>().SetBool("flip", true);
-                animationLength = slot.GetCard().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
-            }
-        }
-        return animationLength;
-    }
-    
-    // Removes the card from every slot and puts them into the Discard Pile
-    public void ClearSlots()
-    {
-        TablePlayer[] players = { player, enemy };
-        foreach (TablePlayer p in players)
-        {
-            foreach (Slot slot in p.slots)
-            {
-                NormalCard card = slot.GetCard();
-                slot.ClearCard();
-                if (card != null)
-                {
-                    List<SupportCard> supCards = card.DetachAllCards();
-                    p.discardpile.GetCards().Add(card);
-                    StartCoroutine(p.DiscardCard(card));
-                    foreach(SupportCard supCard in supCards)
-                    {
-                        p.discardpile.GetCards().Add(supCard);
-                        StartCoroutine(p.DiscardCard(supCard));
-                    }
-                }
-
-            }
-        }
+    public void ResolveSlot(int slotNr, string winner) {
+        // TODO: Actually write it
+        // TODO: Change it to int slotNr, bool playerWon, bool enemyWon
     }
 
-    // TODO: Make better anim for no cards in slot
-    public IEnumerator ResolveSlot(int slotNr, string winner, IDictionary<string, int> lifePoints)
-    {
-        List<string> winnerToInt = new() {"user", "enemy", "none"};
-        int winnerInt = winnerToInt.FindIndex(a => a == winner);
-
-        // Setup position of animation box
-        if(slotNr == 0)
-        {
-            resolveTurnAnimator.transform.Find("PlayerCard/Rotation").localPosition = Vector3.zero;
-            resolveTurnAnimator.transform.Find("EnemyCard/Rotation").localPosition = Vector3.zero;
-        }
-        else
-        {
-            resolveTurnAnimator.transform.Find("PlayerCard/Rotation").localPosition = new Vector3(7.07f, 0, 0);
-            resolveTurnAnimator.transform.Find("EnemyCard/Rotation").localPosition = new Vector3(7.07f, 0, 0);
-        }
-
-        // Bring all cards to front
-        Dictionary<string, Slot> slots = GetSlotByNr(slotNr);
-        foreach (Slot slot in slots.Values)
-        {
-            Card card = slot.GetCard();
-            if(card != null)
-            {
-                card.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-                string newParent = "";
-                if(card.GetDeck().GetTablePlayer().isPlayer) newParent = "PlayerCard/Rotation";
-                else newParent = "EnemyCard/Rotation";
-                card.transform.SetParent(resolveTurnAnimator.transform.Find(newParent));
-            }
-        }
-        yield return new WaitForSeconds(0.5f);
-
-        // Play animation of cards and wait until it's done
-        resolveTurnAnimator.SetInteger("winner", winnerInt);
-        resolveTurnAnimator.SetBool("playAnim", true);
-        float animationLength = resolveTurnAnimator.GetCurrentAnimatorStateInfo(0).length;
-
-        yield return new WaitForSecondsRealtime(animationLength + 0.5f);
-
-        // Play animation for life
-        if(winner == "user")
-        {
-            yield return healthUI.PlayDamageAnimation(lifePoints["enemy"], "enemy");
-            healthUI.SetHealth(lifePoints["user"], "user");
-        }
-        else if (winner == "enemy")
-        {
-            yield return healthUI.PlayDamageAnimation(lifePoints["user"], "user");
-            healthUI.SetHealth(lifePoints["enemy"], "enemy");
-        }
-
-        // Return Cards to previous state
-        foreach (Slot slot in slots.Values)
-        {
-            Card card = slot.GetCard();
-            if(card != null)
-            {
-                card.GetComponent<SortingGroup>().sortingLayerName = "Cards on Table";
-                card.transform.SetParent(card.GetDeck().transform);
-            }
-        }
-        resolveTurnAnimator.SetBool("playAnim", false);
-        yield return new WaitForSeconds(0.5f);
+    public void ClearSlots() {
+        player.ClearSlots();
+        enemy.ClearSlots();
     }
 
-    public void SetWinner(string name)
-    {
-        winLoseScreen.showWinner(name);
+    public void SetWinner(string name) {
+        // TODO: Let Gamelogic queue the animation
     }
+    #endregion
 
+    #region Getter & Setter ----------------------------------------------------------------------------------------
+    /*
+    // TODO: Hide Internal Structure
     public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
     public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
     public Dictionary<string, Slot> GetSlotByNr(int slotNr)
@@ -162,5 +58,17 @@ public class Table : MonoBehaviour
         return slots;
     }
     public Gamelogic GetGamelogic() { return this.logic; }
-    public float GetCardMoveTime() { return this.cardMoveTime; }
+     */
+    #endregion
+
+    #region Debugging ----------------------------------------------------------------------------------------
+    public void Test() {
+        Debug.Log("Test Function");
+        //List<Card> cards = player.drawpile.PopAllCards();
+        //player.discardpile.AddCards(cards);
+        //player.ShuffleDiscardIntoDraw();
+    }
+
+    #endregion
+
 }

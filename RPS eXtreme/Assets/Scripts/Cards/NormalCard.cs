@@ -139,10 +139,10 @@ public class NormalCard : Card, Droppable
     public override void OnRightClickInHand()
     {
         base.OnRightClickInHand();
-        if(!deck.GetTablePlayer().isPlayer) return;
-        if(this.status == 2)
-        {
-            foreach (Slot slot in deck.GetTablePlayer().GetSlots())
+        deck.GetTablePlayer().GetTable().ui.BeginAttaching(this); //TODO: TrainWreck Card -> TableUI
+        
+            /*
+            foreach (Slot slot in deck.GetTablePlayer().GetSlots()) // TODO: Move this to SetFocusOn
             {
                 if(slot.GetCard() == this)
                 {
@@ -153,6 +153,7 @@ public class NormalCard : Card, Droppable
             }
         }
         this.deck.GetTablePlayer().StartAttach(this);
+         */
     }
 
     public bool HasAttachedCards()
@@ -266,7 +267,7 @@ public class NormalCard : Card, Droppable
             draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
             StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
             draggedObject.enabled = false;
-            if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
+            //if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
             return true;
         }
         return false;

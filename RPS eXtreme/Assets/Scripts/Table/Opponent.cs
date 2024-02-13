@@ -10,7 +10,7 @@ public class Opponent : TablePlayer
     public List<float> preferenceList;
 
     public float speed;
-    public override void init(Table table)
+    public override void Init(Table table)
     {
         this.preferences = new Dictionary<string, float>();
         this.preferences["resourcing"] = 0;
@@ -134,7 +134,7 @@ public class Opponent : TablePlayer
         stats["numBasic"] = basic;
         stats["numSupport"] = support;
         // TODO Rework expected Cards
-        stats["numExpectedCards"] = stats["numCards"] + this.table.logic.turnDraw;
+        //stats["numExpectedCards"] = stats["numCards"] + this.table.logic.turnDraw;
         return stats;
     }
 
@@ -231,6 +231,7 @@ public class Opponent : TablePlayer
         {
             this.hand.RemoveCard(card);
         }
+        /*
         this.hand.ArrangeHand();
         
         table.player.endTurnButton.GetComponent<Button>().interactable = true;
@@ -239,6 +240,7 @@ public class Opponent : TablePlayer
         float animationLength = table.TurnEnemySlotCards();
         if(table.quickResolve) animationLength = 0;
         yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
+         */
     }
 
 
@@ -259,6 +261,7 @@ public class Opponent : TablePlayer
             return 1;
         }
     }
+
 
     protected override IEnumerator DealCards(List<Card> cards, float timeOffset)
     {

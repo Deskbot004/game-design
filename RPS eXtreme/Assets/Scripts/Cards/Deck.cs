@@ -36,6 +36,7 @@ public class Deck : MonoBehaviour
         this.LoadDeck(this.deckName);
         foreach (Card card in cards)
         {
+            card.gameObject.SetActive(false);
             card.init(this);
         }
         if(!this.tablePlayer.isPlayer){

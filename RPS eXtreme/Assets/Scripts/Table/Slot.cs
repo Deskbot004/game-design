@@ -3,73 +3,82 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
+// TESTED
 public class Slot : MonoBehaviour, Droppable
 {
-    public int slotPosition; // Leftmost is 0
+    public int slotPosition;
 
-    private TablePlayer tablePlayer;
+    private NormalCard cardInSlot;
+    private AnimationHandler animHandler;
+
+    // Droppable
     private bool dropActive = true;
-    private NormalCard card;
     private int priority = (int) DroppablePriorities.SLOT;
 
-    public void init(TablePlayer tablePlayer) 
-    {
-        this.tablePlayer = tablePlayer;
+    #region Main Functions --------------------------------------------------------------------------------------------
+    public void Init(Table table, TablePlayer tablePlayer) {
         dropActive = tablePlayer.isPlayer;
+        animHandler = table.animHandler;
     }
-
-    // ---------- Slot Functions ----------------------------------------------
-    public void TurnCards()
-    {
-        card.GetComponent<Animator>().SetBool("flip", true);
+    
+    public NormalCard PopCard() {
+        NormalCard poppedCard = cardInSlot;
+        OnLeave(poppedCard.GetComponent<Draggable>());
+        return poppedCard;
     }
+    #endregion
 
-    // ---------- Droppable Functions -----------------------------------------
-    public bool DropActive
-    {
+    #region Droppable --------------------------------------------------------------------------------------------
+    public bool DropActive {
         get {return dropActive;}
         set {dropActive = value;}
     }
 
     public int Priority {
         get {return priority;}
-        set {priority = value;}
     }
-    
-    public bool OnDrop(Draggable draggedObject)
-    {
-        // Check whether the Slot is empty and the dropped Object is a Basic Card
-        if (card != null || draggedObject.GetComponent<NormalCard>() == null) // Not the case
-        {
+
+    public Transform Transform {
+        get {return transform;}
+    }
+
+    public bool OnDrop(Draggable draggedObject) {
+        MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
+        NormalCard droppedCard = draggedObject.GetComponent<NormalCard>();
+        if (cardInSlot == null && droppedCard != null) {
+            GetComponent<BoxCollider2D>().enabled = false;
+            cardInSlot = droppedCard;
+            anim.cards = new() {droppedCard};
+            anim.destinationObject = transform;
+            animHandler.QueueAnimation(anim);
+            return true;
+        } else {
             return false;
         }
-        else // Yes the case
-        {
-            SetCard(draggedObject.GetComponent<NormalCard>());
-            return true;
-        }
     }
 
-    public void OnLeave(Draggable draggedObject)
-    {
-        card = null;
+    public void OnLeave(Draggable draggedObject) {
+        GetComponent<BoxCollider2D>().enabled = true;
+        cardInSlot = null;
     }
+    #endregion
 
-    public Transform GetTransform()
-    {
-        return transform;
+    #region Shorthands -------------------------------------------------------------------------------------------
+    public bool isEmpty() {
+        return cardInSlot == null;
     }
+    #endregion
 
+    // TODO -----------------------------------------------------------------------------
     // ------ Getter und Setter -------------------------------------------------------------------
     public int GetSlotPosition() { return slotPosition; }
     public List<Card> GetNormalAndSuppCards()
     {
         List<Card> cardsInSlot = new List<Card>();
-        if(card != null)
+        if(cardInSlot != null)
         {
-            cardsInSlot.Add(card);
-            foreach(SupportCard supCard in card.GetAttachedSupportCards())
+            cardsInSlot.Add(cardInSlot);
+            foreach(SupportCard supCard in cardInSlot.GetAttachedSupportCards())
                 cardsInSlot.Add(supCard);
         }
         return cardsInSlot;
@@ -80,16 +89,11 @@ public class Slot : MonoBehaviour, Droppable
         newCard.SetWorldTargetPosition(transform.position + new Vector3(0f, 0f, -0.01f));
         newCard.SetTargetRotation(new Vector3(0f, 0f, 0f));
         newCard.SetStatus(2);
-        card = newCard;
+        cardInSlot = newCard;
 
         StartCoroutine(newCard.MoveToTarget(0.1f));
     }
-    public TablePlayer GetTablePlayer() {return tablePlayer;}
 
     // ------ For Debugging -------------------------------------------------------------------
-    public NormalCard GetCard() { return card; }
-    public void ClearCard()
-    {
-        card = null;
-    }
+    public NormalCard GetCard() { return cardInSlot; }
 }

@@ -23,14 +23,14 @@ public class Draggable : MonoBehaviour
 
     // Is called on Pickup
     void OnMouseDown() {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //Prevents Dragging when this component is disabled //TODO: Train Wreck: Card -> isPlayer
+        if (!enabled || !GetComponent<Card>().BelongsToPlayer()) return; //Prevents Dragging when this component is disabled 
         SavePosition();
         transform.eulerAngles = new Vector3(0, 0, 0);
     }
 
     // Is called while Dragging
     void OnMouseDrag() {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //TODO: Train Wreck: Card -> isPlayer
+        if (!enabled || !GetComponent<Card>().BelongsToPlayer()) return;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePosition.z = -7;
         transform.position = mousePosition;
@@ -38,7 +38,7 @@ public class Draggable : MonoBehaviour
 
     // Is called on Drop
     void OnMouseUp() {
-        if (!enabled || !GetComponent<Card>().GetDeck().GetTablePlayer().isPlayer) return; //TODO: Train Wreck: Card -> isPlayer
+        if (!enabled || !GetComponent<Card>().BelongsToPlayer()) return;
         Collider2D[] colliders = GetOverlappedDroppables();
         foreach (Collider2D collider in colliders) {
             Droppable newDroppable = collider.GetComponent<Droppable>();
