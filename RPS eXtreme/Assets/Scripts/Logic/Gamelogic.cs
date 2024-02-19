@@ -20,9 +20,6 @@ public class Gamelogic : MonoBehaviour
     public LibBR libBR;
     public Table table;
 
-    [Header("UI Connection")]
-    public Health healthUI; // TODO: This should move to Animation
-
     // Determines the Win of a symbol on attack
     // Currently -1 Draw; 0 User win; 1 enemy win
     // Want: User > 0; Draw = 0; Enemy < 0
@@ -47,7 +44,7 @@ public class Gamelogic : MonoBehaviour
     * Input: Table from which the game started.
     * Output: none
     */
-    public void init(Table table)
+    public void Init(Table table)
     {
         // rework?
         symbolToEntry.Add("scissors", 0);
@@ -63,8 +60,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        healthUI.SetHealth(lifepointMax, "user"); //TODO: Change to true/false later
-        healthUI.SetHealth(lifepointMax, "enemy");
+        table.ui.SetHealth(lifepointMax, "player");
+        table.ui.SetHealth(lifepointMax, "enemy");
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
         EnemyDraw(startDraw + turnDraw);
@@ -92,50 +89,28 @@ public class Gamelogic : MonoBehaviour
     */
     public void ResolveTurn()
     {
-        //table.player.endTurnButton.GetComponent<Button>().interactable = false;
-        StartCoroutine(ResolveTurnCoroutine());
-    }
-
-    public IEnumerator ResolveTurnCoroutine()
-    {
-        yield return null;
-        //table.dim.gameObject.SetActive(true);
-        /*
-        List<Slot> slotsUser = table.GetSlotsPlayer();
-        List<Slot> slotsEnemy = table.GetSlotsEnemy();
-
-        foreach (Slot slotUser in slotsUser)
-        {
-            foreach (Slot slotEnemy in slotsEnemy)
-            {
-                if(slotUser.GetSlotPosition() == slotEnemy.GetSlotPosition())
-                {
-                    string winner = EvaluateCards(slotUser.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
-                    yield return table.ResolveSlot(slotUser.GetSlotPosition(), winner, currentLifepoints);
-                    stringToInput.Reverse();
-                    foreach (var item in stringToInput) {
-                        Action<Gamelogic,object> func = stringToFunc[item.Key];
-                        func(this, item.Value);
-                    }
-                    stringToInput.Clear();
-                    stringToFunc.Clear();
-                }
+        table.StartResolve();
+        foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetSlotsForResolving()) {
+            string winner = EvaluateCards(slotPlayer.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
+            table.PlayResolveAnimation(slotPlayer.slotPosition, winner, currentLifepoints);
+            stringToInput.Reverse();
+            foreach (var item in stringToInput) {
+                Action<Gamelogic,object> func = stringToFunc[item.Key];
+                func(this, item.Value);
             }
+            stringToInput.Clear();
+            stringToFunc.Clear();
         }
-        table.dim.gameObject.SetActive(false);
+        table.EndResolve();
         table.ClearSlots();
 
-        if (currentLifepoints["user"] <= 0)
-        {
+        if (currentLifepoints["user"] <= 0) {
             GameEnd("enemy");
-        } else if (currentLifepoints["enemy"] <= 0)
-        {
+        } else if (currentLifepoints["enemy"] <= 0) {
             GameEnd("user");
-        } else
-        {
+        } else {
             StartTurn();
         }
-         */
     }
 
     /* Evaluation of the slots and deduction of life points for loss or empty slot.

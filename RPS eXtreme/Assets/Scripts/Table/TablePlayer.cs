@@ -23,22 +23,22 @@ public class TablePlayer : MonoBehaviour, Droppable
     private readonly int priority = (int) DroppablePriorities.TABLE;
 
     #region Main Functions -------------------------------------------------------------------------------------------
-    public virtual void Init(Table table) {
+    public virtual void Init(Table table, AnimationHandler animHandler) {
         // TODO: Cleanup the deck functions
         deck.init(this);
         deck.transform.localPosition = drawpile.transform.localPosition;
 
-        animHandler = table.animHandler;
-        this.table = table;
-        dropActive = isPlayer;
         drawpile.AddCards(deck.GetCards());
         drawpile.Shuffle();
         foreach (Slot slot in slots) {
             slot.Init(table, this);
         }
+        this.animHandler = animHandler;
+        this.table = table;
+        dropActive = isPlayer;
     }
 
-    public void DrawCards(int amount) {
+    public virtual void DrawCards(int amount) {
         FlipCardAnim anim = animHandler.CreateAnim<FlipCardAnim>();
         anim.flippedCards = new();
         anim.offsetTime = 0.2f;
@@ -73,7 +73,6 @@ public class TablePlayer : MonoBehaviour, Droppable
         animHandler.QueueAnimation(anim); // TODO: This animation sucks! (But it works, so I'll leave it for now)
     }
 
-    // TODO: Test
     public void ClearSlots() {
         MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
         List<Card> clearedCards = new();
@@ -146,9 +145,17 @@ public class TablePlayer : MonoBehaviour, Droppable
         return hand.GetCards();
     }
 
-    // TODO
+    public Card GetCardInSlot(int slotNr) {
+        return GetSlotByNr(slotNr).GetCard();
+    }
+
+    // TODO once Cards have been reworked
     public List<Card> GetMatchingSupportCards(NormalCard baseCard) {
         return new();
+    }
+
+    public Slot GetSlotByNr(int slotPosition) {
+        return slots.Where(s => s.slotPosition == slotPosition).FirstOrDefault();
     }
 
     public void RemoveFromHand(Card card) {
@@ -166,30 +173,6 @@ public class TablePlayer : MonoBehaviour, Droppable
     }
     #endregion
 
-    // TODO LIST ---------------------------------------------------
-    public virtual void init(Table table) // TODO
-    {
-        /*
-        this.table = table;
-        dropActive = isPlayer;
-        playerDeck.init(this);
-        playerDeck.transform.localPosition = drawpile.transform.localPosition;
-        drawpile.SetCards(playerDeck.GetCards());
-        drawpile.Shuffle();
-        foreach (Card card in playerDeck.GetCards())
-        {
-            card.gameObject.SetActive(false);
-        }
-        drawpile.init(this);
-        discardpile.init(this);
-        hand.init(this);
-        foreach (Slot slot in slots)
-        {
-            slot.init(this);
-        }
-        animHandler = table.animHandler;
-         */
-    }
 
     // TODO: Remove once Opponent is refactored
     public virtual IEnumerator playCards() 
@@ -197,6 +180,7 @@ public class TablePlayer : MonoBehaviour, Droppable
         yield return new WaitForSeconds(0.3f); 
     }
 
+    // TODO: Remove once Opponent is refactored
     protected virtual IEnumerator DealCards(List<Card> cards, float timeOffset)
     {
         //hand.ArrangeHand(false);
@@ -217,6 +201,7 @@ public class TablePlayer : MonoBehaviour, Droppable
         foreach (Card card in hand.GetCards()) card.GetComponent<Draggable>().enabled = true;
     }
 
+    // TODO: Remove once Normalcard is refactored
     public Table GetTable() {
         return table;
     }

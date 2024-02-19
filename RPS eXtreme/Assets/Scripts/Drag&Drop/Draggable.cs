@@ -97,7 +97,6 @@ public class Draggable : MonoBehaviour
     #endregion
 
     #region Getter und Setter ---------------------------------------------------------------------------------------------
-
     public void FindStartingDroppable() {
         Collider2D[] colliders = GetOverlappedDroppables();
         int colAmount = colliders.Length;
@@ -107,12 +106,6 @@ public class Draggable : MonoBehaviour
 
         Debug.Assert(1 == 1, "test");
     }
-
-    // TODO: This shouldn't be needed anymore after refactoring -> DropInto should call it
-    public void SetCurrentDroppable(Droppable droppable) {
-        currentDroppable = droppable;
-    }
-
     #endregion
         
 }

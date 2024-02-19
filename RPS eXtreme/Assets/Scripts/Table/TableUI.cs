@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,10 +16,16 @@ public class TableUI : MonoBehaviour
     public Button discardpile;
 
     [Header("Other")]
-    public GameObject dim; // TODO: Give dim a BoxCollider, so that it stops clicks behind it
+    public GameObject dim;
     public Vector3 attachCardWorldPosition;
     public GameObject cardpileScrollview; // Scrollview object to be activated when opening the cardpile
     public Transform cardpileScrollviewContent; // Content object of the Scrollview
+
+    [UDictionary.Split(30, 70)]
+    public UDictionary1 healthbars;
+
+    [Serializable]
+    public class UDictionary1 : UDictionary<string, GameObject> { }
 
     private AnimationHandler animHandler;
     private TablePlayer player;
@@ -25,13 +33,13 @@ public class TableUI : MonoBehaviour
     private List<Button> allButtons;
     private List<Card> cardsInOpenedPile;
 
-    #region Main Functions --------------------------------------------------------------------------------------------
     public void Init(Table table) {
         animHandler = table.animHandler;
         player = table.player;
         allButtons = new() {endTurnButton, closeCardpileButton, attachDoneButton, detachButton, drawpile, discardpile};
     }
 
+    #region Cardpiles --------------------------------------------------------------------------------------------
     public void OpenPile(Cardpile pile) {
         cardsInOpenedPile = pile.GetSortedCards();
         float cardRows = Mathf.Ceil(cardsInOpenedPile.Count/5f);
@@ -48,7 +56,6 @@ public class TableUI : MonoBehaviour
             card.gameObject.SetActive(true);
             card.GetComponent<Animator>().SetBool("faceFront", true);
         }
-        // TODO: Show return button
         // TODO: Create animation?
     }
 
@@ -62,7 +69,6 @@ public class TableUI : MonoBehaviour
             card.SetSortingLayer("Cards on Table");
             card.gameObject.SetActive(false);
         }
-        // TODO: Hide return button
         // TODO: Create animation?
     }
 
@@ -177,4 +183,10 @@ public class TableUI : MonoBehaviour
     }
     #endregion
 
+    #region Health ----------------------------------------------------------------------------------------------------
+    public void SetHealth(int health, string player) {
+        healthbars[player].GetComponentInChildren<TextMeshPro>().text = health.ToString();
+    }
+
+    #endregion
 }

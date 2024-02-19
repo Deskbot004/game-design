@@ -64,26 +64,27 @@ public class Slot : MonoBehaviour, Droppable
     #endregion
 
     #region Shorthands -------------------------------------------------------------------------------------------
-    public bool isEmpty() {
-        return cardInSlot == null;
+    public NormalCard GetCard() { 
+        return cardInSlot; 
     }
-    #endregion
 
-    // TODO -----------------------------------------------------------------------------
-    // ------ Getter und Setter -------------------------------------------------------------------
-    public int GetSlotPosition() { return slotPosition; }
-    public List<Card> GetNormalAndSuppCards()
-    {
+    public List<Card> GetNormalAndSuppCards() {
         List<Card> cardsInSlot = new List<Card>();
-        if(cardInSlot != null)
-        {
+        if(cardInSlot != null) {
             cardsInSlot.Add(cardInSlot);
             foreach(SupportCard supCard in cardInSlot.GetAttachedSupportCards())
                 cardsInSlot.Add(supCard);
         }
         return cardsInSlot;
     }
+    
+    public bool isEmpty() {
+        return cardInSlot == null;
+    }
+    #endregion
+    
 
+    // TODO: Delete once Opponent is clean
     public void SetCard(NormalCard newCard)
     {
         newCard.SetWorldTargetPosition(transform.position + new Vector3(0f, 0f, -0.01f));
@@ -93,7 +94,4 @@ public class Slot : MonoBehaviour, Droppable
 
         StartCoroutine(newCard.MoveToTarget(0.1f));
     }
-
-    // ------ For Debugging -------------------------------------------------------------------
-    public NormalCard GetCard() { return cardInSlot; }
 }

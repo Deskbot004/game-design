@@ -6,8 +6,8 @@ using UnityEngine;
 using UnityEngine.Android;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-// TODO: Test
 public class Table : MonoBehaviour
 {
     public Gamelogic logic;
@@ -15,14 +15,19 @@ public class Table : MonoBehaviour
     public TablePlayer enemy;
     public TableUI ui;
     public AnimationHandler animHandler;
+    public AnimationHandler opponentAnimHandler;
+
+    [Header("Other Stuff")]
+    public Animator resolveTurnAnimator;
+
 
     #region Main Functions ----------------------------------------------------------------------------------------
     void Start() {
         TestClass.table = this; // Debugging
-        player.Init(this);
-        enemy.Init(this);
+        player.Init(this, animHandler);
+        enemy.Init(this, opponentAnimHandler);
         ui.Init(this);
-        //logic.init(this); // TODO: Rename to Init (capital letter)
+        //logic.Init(this);
     }
 
     public void DrawCards(int amount, bool forPlayer) {
@@ -30,9 +35,32 @@ public class Table : MonoBehaviour
         cardDrawer.DrawCards(amount);
     }
 
-    public void ResolveSlot(int slotNr, string winner) {
-        // TODO: Actually write it
-        // TODO: Change it to int slotNr, bool playerWon, bool enemyWon
+    public void StartResolve() {
+        ui.EnableInteractions(false);
+        ui.dim.SetActive(true);
+    }
+
+    public void EndResolve() {
+        ui.EnableInteractions(true);
+        ui.dim.SetActive(false);
+    }
+
+    public void PlayResolveAnimation(int slotNr, string winner, IDictionary<string, int> lifePoints) {
+        // TODO: Change it to (Slot, Slot) slotCombination, bool[] {playerWon, enemyWon}, ...
+        bool playerWon = winner == "user" || winner == "none";
+        bool enemyWon = winner == "enemy" || winner == "none";
+
+        ResolveAnim anim = animHandler.CreateAnim<ResolveAnim>();
+        anim.ui = ui;
+        anim.resolveTurnAnimator = resolveTurnAnimator;
+        anim.startPosition = slotNr == 0? Vector3.zero : new Vector3(7.07f, 0, 0); // TODO: Change to Slot Position
+        anim.playerCard = player.GetCardInSlot(slotNr);
+        anim.enemyCard = enemy.GetCardInSlot(slotNr);
+        anim.playerWon = playerWon;
+        anim.enemyWon = enemyWon;
+        anim.playerHealth = lifePoints["player"];
+        anim.enemyHealth = lifePoints["enemy"];
+        animHandler.QueueAnimation(anim);
     }
 
     public void ClearSlots() {
@@ -45,28 +73,25 @@ public class Table : MonoBehaviour
     }
     #endregion
 
-    #region Getter & Setter ----------------------------------------------------------------------------------------
-    /*
-    // TODO: Hide Internal Structure
-    public List<Slot> GetSlotsPlayer() { return player.GetSlots(); }
-    public List<Slot> GetSlotsEnemy() { return enemy.GetSlots(); }
-    public Dictionary<string, Slot> GetSlotByNr(int slotNr)
-    {
-        Dictionary<string, Slot> slots = new();
-        slots["user"] = player.GetSlots().Where(x => x.slotPosition == slotNr).ToList()[0];
-        slots["enemy"] = enemy.GetSlots().Where(x => x.slotPosition == slotNr).ToList()[0];
-        return slots;
+
+    #region Shorthands ----------------------------------------------------------------------------------------------
+    public List<(Slot, Slot)> GetSlotsForResolving() { // TODO: Rename
+        List<(Slot, Slot)> slotCombinations = new();
+        foreach (Slot slot in player.slots) {
+            slotCombinations.Add((slot, enemy.GetSlotByNr(slot.slotPosition)));
+        }
+        return slotCombinations;
     }
-    public Gamelogic GetGamelogic() { return this.logic; }
-     */
     #endregion
 
     #region Debugging ----------------------------------------------------------------------------------------
+    // Function that is called when pressing the Test Button in Unity
     public void Test() {
         Debug.Log("Test Function");
-        //List<Card> cards = player.drawpile.PopAllCards();
-        //player.discardpile.AddCards(cards);
-        //player.ShuffleDiscardIntoDraw();
+        Dictionary<string, int> life = new();
+        life["player"] = 12;
+        life["enemy"] = 9;
+        PlayResolveAnimation(0, "user", life);
     }
 
     #endregion

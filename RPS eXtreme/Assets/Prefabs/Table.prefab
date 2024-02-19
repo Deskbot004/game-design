@@ -662,6 +662,7 @@ MonoBehaviour:
   enemy: {fileID: 5590939017993923355}
   ui: {fileID: 0}
   animHandler: {fileID: 8175310706886076075}
+  resolveTurnAnimator: {fileID: 2920181429620043924}
 --- !u!114 &8175310706886076075
 MonoBehaviour:
   m_ObjectHideFlags: 0
