@@ -5,28 +5,47 @@ using UnityEngine.UI;
 
 public class Opponent : TablePlayer
 {
-    public Dictionary<string,float> preferences;
-    [Header("[resourcing,right,rock,paper,scissors,random,support]")]
-    public List<float> preferenceList;
-
+    [Header("Opponent Specific")]
     public float speed;
-    public override void Init(Table table)
-    {
-        this.preferences = new Dictionary<string, float>();
-        this.preferences["resourcing"] = 0;
-        this.preferences["right"] = 1;
-        this.preferences["rock"] = 1;
-        this.preferences["scissors"] = 1;
-        this.preferences["paper"] = 1;
-        this.preferences["random"] = 0;
-        this.preferences["support"] = 1;
-        this.normalizeDict();
-        this.SetPreferenceList();
-        base.init(table);
-        this.isPlayer = false;
+
+    [System.Serializable]
+    public class UDictionary1 : UDictionary<string, float> { }
+    [UDictionary.Split(50, 50)]
+    public UDictionary1 preferences;
+    
+    public override void Init(Table table, AnimationHandler animHandler) {
+        CheckPreferencesAllSet();
+        NormalizePrefs();
+        base.Init(table, animHandler);
+        isPlayer = false;
     }
 
-    public void SetPreferences(List<float> preferences){
+    public void CheckPreferencesAllSet() {
+        List<string> prefOptions = new() {"resourcing", "right", "rock", "scissors", "paper", "random", "support"};
+        foreach (string prefOption in prefOptions) {
+            Debug.Assert(preferences.ContainsKey(prefOption));
+        }
+    }
+
+    private void NormalizePrefs() {
+        float total = 0f;
+        total += this.preferences["rock"];
+        total += this.preferences["scissors"];
+        total += this.preferences["paper"];
+        total += this.preferences["random"];
+        if(total == 0) {
+            Debug.Log("can't have all 0 preferences");
+            this.preferences["rock"] = 1f / 3f;
+            this.preferences["scissors"] = 1f / 3f;
+            this.preferences["paper"] = 1f / 3f;
+        }
+        this.preferences["rock"] /= total;
+        this.preferences["scissors"] /= total;
+        this.preferences["paper"] /= total;
+        this.preferences["random"] /= total;
+    }
+
+    public void SetPreferences(List<float> preferences){ // TODO: Refactor after Deck
         if(preferences.Count != this.preferences.Keys.Count){
             Debug.Log("Number of preferences of deck doesn't match number of preferences of opponent!");
             return;
@@ -38,8 +57,8 @@ public class Opponent : TablePlayer
         this.preferences["paper"] = preferences[4];
         this.preferences["random"] = preferences[5];
         this.preferences["support"] = preferences[6];
-        this.normalizeDict();
-        //Make sure no Card has a probability of much less than 10%
+        this.NormalizePrefs();
+        //Make sure no Card has a probability of much less than 10% // TODO: Should this also be checked in the init? Maybe in CheckPreferencesAllSet()?
         if(this.preferences["rock"] < 0.1)
         {
             this.preferences["rock"] = 0.1f;
@@ -52,38 +71,7 @@ public class Opponent : TablePlayer
         {
             this.preferences["paper"] = 0.1f;
         }
-        this.normalizeDict();
-        this.SetPreferenceList();
-    }
-    //Only for looking at the Dictionary values in the editor
-    public void SetPreferenceList()
-    {
-        this.preferenceList.Clear();
-        foreach(KeyValuePair<string, float> pref in this.preferences)
-        {
-            this.preferenceList.Add(pref.Value);
-        }
-    }
-
-    private void normalizeDict()
-    {
-        float total = 0f;
-        total += this.preferences["rock"];
-        total += this.preferences["scissors"];
-        total += this.preferences["paper"];
-        total += this.preferences["random"];
-        if(total == 0)
-        {
-            Debug.Log("can't have all 0 preferences");
-            this.preferences["rock"] = 1f / 3f;
-            this.preferences["scissors"] = 1f / 3f;
-            this.preferences["paper"] = 1f / 3f;
-
-        }
-        this.preferences["rock"] /= total;
-        this.preferences["scissors"] /= total;
-        this.preferences["paper"] /= total;
-        this.preferences["random"] /= total;
+        this.NormalizePrefs();
     }
 
     private Dictionary<string,int> AnalyzeHand(List<Card> cards) {  
@@ -138,10 +126,10 @@ public class Opponent : TablePlayer
         return stats;
     }
 
-    public override IEnumerator playCards() {
-        List<Card> cards = this.hand.GetCards();
-        Dictionary<string,int> stats = AnalyzeHand(cards);
-        List<Card> playedCards = new List<Card>();
+    public void PlayCards() {
+        List<Card> cardsInHand = GetCardsInHand();
+        Dictionary<string,int> stats = AnalyzeHand(cardsInHand);
+        List<Card> playedCards = new();
 
         var wantedSlots = new Queue<int>();
         var slotfill = stats["numSlots"];
@@ -156,7 +144,6 @@ public class Opponent : TablePlayer
         if (stats["numBasic"] < stats["numSlots"]) {
             slotfill = stats["numBasic"];
         }
-        
 
         // TODO Rework Resourcing after Turn change functionality
         float decisionPrefRight = Random.Range(0.0f,1.0f);
@@ -203,44 +190,42 @@ public class Opponent : TablePlayer
                 cardToPlay = "paper";
             }
 
-            foreach(Card card in cards) {
+            foreach(Card card in cardsInHand) {
                 if (card.symbol == cardToPlay && wantedSlots.Count > 0){
                     float decisionSupp = Random.Range(0.0f, 1.0f);
                     if (decisionSupp <= preferences["support"]) {
-                        foreach(Card support in cards) {
+                        foreach(Card support in cardsInHand) {
                             if (playedCards.Contains(support)){
                                 continue;
                             }
                             if(!support.IsBasic()){
                                 NormalCard normal = (NormalCard)card;
-                                if(normal.OnDrop(support.GetComponent<Draggable>())){
-                                    yield return new WaitForSeconds(speed);
-                                    support.transform.localPosition = new Vector3(0,0,0.5f);
+                                if(support.GetComponent<Draggable>().DropInto(normal)){
+                                    //normal.OnDrop(support.GetComponent<Draggable>())
+                                    // yield return new WaitForSeconds(speed); TODO
+                                    //support.transform.localPosition = new Vector3(0,0,0.5f);
                                     playedCards.Add(support);
                                 }
                             }
                         }
                     }
                     playNormalCard(card, wantedSlots.Dequeue(), playedCards);
-                    yield return new WaitForSeconds(speed);
+                    // yield return new WaitForSeconds(speed); TODO
                 }
             }
         }
-        yield return new WaitForSeconds(speed);
+        // yield return new WaitForSeconds(speed); TODO
         foreach(Card card in playedCards)
         {
-            this.hand.RemoveCard(card);
+            //RemoveFromHandWithAnimation(card);
         }
-        /*
-        this.hand.ArrangeHand();
         
-        table.player.endTurnButton.GetComponent<Button>().interactable = true;
+        table.ui.endTurnButton.GetComponent<Button>().interactable = true;
 
-        yield return new WaitForSeconds(0.5f);
-        float animationLength = table.TurnEnemySlotCards();
-        if(table.quickResolve) animationLength = 0;
-        yield return new WaitForSecondsRealtime(animationLength + table.waitTimer);
-         */
+        //yield return new WaitForSeconds(0.5f); TODO
+        FlipCardAnim anim = animHandler.CreateAnim<FlipCardAnim>();
+        anim.flippedCards = playedCards;
+        animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
     }
 
 
@@ -249,11 +234,16 @@ public class Opponent : TablePlayer
         if (this.slots[slot].GetNormalAndSuppCards().Count == 0) 
         {
             NormalCard norm = (NormalCard)card;
-            this.slots[slot].SetCard(norm);
+            norm.GetComponent<Draggable>().DropInto(slots[slot]);
             playedCards.Add(card);
-            card.SetWorldTargetPosition(slots[slot].transform.TransformPoint(Vector3.zero));
-            card.SetTargetRotation(Vector3.zero);
-            StartCoroutine(card.MoveToTarget(1));
+
+            /*
+            MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
+            anim.cards = new() {card};
+            anim.destinationObject = slots[slot].transform;
+            anim.draggableOnArrival = false;
+            animHandler.QueueAnimation(anim);
+             */
             return 0;
         }
         else
@@ -262,12 +252,9 @@ public class Opponent : TablePlayer
         }
     }
 
-
-    protected override IEnumerator DealCards(List<Card> cards, float timeOffset)
-    {
-        yield return base.DealCards(cards, timeOffset);
-        yield return new WaitForSeconds(1);
-        StartCoroutine(playCards());
-        yield return null;
+    public override void DrawCards(int amount) {
+        base.DrawCards(amount);
+        // Wait for 1 second // TODO
+        PlayCards();
     }
 }

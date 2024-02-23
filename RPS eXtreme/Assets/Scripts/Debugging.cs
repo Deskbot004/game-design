@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public static class TestClass
+public static class StaticObjectRefs
 {
     static public Table table;
 }

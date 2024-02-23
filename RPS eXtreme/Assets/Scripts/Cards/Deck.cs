@@ -20,6 +20,8 @@ public class Deck : MonoBehaviour
     [Header("[resourcing,right,rock,paper,scissors,random,support]")]
     public List<float> preferences;
 
+    private AnimationHandler animHandler;
+
     // ---------- Main Functions ------------------------------------------------------------------------------
 
     public void Awake()
@@ -30,19 +32,20 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void init(TablePlayer tablePlayer)
+    public void init(TablePlayer tablePlayer, AnimationHandler animHandler)
     {
         this.tablePlayer = tablePlayer;
         this.LoadDeck(this.deckName);
         foreach (Card card in cards)
         {
             card.gameObject.SetActive(false);
-            card.init(this);
+            card.init(this, animHandler);
         }
         if(!this.tablePlayer.isPlayer){
             Opponent enemy = (Opponent) this.tablePlayer;
             enemy.SetPreferences(this.preferences);
         }
+        this.animHandler = animHandler;
     }
 
     public void AddCard(Card card)

@@ -31,6 +31,8 @@ public class Card : MonoBehaviour
     private Vector3 targetPosition; // WorldPosition
     private Vector3 targetRotation;
 
+    protected AnimationHandler animHandler;
+
     #region New Functions (To be sorted) --------------------------------------------------------------------
     public void EnableDrag(bool enabled) {
         GetComponent<Draggable>().enabled = enabled;
@@ -39,7 +41,7 @@ public class Card : MonoBehaviour
     
 
     // ---------- Main Functions ------------------------------------------------------------------------------
-    public virtual void init(Deck deck)
+    public virtual void init(Deck deck, AnimationHandler animHandler)
     {
         if(!deck.GetTablePlayer().isPlayer)
             transform.eulerAngles = new Vector3(0f, 0f, 180f);
@@ -47,6 +49,8 @@ public class Card : MonoBehaviour
         //this.gamelogic = deck.GetTablePlayer().GetTable().GetGamelogic();
         this.targetPosition = this.transform.position;
         SetSprite();
+        this.animHandler = animHandler;
+        GetComponent<Draggable>().Init();
     }
 
     void OnMouseOver()

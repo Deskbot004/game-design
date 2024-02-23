@@ -263,11 +263,17 @@ public class NormalCard : Card, Droppable
         {
             draggedObject.transform.SetParent(transform);
             draggedObject.GetComponent<SortingGroup>().sortingLayerName = "Cards Background";
-            draggedObject.GetComponent<Card>().SetWorldTargetPosition(transform.TransformPoint(new Vector3 (0, 0, 0.5f)));
-            draggedObject.GetComponent<Card>().SetTargetRotation(new Vector3 (0, 0, 0));
-            StartCoroutine(draggedObject.GetComponent<Card>().MoveToTarget(0.1f));
-            draggedObject.enabled = false;
-            //if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true);
+
+            MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
+            anim.cards = new() {draggedObject.GetComponent<Card>()};
+            anim.destinationObject = transform;
+            anim.draggableOnArrival = false;
+            if(BelongsToPlayer())
+                animHandler.QueueAnimation(anim);
+            else
+                animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
+
+            //if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true); // TODO
             return true;
         }
         return false;

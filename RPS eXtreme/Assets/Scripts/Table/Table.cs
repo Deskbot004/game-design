@@ -15,7 +15,6 @@ public class Table : MonoBehaviour
     public TablePlayer enemy;
     public TableUI ui;
     public AnimationHandler animHandler;
-    public AnimationHandler opponentAnimHandler;
 
     [Header("Other Stuff")]
     public Animator resolveTurnAnimator;
@@ -23,11 +22,11 @@ public class Table : MonoBehaviour
 
     #region Main Functions ----------------------------------------------------------------------------------------
     void Start() {
-        TestClass.table = this; // Debugging
+        StaticObjectRefs.table = this; // Debugging
         player.Init(this, animHandler);
-        enemy.Init(this, opponentAnimHandler);
+        enemy.Init(this, animHandler);
         ui.Init(this);
-        //logic.Init(this);
+        logic.Init(this);
     }
 
     public void DrawCards(int amount, bool forPlayer) {
@@ -41,8 +40,8 @@ public class Table : MonoBehaviour
     }
 
     public void EndResolve() {
-        ui.EnableInteractions(true);
-        ui.dim.SetActive(false);
+        //ui.EnableInteractions(true);
+        //ui.dim.SetActive(false);
     }
 
     public void PlayResolveAnimation(int slotNr, string winner, IDictionary<string, int> lifePoints) {
@@ -52,15 +51,21 @@ public class Table : MonoBehaviour
 
         ResolveAnim anim = animHandler.CreateAnim<ResolveAnim>();
         anim.ui = ui;
+        anim.closeAfterAnim = slotNr == player.slots.Count - 1;
         anim.resolveTurnAnimator = resolveTurnAnimator;
-        anim.startPosition = slotNr == 0? Vector3.zero : new Vector3(7.07f, 0, 0); // TODO: Change to Slot Position
-        anim.playerCard = player.GetCardInSlot(slotNr);
-        anim.enemyCard = enemy.GetCardInSlot(slotNr);
+        anim.startPositionPlayer = player.GetSlotByNr(slotNr).transform.position;
+        anim.startPositionEnemy = enemy.GetSlotByNr(slotNr).transform.position;
+        anim.playerCard = (NormalCard) player.GetCardInSlot(slotNr);
+        if(anim.playerCard != null)
+            anim.playerSuppCards = anim.playerCard.GetAttachedSupportCards();
+        anim.enemyCard = (NormalCard) enemy.GetCardInSlot(slotNr);
+        if(anim.enemyCard != null)
+            anim.enemySuppCards = anim.enemyCard.GetAttachedSupportCards();
         anim.playerWon = playerWon;
         anim.enemyWon = enemyWon;
-        anim.playerHealth = lifePoints["player"];
+        anim.playerHealth = lifePoints["user"]; // TODO: Change to player
         anim.enemyHealth = lifePoints["enemy"];
-        animHandler.QueueAnimation(anim);
+        animHandler.QueueAfterOffQueues(anim);
     }
 
     public void ClearSlots() {
@@ -68,14 +73,16 @@ public class Table : MonoBehaviour
         enemy.ClearSlots();
     }
 
-    public void SetWinner(string name) {
-        // TODO: Let Gamelogic queue the animation
+    public void SetWinner(string winner) {
+        // TODO: Change it to a bool
+        bool playerWon = winner == "user";
+        ui.ShowWinScreen(playerWon);
     }
     #endregion
 
 
     #region Shorthands ----------------------------------------------------------------------------------------------
-    public List<(Slot, Slot)> GetSlotsForResolving() { // TODO: Rename
+    public List<(Slot, Slot)> GetSlotsForResolving() { // TODO: Rename?
         List<(Slot, Slot)> slotCombinations = new();
         foreach (Slot slot in player.slots) {
             slotCombinations.Add((slot, enemy.GetSlotByNr(slot.slotPosition)));
@@ -88,10 +95,6 @@ public class Table : MonoBehaviour
     // Function that is called when pressing the Test Button in Unity
     public void Test() {
         Debug.Log("Test Function");
-        Dictionary<string, int> life = new();
-        life["player"] = 12;
-        life["enemy"] = 9;
-        PlayResolveAnimation(0, "user", life);
     }
 
     #endregion

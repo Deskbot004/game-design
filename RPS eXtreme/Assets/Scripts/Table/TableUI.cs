@@ -14,9 +14,10 @@ public class TableUI : MonoBehaviour
     public Button detachButton;
     public Button drawpile;
     public Button discardpile;
-
+    
     [Header("Other")]
     public GameObject dim;
+    public WinLoseScreen winLoseScreen;
     public Vector3 attachCardWorldPosition;
     public GameObject cardpileScrollview; // Scrollview object to be activated when opening the cardpile
     public Transform cardpileScrollviewContent; // Content object of the Scrollview
@@ -40,6 +41,7 @@ public class TableUI : MonoBehaviour
     }
 
     #region Cardpiles --------------------------------------------------------------------------------------------
+    // TODO: Create animation for opening/closing pile?
     public void OpenPile(Cardpile pile) {
         cardsInOpenedPile = pile.GetSortedCards();
         float cardRows = Mathf.Ceil(cardsInOpenedPile.Count/5f);
@@ -56,7 +58,6 @@ public class TableUI : MonoBehaviour
             card.gameObject.SetActive(true);
             card.GetComponent<Animator>().SetBool("faceFront", true);
         }
-        // TODO: Create animation?
     }
 
     public void ClosePile() {
@@ -69,7 +70,6 @@ public class TableUI : MonoBehaviour
             card.SetSortingLayer("Cards on Table");
             card.gameObject.SetActive(false);
         }
-        // TODO: Create animation?
     }
 
     public void EnableInteractions(bool enabled) {
@@ -147,7 +147,7 @@ public class TableUI : MonoBehaviour
         MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
         anim.cards = new() {baseCard};
         anim.targetWorldPosition = attachCardWorldPosition;
-        anim.targetLocalRotation = Vector3.zero;
+        anim.targetWorldRotation = Vector3.zero;
         anim.draggableOnArrival = false;
 
         player.RemoveFromHandWithAnimation(baseCard);
@@ -187,6 +187,11 @@ public class TableUI : MonoBehaviour
     public void SetHealth(int health, string player) {
         healthbars[player].GetComponentInChildren<TextMeshPro>().text = health.ToString();
     }
+    #endregion
 
+    #region Other ----------------------------------------------------------------------------------------------------
+    public void ShowWinScreen(bool playerWon) {
+        winLoseScreen.showWinner(playerWon);
+    }
     #endregion
 }

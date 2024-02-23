@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// TESTED
 public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition;
 
     private NormalCard cardInSlot;
     private AnimationHandler animHandler;
+    private bool isPlayer;
 
     // Droppable
     private bool dropActive = true;
     private int priority = (int) DroppablePriorities.SLOT;
 
     #region Main Functions --------------------------------------------------------------------------------------------
-    public void Init(Table table, TablePlayer tablePlayer) {
+    public void Init(TablePlayer tablePlayer, AnimationHandler animHandler) {
+        isPlayer = tablePlayer.isPlayer;
         dropActive = tablePlayer.isPlayer;
-        animHandler = table.animHandler;
+        this.animHandler = animHandler;
     }
     
     public NormalCard PopCard() {
@@ -49,8 +50,12 @@ public class Slot : MonoBehaviour, Droppable
             GetComponent<BoxCollider2D>().enabled = false;
             cardInSlot = droppedCard;
             anim.cards = new() {droppedCard};
-            anim.destinationObject = transform;
-            animHandler.QueueAnimation(anim);
+            anim.targetWorldPosition = transform.position;
+            anim.targetWorldRotation = Vector3.zero;
+            if(isPlayer)
+                animHandler.QueueAnimation(anim);
+            else
+                animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
             return true;
         } else {
             return false;
@@ -82,16 +87,4 @@ public class Slot : MonoBehaviour, Droppable
         return cardInSlot == null;
     }
     #endregion
-    
-
-    // TODO: Delete once Opponent is clean
-    public void SetCard(NormalCard newCard)
-    {
-        newCard.SetWorldTargetPosition(transform.position + new Vector3(0f, 0f, -0.01f));
-        newCard.SetTargetRotation(new Vector3(0f, 0f, 0f));
-        newCard.SetStatus(2);
-        cardInSlot = newCard;
-
-        StartCoroutine(newCard.MoveToTarget(0.1f));
-    }
 }

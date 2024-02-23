@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// TESTED
 public class TablePlayer : MonoBehaviour, Droppable
 {
     public Deck deck;
@@ -15,8 +14,8 @@ public class TablePlayer : MonoBehaviour, Droppable
     public List<Slot> slots;
     public bool isPlayer;
     
-    private AnimationHandler animHandler;
-    private Table table;
+    protected AnimationHandler animHandler;
+    protected Table table;
 
     // Droppable
     private bool dropActive = true;
@@ -25,19 +24,20 @@ public class TablePlayer : MonoBehaviour, Droppable
     #region Main Functions -------------------------------------------------------------------------------------------
     public virtual void Init(Table table, AnimationHandler animHandler) {
         // TODO: Cleanup the deck functions
-        deck.init(this);
+        deck.init(this, animHandler);
         deck.transform.localPosition = drawpile.transform.localPosition;
 
         drawpile.AddCards(deck.GetCards());
         drawpile.Shuffle();
         foreach (Slot slot in slots) {
-            slot.Init(table, this);
+            slot.Init(this, animHandler);
         }
         this.animHandler = animHandler;
         this.table = table;
         dropActive = isPlayer;
     }
 
+    // TODO: When dropping a card (for example into a slot) while this animation plays, it looks like lag, because the ondrop animation is queued after this one
     public virtual void DrawCards(int amount) {
         FlipCardAnim anim = animHandler.CreateAnim<FlipCardAnim>();
         anim.flippedCards = new();
@@ -54,7 +54,11 @@ public class TablePlayer : MonoBehaviour, Droppable
                 i--;
             }
         }
-        animHandler.QueueAnimation(anim);
+
+        if(isPlayer)
+            animHandler.QueueAnimation(anim);
+        else
+            anim.DestroyAnim();
     }
 
     public void ShuffleDiscardIntoDraw() {
@@ -89,7 +93,10 @@ public class TablePlayer : MonoBehaviour, Droppable
         anim.destinationObject = discardpile.transform;
         anim.moveTime = 0.5f;
         anim.disableOnArrival = true;
-        animHandler.QueueAnimation(anim);
+        if(isPlayer)
+            animHandler.QueueAnimation(anim);
+        else
+            animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
     }
     #endregion
 
@@ -129,7 +136,10 @@ public class TablePlayer : MonoBehaviour, Droppable
         anim.animHandler = animHandler;
         anim.hand = hand;
         anim.cardsInHand = GetCardsInHand();
-        animHandler.QueueAnimation(anim);
+        if(isPlayer)
+            animHandler.QueueAnimation(anim);
+        else
+            animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
     }
     
     public void EnableSlots(bool enabled) {
@@ -169,37 +179,12 @@ public class TablePlayer : MonoBehaviour, Droppable
         anim.animHandler = animHandler;
         anim.hand = hand;
         anim.cardsInHand = GetCardsInHand();
-        animHandler.QueueAnimation(anim);
+        if(isPlayer)
+            animHandler.QueueAnimation(anim);
+        else
+            animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
     }
     #endregion
-
-
-    // TODO: Remove once Opponent is refactored
-    public virtual IEnumerator playCards() 
-    {
-        yield return new WaitForSeconds(0.3f); 
-    }
-
-    // TODO: Remove once Opponent is refactored
-    protected virtual IEnumerator DealCards(List<Card> cards, float timeOffset)
-    {
-        //hand.ArrangeHand(false);
-        foreach (Card card in hand.GetCards())
-        {  
-            card.GetComponent<Draggable>().enabled = false;
-            card.gameObject.SetActive(true);
-            if(cards.Contains(card))
-            {
-                card.transform.position = drawpile.transform.position;
-                card.GetComponent<Animator>().SetBool("faceFront", false);
-                card.GetComponent<Animator>().SetBool("flip", isPlayer);
-            }
-            StartCoroutine(card.MoveToTarget(0.5f));
-            float actualOffset = cards.Contains(card)? timeOffset : 0f;
-            yield return new WaitForSeconds(actualOffset);
-        }
-        foreach (Card card in hand.GetCards()) card.GetComponent<Draggable>().enabled = true;
-    }
 
     // TODO: Remove once Normalcard is refactored
     public Table GetTable() {

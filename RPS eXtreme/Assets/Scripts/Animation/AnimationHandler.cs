@@ -4,76 +4,126 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+enum AnimationOffQueues {
+    OPPONENT
+}
+
 public class AnimationHandler : MonoBehaviour
 {
-    private Task currentAnimation;
-    private List<Task> parallelAnimations = new();
-    private List<List<Animation>> animationQueue = new();
+    private AnimationQueue mainQueue = new();
+    private AnimationQueue[] offQueues = new AnimationQueue[Enum.GetNames(typeof(AnimationOffQueues)).Length];
 
-    private List<GameObject> animatedObjects = new();
-
-    public T CreateAnim<T> () where T:Animation {
+    public T CreateAnim<T>() where T:Animation {
         return gameObject.AddComponent<T>();
     }
 
+    #region Queueing -------------------------------------------------------------------------------------------------
     public void QueueAnimation(Animation anim) {
-        // Put the animation into the queue
-        // If there is no current animation running play it
-
-        animationQueue.Add(new() {anim});
-        if(currentAnimation == null || !currentAnimation.Running) {
-            PlayNextAnimation();
-        }
+        mainQueue.QueueAnimation(anim);
     }
 
+    public void QueueAnimation(Animation anim, int animQueueIndex) {
+        if (offQueues.ElementAtOrDefault(animQueueIndex) == null) {
+            offQueues[animQueueIndex] = new();
+        }
+        offQueues[animQueueIndex].QueueAnimation(anim);
+    }
+
+    public void QueueAfterOffQueues(Animation anim) {
+        // TODO: Find better names for all those functions
+        QueuePauseForOffQueues();
+        QueueWaitForOffQueues();
+        QueueAnimation(anim);
+        QueueResumeForOffQueues();
+    }
+    #endregion
+
+    #region Parallel -------------------------------------------------------------------------------------------------
     public void PlayParallelToLastQueuedAnim(Animation anim) {
-        if (animationQueue.Count > 0) {
-            animationQueue.Last().Add(anim);
-        } else { // Meaning last queued animation is already playing
-            PlayParallelToCurrentAnimation(anim);
+        mainQueue.PlayParallelToLastQueuedAnim(anim);
+    }
+
+    public void PlayParallelToLastQueuedAnim(Animation anim, int animQueueIndex) {
+        offQueues[animQueueIndex].PlayParallelToLastQueuedAnim(anim);
+    }
+    #endregion
+
+    #region Other -----------------------------------------------------------------------------------------------------
+    void QueuePauseForOffQueues() {
+        for(int i = 0; i<offQueues.Length; i++) {
+            QueuePause(i);
         }
     }
+    
+    void QueuePause(int animQueueIndex) {
+        Pause anim = CreateAnim<Pause>();
+        anim.SetPause(offQueues[animQueueIndex], true);
+        offQueues[animQueueIndex].QueueAnimation(anim);
+    }
 
-    void PlayNextAnimation() {
-        // Check whether there is an animation in the list
-        // Create a Task for that animation and save it under current Animation
-        // Make it Call this Function when it's finished
-        // Remove animation from queue
+    void QueueWaitForOffQueues() {
+        WaitForQueues anim = CreateAnim<WaitForQueues>();
+        anim.offQueues = offQueues;
+        QueueAnimation(anim);
+    }
 
-        if (parallelAnimations.Count > 0) {
-            return;
-        } else if (animationQueue.Count > 0) {
-            animatedObjects.Clear();
+    void QueueResumeForOffQueues() {
+        Resume anim = CreateAnim<Resume>();
+        anim.offQueues = offQueues;
+        QueueAnimation(anim);
+    }
+    #endregion
+}
 
-            List<Animation> animations = animationQueue[0];
-            animationQueue.RemoveAt(0);
 
-            Animation nextAnimation = animations[0];
-            animations.RemoveAt(0);
-            animatedObjects.AddRange(nextAnimation.animatedObjects);
-            currentAnimation = new Task(nextAnimation.Play());
-            currentAnimation.Finished += delegate(bool manual) {
-                PlayNextAnimation();
-            };
 
-            foreach (Animation anim in animations) {
-                PlayParallelToCurrentAnimation(anim);
-            }
+public class Pause : Animation 
+{
+    AnimationQueue animQueue;
+    bool pause;
+
+    public void SetPause(AnimationQueue animQueue, bool pause) {
+        this.animQueue = animQueue;
+        this.pause = pause;
+    }
+
+    protected override void SetAnimatedObjects() {
+        return;
+    }
+
+    protected override IEnumerator PlaySpecificAnimation(){
+        animQueue.SetPause(pause);
+        yield return null;
+    }
+}
+
+public class WaitForQueues : Animation
+{
+    public AnimationQueue[] offQueues;
+
+    protected override void SetAnimatedObjects() {
+        return;
+    }
+
+    protected override IEnumerator PlaySpecificAnimation(){
+        while(offQueues.Where(q => !q.IsPaused()).ToList().Count > 0) {
+            yield return null;
         }
     }
+}
 
-    void PlayParallelToCurrentAnimation(Animation anim) {
-        Debug.Assert(IsOverlapZero(animatedObjects, anim.animatedObjects), "Parallel Animation trying to animate same Object as this animation", this);
-        animatedObjects.AddRange(anim.animatedObjects);
-        Task parallelAnim = new Task(anim.Play());
-        parallelAnimations.Add(parallelAnim);
-        parallelAnim.Finished += delegate(bool manual) {
-            parallelAnimations.Remove(parallelAnim);
-            PlayNextAnimation();
-        };
+public class Resume : Animation
+{
+    public AnimationQueue[] offQueues;
+
+    protected override void SetAnimatedObjects() {
+        return;
     }
 
-    bool IsOverlapZero(List<GameObject> firstList, List<GameObject> secondList) {
-        return firstList.Intersect(secondList).ToList().Count == 0;
+    protected override IEnumerator PlaySpecificAnimation(){
+        foreach (AnimationQueue animQueue in offQueues) {
+            animQueue.Resume();
+        }
+        yield return null;
     }
 }

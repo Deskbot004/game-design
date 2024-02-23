@@ -18,7 +18,7 @@ public class Gamelogic : MonoBehaviour
     // [Non serialized]
     public LibAR libAR;
     public LibBR libBR;
-    public Table table;
+    private Table table;
 
     // Determines the Win of a symbol on attack
     // Currently -1 Draw; 0 User win; 1 enemy win
@@ -89,7 +89,6 @@ public class Gamelogic : MonoBehaviour
     */
     public void ResolveTurn()
     {
-        table.StartResolve();
         foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetSlotsForResolving()) {
             string winner = EvaluateCards(slotPlayer.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
             table.PlayResolveAnimation(slotPlayer.slotPosition, winner, currentLifepoints);
@@ -101,7 +100,6 @@ public class Gamelogic : MonoBehaviour
             stringToInput.Clear();
             stringToFunc.Clear();
         }
-        table.EndResolve();
         table.ClearSlots();
 
         if (currentLifepoints["user"] <= 0) {

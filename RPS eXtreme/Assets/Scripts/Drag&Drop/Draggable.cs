@@ -16,9 +16,11 @@ public class Draggable : MonoBehaviour
 
     #region Main Functions ---------------------------------------------------------------------------------------------
     
-    void Start() {
+    public void Init() {
+        gameObject.SetActive(true);
         Debug.Assert(GetComponent<Collider2D>() != null, "Draggable Object is missing a 2D Collider!", this);
         FindStartingDroppable();
+        gameObject.SetActive(false);
     }
 
     // Is called on Pickup
@@ -77,7 +79,7 @@ public class Draggable : MonoBehaviour
         colliders = colliders.Where(c => c.GetComponent<Droppable>().DropActive).ToArray(); // inactive doppables
         colliders = colliders.OrderBy(c => c.GetComponent<Droppable>().Priority).ToArray();
 
-        return  colliders;
+        return colliders;
     }
 
     public bool DropInto(Droppable newDroppable) {
@@ -98,13 +100,19 @@ public class Draggable : MonoBehaviour
 
     #region Getter und Setter ---------------------------------------------------------------------------------------------
     public void FindStartingDroppable() {
+        currentDroppable = GetComponent<Card>().GetDeck().GetTablePlayer(); // TODO: Trainwreck Card -> TablePlayer
+        return;
+
+
+        // FUCK THIS I HATE IT IT DOESN'T WORK WE'RE DOING THIS MANUALLY
+        /*
         Collider2D[] colliders = GetOverlappedDroppables();
         int colAmount = colliders.Length;
         Debug.Assert(colAmount < 2, "Multiple Start-Droppables found", this);
+        Debug.Assert(colAmount > 0, "No Start-Droppables found", this);
         if (colAmount > 0)
             currentDroppable = colliders[0].GetComponent<Droppable>();
-
-        Debug.Assert(1 == 1, "test");
+        */
     }
     #endregion
         

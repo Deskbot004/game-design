@@ -8,9 +8,8 @@ public class WinLoseScreen : MonoBehaviour
 {
     public TextMeshProUGUI winText;
 
-    public void showWinner(string winner)
+    public void showWinner(bool playerWon)
     {
-        bool playerWon = winner == "user";
         if(!playerWon) 
         {
             winText.text = "You Lost...";

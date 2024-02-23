@@ -19,11 +19,12 @@ public class Animation : MonoBehaviour
         Debug.Log("Error: Animation doesn't set animated Objects", this);
     }
 
-    protected void DestroyAnim() {
+    public void DestroyAnim() {
         Destroy(this);
     }
 
     protected virtual IEnumerator PlaySpecificAnimation(){
+        Debug.Log("Error: Animation doesn't override PlaySpecificAnimation", this);
         yield return null;
     }
 }

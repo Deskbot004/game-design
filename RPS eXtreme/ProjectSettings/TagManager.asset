@@ -50,6 +50,9 @@ TagManager:
   - name: Dim
     uniqueID: 4288305197
     locked: 0
+  - name: Attached Cards in Focus
+    uniqueID: 343497775
+    locked: 0
   - name: Cards in Focus
     uniqueID: 3983063315
     locked: 0
