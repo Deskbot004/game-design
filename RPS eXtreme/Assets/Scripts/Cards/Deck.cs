@@ -20,7 +20,7 @@ public class Deck : MonoBehaviour
     [Header("[resourcing,right,rock,paper,scissors,random,support]")]
     public List<float> preferences;
 
-    private AnimationHandler animHandler;
+    private AnimationHandlerComp animHandler;
 
     // ---------- Main Functions ------------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void init(TablePlayer tablePlayer, AnimationHandler animHandler)
+    public void init(TablePlayer tablePlayer, AnimationHandlerComp animHandler)
     {
         this.tablePlayer = tablePlayer;
         this.LoadDeck(this.deckName);
@@ -108,7 +108,7 @@ public class Deck : MonoBehaviour
     /*
     * Loads the Deck from a text file using Json and a DeckManager.
     */
-    public void LoadDeck(string filename)
+    public void LoadDeck(string filename) // TODO: Throw Error or smth if this isn't called before everything else to do with cards (f.e. Cardpile)
     {
         //Read text from file and convert it into a DeckManager
         string filename_location = Path.Combine(Application.persistentDataPath, filename);

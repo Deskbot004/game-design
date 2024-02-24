@@ -13,10 +13,10 @@ public class Opponent : TablePlayer
     [UDictionary.Split(50, 50)]
     public UDictionary1 preferences;
     
-    public override void Init(Table table, AnimationHandler animHandler) {
+    public override void Init(Table table) {
         CheckPreferencesAllSet();
         NormalizePrefs();
-        base.Init(table, animHandler);
+        base.Init(table);
         isPlayer = false;
     }
 
@@ -223,9 +223,9 @@ public class Opponent : TablePlayer
         table.ui.endTurnButton.GetComponent<Button>().interactable = true;
 
         //yield return new WaitForSeconds(0.5f); TODO
-        FlipCardAnim anim = animHandler.CreateAnim<FlipCardAnim>();
-        anim.flippedCards = playedCards;
-        animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
+        FlipCardAnim anim = AnimationHandler.CreateAnim<FlipCardAnim>();
+        anim.Init(playedCards);
+        AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
     }
 
 

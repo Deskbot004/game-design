@@ -60,8 +60,8 @@ public class Gamelogic : MonoBehaviour
         this.table = table;
         currentLifepoints.Add("user", lifepointMax);
         currentLifepoints.Add("enemy", lifepointMax);
-        table.ui.SetHealth(lifepointMax, "player");
-        table.ui.SetHealth(lifepointMax, "enemy");
+        table.ui.SetHealth(lifepointMax, DictKeys.PLAYER);
+        table.ui.SetHealth(lifepointMax, DictKeys.ENEMY);
         this.players = table.GetComponentsInChildren<TablePlayer>();
 
         EnemyDraw(startDraw + turnDraw);
@@ -77,8 +77,8 @@ public class Gamelogic : MonoBehaviour
     {
         foreach (TablePlayer p in players)
         {
-            if(p.hand.GetCards().Count == 0) p.DrawCards(startDraw);
-            else p.DrawCards(turnDraw);
+            if(p.GetCardsInHand().Count == 0) table.DrawCards(startDraw, p.isPlayer);
+            else table.DrawCards(turnDraw, p.isPlayer);
         }
     }
 
@@ -90,8 +90,11 @@ public class Gamelogic : MonoBehaviour
     public void ResolveTurn()
     {
         foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetSlotsForResolving()) {
+            int[] prevHealth = {currentLifepoints["user"], currentLifepoints["enemy"]};
             string winner = EvaluateCards(slotPlayer.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
-            table.PlayResolveAnimation(slotPlayer.slotPosition, winner, currentLifepoints);
+            SlotResult playerResult = new(slotPlayer, winner=="user" || winner=="none", prevHealth[0], currentLifepoints["user"]);
+            SlotResult enemyResult = new(slotEnemy, winner=="enemy"|| winner=="none", prevHealth[1], currentLifepoints["enemy"]);
+            table.PlaySlotResolveAnim(playerResult, enemyResult, slotPlayer.slotPosition == table.player.slots.Count - 1);
             stringToInput.Reverse();
             foreach (var item in stringToInput) {
                 Action<Gamelogic,object> func = stringToFunc[item.Key];
@@ -273,23 +276,12 @@ public class Gamelogic : MonoBehaviour
 
     public void UserDraw(int amount)
     {
-        foreach (TablePlayer p in players)
-        {
-            if (p.isPlayer) {
-                p.DrawCards(amount);
-            }
-        }
+        table.DrawCards(amount, true);
     }
 
     public void EnemyDraw(int amount)
     {
-        foreach (TablePlayer p in players)
-        {
-            if (!p.isPlayer)
-            {
-                p.DrawCards(amount);
-            }
-        }
+        table.DrawCards(amount, false);
     }
 
     // Start of various setter stuff -------------------------------------------------------------------------------------------------

@@ -3,16 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// TESTED
-// Draws a single Card from the drawpile
+// Plays flip animation for given cards
 public class FlipCardAnim : Animation
 {
-    public List<Card> flippedCards;
-    public bool startFront = false;
-    public float offsetTime = 0;
+    List<Card> cardsToFlip;
+    bool startFront = false;
+    float offsetTime = 0; // -1 if card should only start flipping, once previous card is done
+
+    public void Init(List<Card> cardsToFlip) {
+        this.cardsToFlip = cardsToFlip;
+        initialized = true;
+    }
+
+    public void Options(bool startFront = false, float offsetTime = 0) {
+        this.startFront = startFront;
+        this.offsetTime = offsetTime;
+    }
 
     protected override IEnumerator PlaySpecificAnimation() {
-        foreach (Card card in flippedCards) {
+        foreach (Card card in cardsToFlip) {
             card.gameObject.SetActive(true);
             card.GetComponent<Animator>().SetBool("faceFront", startFront);
             card.GetComponent<Animator>().SetBool("flip", true);
@@ -23,13 +32,11 @@ public class FlipCardAnim : Animation
                 yield return new WaitForSecondsRealtime(offsetTime);
             }
         }
-        float lastAnimationLength = flippedCards.Last().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
+        float lastAnimationLength = cardsToFlip.Last().GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSecondsRealtime(lastAnimationLength);
     }
 
     protected override void SetAnimatedObjects() {
-        foreach (Card card in flippedCards) {
-            animatedObjects.Add(card.gameObject);
-        }
+        animatedObjects.AddRange(cardsToFlip.Select(c => c.gameObject));
     }
 }

@@ -1,116 +1,143 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class ResolveAnim : Animation
 {
-    public TableUI ui;
-    public bool closeAfterAnim = false;
+    // Main stuff
+    TableUI ui;
+    Animator resolveTurnAnimator;
 
-    public Animator resolveTurnAnimator;
-    public Vector3 startPositionPlayer;
-    public Vector3 startPositionEnemy;
+    // Player Result
+    SlotResult[] results;
+    NormalCard[] normalCards;
+    List<SupportCard>[] supportCards;
 
-    public NormalCard playerCard;
-    public List<SupportCard> playerSuppCards;
-    public NormalCard enemyCard;
-    public List<SupportCard> enemySuppCards;
-    public bool playerWon;
-    public bool enemyWon;
-    public int playerHealth;
-    public int enemyHealth;
+    // Options
+    bool closeAfterAnim = false;
 
-    // TODO: Handle case that both slots are empty -> PlayClashAnimation & rest shouldn't wait for coroutines in that case
-    protected override IEnumerator PlaySpecificAnimation() {
-        yield return SetupAnimation();
-        yield return PlayClashAnimation();
 
-        Coroutine healthPlayerAnim = StartCoroutine(PlayHealthAnimation(ui.healthbars["player"], !playerWon, playerHealth));
-        Coroutine healthEnemyAnim = StartCoroutine(PlayHealthAnimation(ui.healthbars["enemy"], !enemyWon, enemyHealth));
-        yield return healthPlayerAnim;
-        yield return healthEnemyAnim;
+    #region Main Functions -------------------------------------------------------------------------------------------
+    public void Init(Table table, SlotResult playerResult, SlotResult enemyResult) {
+        ui = table.ui;
+        resolveTurnAnimator = table.resolveTurnAnimator;
 
-        yield return ResetEverything();
+        results = new[] {playerResult, enemyResult};
+        normalCards = new[] {playerResult.slot.GetCard(), enemyResult.slot.GetCard()};
+        supportCards = new[] {normalCards[0].GetAttachedSupportCards(), normalCards[1].GetAttachedSupportCards()};
+
+        initialized = true;
+    }
+
+    public void Options(bool closeAfterAnim = false) {
+        this.closeAfterAnim = closeAfterAnim;
     }
 
     protected override void SetAnimatedObjects() {
-        if (playerCard != null)
-            animatedObjects.Add(playerCard.gameObject);
-        if (enemyCard != null)
-            animatedObjects.Add(enemyCard.gameObject);
+        for(int i=0; i<2; i++) {
+            if(normalCards[i] != null) {
+                animatedObjects.Add(normalCards[i].gameObject);
+                animatedObjects.AddRange(supportCards[i].Select(c => c.gameObject));
+            }
+        }
     }
 
+    // TODO Later: Handle case that both slots are empty -> PlayClashAnimation & rest shouldn't wait for coroutines in that case
+    protected override IEnumerator PlaySpecificAnimation() {
+        yield return SetupAnimation();
+        yield return PlayClashAnimation();
+        yield return PlayHealthAnimation();
+        yield return ResetEverything();
+    }
+    #endregion
+
+    #region Helper Functions -------------------------------------------------------------------------------------------
     IEnumerator SetupAnimation() {
         ui.EnableInteractions(false);
         ui.dim.SetActive(true);
-        if (playerCard != null) {
-            resolveTurnAnimator.transform.Find("PlayerCard/Rotation").position = startPositionPlayer;
-            playerCard.transform.SetParent(resolveTurnAnimator.transform.Find("PlayerCard/Rotation"));
-            playerCard.SetSortingLayer("Cards in Focus");
-            foreach (Card suppCard in playerSuppCards) {
-                suppCard.SetSortingLayer("Attached Cards in Focus"); // TODO: As this layer is above Attached Cards, the mask of the Normal Card doesn't work on it
-                suppCard.transform.SetParent(resolveTurnAnimator.transform.Find("PlayerCard/Rotation"));
+
+        string[] playerName = {"Player", "Enemy"};
+        for(int i=0; i<2; i++) {
+            if(normalCards[i] == null) {
+                continue;
             }
-        }
-        if (enemyCard != null) {
-            resolveTurnAnimator.transform.Find("EnemyCard/Rotation").position = startPositionEnemy;
-            enemyCard.SetSortingLayer("Cards in Focus");
-            enemyCard.transform.SetParent(resolveTurnAnimator.transform.Find("EnemyCard/Rotation"));
-            foreach (Card suppCard in enemySuppCards) {
-                suppCard.SetSortingLayer("Attached Cards in Focus");
-                suppCard.transform.SetParent(resolveTurnAnimator.transform.Find("EnemyCard/Rotation"));
+
+            Transform newParent = resolveTurnAnimator.transform.Find(playerName[i] + "Card/Rotation");
+            newParent.position = results[i].slot.transform.position;
+            normalCards[i].transform.SetParent(newParent);
+            normalCards[i].SetSortingLayer("Cards in Focus");
+            foreach(SupportCard suppCard in supportCards[i]) {
+                suppCard.transform.SetParent(newParent);
+                suppCard.SetSortingLayer("Attached Cards in Focus"); // TODO Later: As this layer is above Attached Cards, the mask of the Normal Card doesn't work on it
             }
         }
         yield return new WaitForSeconds(0.5f);
     }
 
     IEnumerator PlayClashAnimation() {
-        resolveTurnAnimator.SetBool("playerWon", playerWon);
-        resolveTurnAnimator.SetBool("enemyWon", enemyWon);
+        resolveTurnAnimator.SetBool("playerWon", results[0].slotWon);
+        resolveTurnAnimator.SetBool("enemyWon", results[1].slotWon);
         resolveTurnAnimator.SetBool("playAnim", true);
         float animationLength = Mathf.Max(resolveTurnAnimator.GetCurrentAnimatorStateInfo(0).length, resolveTurnAnimator.GetCurrentAnimatorStateInfo(1).length);
         yield return new WaitForSecondsRealtime(animationLength + 0.5f);
     }
 
-    IEnumerator PlayHealthAnimation(GameObject healthbar, bool tookDamage, int newHealth) {
-        float animationLength = 0;
-        if (tookDamage) {
-            healthbar.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
-            healthbar.GetComponent<Animator>().SetBool("isDamaged", true);
-            animationLength = healthbar.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length + 1;
+    IEnumerator PlayHealthAnimation() {
+        DictKeys[] healthbarKeys = {DictKeys.PLAYER, DictKeys.ENEMY};
+        Coroutine[] playingAnims = new Coroutine[2];
+
+        for(int i=0; i<2; i++) {
+            GameObject healthbar = ui.healthbars[healthbarKeys[i]];
+            playingAnims[i] = StartCoroutine(PlayHealthAnimationFor(healthbar, results[i]));
         }
-        healthbar.GetComponentInChildren<TextMeshPro>().text = newHealth.ToString();
-        yield return new WaitForSecondsRealtime(animationLength);
+
+        for(int i=0; i<2; i++) {
+            yield return playingAnims[i];
+        }
+    }
+
+    IEnumerator PlayHealthAnimationFor(GameObject healthbar, SlotResult result) {
+        float animationLength = 0;
+        healthbar.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+        healthbar.GetComponentInChildren<TextMeshPro>().text = result.healthAfterResolution.ToString(); // TODO Later: Integrate this part into the Unity-animation with SetInt("newhealth", 10);
+
+        if(result.TookDamage()) {
+            healthbar.GetComponent<Animator>().SetBool("isDamaged", true);
+            animationLength = healthbar.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
+        } else if(result.WasHealed()) {
+            // TODO Later: Create Animation
+        }
+
+        yield return new WaitForSecondsRealtime(animationLength + 1);
         healthbar.GetComponent<SortingGroup>().sortingLayerName = "Default";
         healthbar.GetComponent<Animator>().SetBool("isDamaged", false);
     }
 
     IEnumerator ResetEverything() {
-        if (playerCard != null) {
-            playerCard.SetSortingLayer("Cards on Table");
-            playerCard.transform.SetParent(playerCard.GetDeck().transform);
-            foreach (Card suppCard in playerSuppCards) {
-                suppCard.SetSortingLayer("Attached Cards");
-                suppCard.transform.SetParent(suppCard.GetDeck().transform);
+        for(int i=0; i<2; i++) {
+            if(normalCards[i] == null) {
+                continue;
             }
-            
-        }
-        if (enemyCard != null) {
-            enemyCard.SetSortingLayer("Cards on Table");
-            enemyCard.transform.SetParent(enemyCard.GetDeck().transform);
-            foreach (Card suppCard in enemySuppCards) {
+
+            normalCards[i].SetSortingLayer("Cards on Table");
+            normalCards[i].transform.SetParent(normalCards[i].GetDeck().transform); // TODO: Trainwreck Card -> Deck transform
+            foreach(SupportCard suppCard in supportCards[i]) {
                 suppCard.SetSortingLayer("Attached Cards");
-                suppCard.transform.SetParent(suppCard.GetDeck().transform);
+                suppCard.transform.SetParent(suppCard.GetDeck().transform); // TODO: Trainwreck Card -> Deck transform
+                
             }
         }
         resolveTurnAnimator.SetBool("playAnim", false);
         yield return new WaitForSeconds(0.5f);
+        
         if(closeAfterAnim) {
             ui.EnableInteractions(true);
             ui.dim.SetActive(false);
         }
     }
+    #endregion
 }

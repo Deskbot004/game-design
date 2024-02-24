@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,7 +11,7 @@ public class TableUI : MonoBehaviour
 {
     [Header("Buttons")]
     public Button endTurnButton;
-    public Button closeCardpileButton; // TODO: Create better button in the scene
+    public Button closeCardpileButton; // TODO Later: Create better button in the scene
     public Button attachDoneButton;
     public Button detachButton;
     public Button drawpile;
@@ -23,34 +25,47 @@ public class TableUI : MonoBehaviour
     public Transform cardpileScrollviewContent; // Content object of the Scrollview
 
     [UDictionary.Split(30, 70)]
-    public UDictionary1 healthbars;
-
+    public HealthbarDict healthbars;
     [Serializable]
-    public class UDictionary1 : UDictionary<string, GameObject> { }
+    public class HealthbarDict : UDictionary<DictKeys, GameObject> { }
 
-    private AnimationHandler animHandler;
     private TablePlayer player;
     private NormalCard attachModeFocusCard;
     private List<Button> allButtons;
     private List<Card> cardsInOpenedPile;
 
     public void Init(Table table) {
-        animHandler = table.animHandler;
         player = table.player;
-        allButtons = new() {endTurnButton, closeCardpileButton, attachDoneButton, detachButton, drawpile, discardpile};
+        allButtons = GetType().GetFields().Where(f => f.FieldType == typeof(Button)).Select(p => (Button) p.GetValue(this)).ToList();
+    }
+
+    bool IsButton(MemberInfo info) {
+        return info.MemberType == MemberTypes.Field && ((FieldInfo)info).FieldType == typeof(Button);
+    }
+
+    public void EnableInteractions(bool enabled) {
+        foreach (Card card in player.GetAllCards()) {
+            card.EnableDrag(enabled);
+            card.EnableRightClick(enabled);
+        }
+        
+        foreach (Button button in allButtons) {
+            button.interactable = enabled;
+        }
     }
 
     #region Cardpiles --------------------------------------------------------------------------------------------
     // TODO: Create animation for opening/closing pile?
+    // This function can access the Cardpile directly, because the parameter is set in the Unity Editor
     public void OpenPile(Cardpile pile) {
+        EnableInteractions(false);
+        closeCardpileButton.gameObject.SetActive(true);
+        closeCardpileButton.interactable = true;
+        dim.SetActive(true);
+
+        cardpileScrollview.SetActive(true);
         cardsInOpenedPile = pile.GetSortedCards();
         float cardRows = Mathf.Ceil(cardsInOpenedPile.Count/5f);
-
-        EnableInteractions(false);
-        closeCardpileButton.interactable = true;
-        closeCardpileButton.gameObject.SetActive(true);
-        dim.SetActive(true);
-        cardpileScrollview.SetActive(true);
         cardpileScrollviewContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, cardRows * 90);
         foreach (Card card in cardsInOpenedPile) {
             card.transform.SetParent(cardpileScrollviewContent);
@@ -64,22 +79,12 @@ public class TableUI : MonoBehaviour
         EnableInteractions(true);
         closeCardpileButton.gameObject.SetActive(false);
         dim.SetActive(false);
+
         cardpileScrollview.SetActive(false);
         foreach (Card card in cardsInOpenedPile) {
-            card.transform.SetParent(card.GetDeck().transform);
-            card.SetSortingLayer("Cards on Table");
+            card.transform.SetParent(card.GetDeck().transform); // TODO Trainwreck: Card -> Deck Transform
+            card.SetSortingLayer("Cards on Table"); // TODO Kein Bock: Replace all Sorting Layer calls to an Enum
             card.gameObject.SetActive(false);
-        }
-    }
-
-    public void EnableInteractions(bool enabled) {
-        foreach (Card card in player.GetAllCards()) {
-            card.EnableDrag(enabled);
-            card.EnableRightClick(enabled);
-        }
-        
-        foreach (Button button in allButtons) {
-            button.interactable = enabled;
         }
     }
     #endregion
@@ -90,7 +95,7 @@ public class TableUI : MonoBehaviour
         if (baseCard == attachModeFocusCard) {
             EndAttaching();
         } else if (attachModeFocusCard != null) {
-            RemoveFocus(false);
+            RemoveFocus(withAnimation: false);
             SetFocusOn(baseCard);
         } else {
             SetFocusOn(baseCard);
@@ -98,7 +103,7 @@ public class TableUI : MonoBehaviour
     }
 
     public void EndAttaching() {
-        RemoveFocus(true);
+        RemoveFocus(withAnimation: true);
         CloseAttachMode();
     }
 
@@ -110,10 +115,9 @@ public class TableUI : MonoBehaviour
             card.EnableDrag(false);
         }
 
-        AttachModeAnim anim = animHandler.CreateAnim<AttachModeAnim>();
-        anim.dim = dim;
-        anim.open = true;
-        animHandler.QueueAnimation(anim);
+        AttachModeAnim anim = AnimationHandler.CreateAnim<AttachModeAnim>();
+        anim.Init(dim, true);
+        AnimationHandler.QueueAnimation(anim);
     }
 
     public void CloseAttachMode() {
@@ -125,10 +129,9 @@ public class TableUI : MonoBehaviour
             card.EnableDrag(true);
         }
 
-        AttachModeAnim anim = animHandler.CreateAnim<AttachModeAnim>();
-        anim.dim = dim;
-        anim.open = false;
-        animHandler.QueueAnimation(anim);
+        AttachModeAnim anim = AnimationHandler.CreateAnim<AttachModeAnim>();
+        anim.Init(dim, false);
+        AnimationHandler.QueueAnimation(anim);
     }
 
     public void SetFocusOn(NormalCard baseCard) {
@@ -144,25 +147,12 @@ public class TableUI : MonoBehaviour
                 card.SetSortingLayer("Cards on Table");
         }
 
-        MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
-        anim.cards = new() {baseCard};
-        anim.targetWorldPosition = attachCardWorldPosition;
-        anim.targetWorldRotation = Vector3.zero;
-        anim.draggableOnArrival = false;
+        MoveCardAnim anim = AnimationHandler.CreateAnim<MoveCardAnim>();
+        anim.Init(new() {baseCard}, attachCardWorldPosition, Vector3.zero);
+        anim.Options(draggableOnArrival: false);
 
         player.RemoveFromHandWithAnimation(baseCard);
-        animHandler.PlayParallelToLastQueuedAnim(anim);
-        
-        /*
-        AttachModeAnim anim = animHandler.CreateAnim<AttachModeAnim>();
-        anim.animHandler = animHandler;
-        anim.focusCard = baseCard;
-        anim.focusCardPosition = attachCardWorldPosition;
-        anim.cardsInHand = player.GetCardsInHand();
-        anim.hand = player.hand;
-        anim.viableSupportCards = player.GetMatchingSupportCards(baseCard);
-         */
-        
+        AnimationHandler.PlayParallelToLastQueuedAnim(anim);
     }
 
     public void RemoveFocus(bool withAnimation) {
@@ -174,7 +164,7 @@ public class TableUI : MonoBehaviour
         attachModeFocusCard = null;
     }
     
-    public void DetachAllCards() {
+    void DetachAllCards() {
         List<SupportCard> supCards = attachModeFocusCard.DetachAllCards();
         foreach (SupportCard supCard in supCards) {
             bool dropSuccess = supCard.GetComponent<Draggable>().DropInto(player);
@@ -184,13 +174,13 @@ public class TableUI : MonoBehaviour
     #endregion
 
     #region Health ----------------------------------------------------------------------------------------------------
-    public void SetHealth(int health, string player) {
-        healthbars[player].GetComponentInChildren<TextMeshPro>().text = health.ToString();
+    public void SetHealth(int health, DictKeys healthbarKey) {
+        healthbars[healthbarKey].GetComponentInChildren<TextMeshPro>().text = health.ToString();
     }
     #endregion
 
     #region Other ----------------------------------------------------------------------------------------------------
-    public void ShowWinScreen(bool playerWon) {
+    public void ShowWinScreen(bool playerWon) { // TODO Later: Maybe create animation for that?
         winLoseScreen.showWinner(playerWon);
     }
     #endregion

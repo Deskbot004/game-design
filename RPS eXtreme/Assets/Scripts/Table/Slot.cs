@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// TODO Bug: Right clicking on card in slot doesn't remove it from slot
 public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition;
 
     private NormalCard cardInSlot;
-    private AnimationHandler animHandler;
     private bool isPlayer;
 
     // Droppable
@@ -16,10 +16,9 @@ public class Slot : MonoBehaviour, Droppable
     private int priority = (int) DroppablePriorities.SLOT;
 
     #region Main Functions --------------------------------------------------------------------------------------------
-    public void Init(TablePlayer tablePlayer, AnimationHandler animHandler) {
+    public void Init(TablePlayer tablePlayer, AnimationHandlerComp animHandler) {
         isPlayer = tablePlayer.isPlayer;
         dropActive = tablePlayer.isPlayer;
-        this.animHandler = animHandler;
     }
     
     public NormalCard PopCard() {
@@ -44,22 +43,23 @@ public class Slot : MonoBehaviour, Droppable
     }
 
     public bool OnDrop(Draggable draggedObject) {
-        MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
         NormalCard droppedCard = draggedObject.GetComponent<NormalCard>();
-        if (cardInSlot == null && droppedCard != null) {
-            GetComponent<BoxCollider2D>().enabled = false;
-            cardInSlot = droppedCard;
-            anim.cards = new() {droppedCard};
-            anim.targetWorldPosition = transform.position;
-            anim.targetWorldRotation = Vector3.zero;
-            if(isPlayer)
-                animHandler.QueueAnimation(anim);
-            else
-                animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
-            return true;
-        } else {
+        if (cardInSlot != null || droppedCard == null) {
             return false;
         }
+
+        GetComponent<BoxCollider2D>().enabled = false;
+        cardInSlot = droppedCard;
+
+        MoveCardAnim anim = AnimationHandler.CreateAnim<MoveCardAnim>();
+        anim.Init(new(){droppedCard}, transform.position, Vector3.zero);
+        if(isPlayer) {
+            AnimationHandler.QueueAnimation(anim);
+        } else {
+            AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+        }
+
+        return true;
     }
 
     public void OnLeave(Draggable draggedObject) {
@@ -83,7 +83,7 @@ public class Slot : MonoBehaviour, Droppable
         return cardsInSlot;
     }
     
-    public bool isEmpty() {
+    public bool IsEmpty() {
         return cardInSlot == null;
     }
     #endregion

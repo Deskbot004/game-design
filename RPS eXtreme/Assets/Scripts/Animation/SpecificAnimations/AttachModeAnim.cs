@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// Opens and Closes the Attach Mode
 public class AttachModeAnim : Animation
 {
-    public GameObject dim;
-    public bool open;
+    private GameObject dim;
+    private bool open;
+
+    public void Init(GameObject dim, bool open) {
+        this.dim = dim;
+        this.open = open;
+        initialized = true;
+    }
 
     protected override IEnumerator PlaySpecificAnimation() {
         dim.SetActive(open);

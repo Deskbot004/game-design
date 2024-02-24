@@ -618,7 +618,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6573284335169748196}
   - component: {fileID: 1188935324138398999}
-  - component: {fileID: 8175310706886076075}
+  - component: {fileID: 8125347138302286371}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -661,9 +661,9 @@ MonoBehaviour:
   player: {fileID: 8025135359473228166}
   enemy: {fileID: 5590939017993923355}
   ui: {fileID: 0}
-  animHandler: {fileID: 8175310706886076075}
+  animHandler: {fileID: 8125347138302286371}
   resolveTurnAnimator: {fileID: 2920181429620043924}
---- !u!114 &8175310706886076075
+--- !u!114 &8125347138302286371
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -672,7 +672,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7199287471145312262}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3048f978a550524c9f4bbec23714a85, type: 3}
+  m_Script: {fileID: 11500000, guid: 6adc1b464de71eb499daacf062816a6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &1941925720839993078
@@ -1184,9 +1184,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1802453394693249130, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5590939017993923355}
-    - targetCorrespondingSourceObject: {fileID: 1802453394693249130, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 5432211671972708008}
   m_SourcePrefab: {fileID: 100100000, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}
 --- !u!114 &213948642165471567 stripped
 MonoBehaviour:
@@ -1280,18 +1277,6 @@ MonoBehaviour:
     - 1
     - 0
     - 1
---- !u!114 &5432211671972708008
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7199868947558430183}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3048f978a550524c9f4bbec23714a85, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8253046425437771579 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 603551095673862838, guid: 923f053d6966bdc4f8c7dcc72cc578ec, type: 3}

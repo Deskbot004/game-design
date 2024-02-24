@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-// TESTED
 public class Cardpile : MonoBehaviour
 {
     public List<Card> cardsInside = new();
@@ -17,7 +16,7 @@ public class Cardpile : MonoBehaviour
     }
 
     public List<Card> GetSortedCards() {
-        return cardsInside.OrderBy(c => c.symbol).ToList(); // TODO: Change to a better sort criteria
+        return cardsInside.OrderBy(c => c.symbol).ToList(); // TODO Later: Change to a better sort criteria
     }
     #endregion
 

@@ -264,14 +264,13 @@ public class NormalCard : Card, Droppable
             draggedObject.transform.SetParent(transform);
             draggedObject.GetComponent<SortingGroup>().sortingLayerName = "Cards Background";
 
-            MoveCardAnim anim = animHandler.CreateAnim<MoveCardAnim>();
-            anim.cards = new() {draggedObject.GetComponent<Card>()};
-            anim.destinationObject = transform;
-            anim.draggableOnArrival = false;
+            MoveCardAnim anim = AnimationHandler.CreateAnim<MoveCardAnim>();
+            anim.Init(new() {draggedObject.GetComponent<Card>()}, transform);
+            anim.Options(draggableOnArrival: false);
             if(BelongsToPlayer())
-                animHandler.QueueAnimation(anim);
+                AnimationHandler.QueueAnimation(anim);
             else
-                animHandler.QueueAnimation(anim, (int) AnimationOffQueues.OPPONENT);
+                AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
 
             //if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true); // TODO
             return true;

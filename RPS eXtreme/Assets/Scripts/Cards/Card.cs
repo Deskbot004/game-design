@@ -31,7 +31,7 @@ public class Card : MonoBehaviour
     private Vector3 targetPosition; // WorldPosition
     private Vector3 targetRotation;
 
-    protected AnimationHandler animHandler;
+    protected AnimationHandlerComp animHandler;
 
     #region New Functions (To be sorted) --------------------------------------------------------------------
     public void EnableDrag(bool enabled) {
@@ -41,7 +41,7 @@ public class Card : MonoBehaviour
     
 
     // ---------- Main Functions ------------------------------------------------------------------------------
-    public virtual void init(Deck deck, AnimationHandler animHandler)
+    public virtual void init(Deck deck, AnimationHandlerComp animHandler)
     {
         if(!deck.GetTablePlayer().isPlayer)
             transform.eulerAngles = new Vector3(0f, 0f, 180f);

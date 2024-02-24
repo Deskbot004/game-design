@@ -5,17 +5,36 @@ using UnityEngine;
 // Moves all cards to the same destination Object, or to the same targetWorldPosition/Rotation if there isn't an Object
 public class MoveCardAnim : Animation
 {
-    public List<Card> cards = new();
+    protected List<Card> cards = new();
+    private Transform destinationObject;
+    private Vector3 targetWorldPosition;
+    private Vector3 targetWorldRotation;
 
-    public Transform destinationObject;
-    public Vector3 targetWorldPosition;
-    public Vector3 targetWorldRotation;
+    protected float moveTime = 0.1f; // Time it takes the card to arrive
+    protected float offsetTime = 0; // Time between two cards staring to move
+    protected bool disableOnArrival = false;
+    protected bool draggableOnArrival = true;
 
-    public float moveTime = 0.1f; // Time it takes the card to arrive
-    public float offsetTime = 0; // Time between two cards staring to move
-    public bool disableOnArrival = false;
-    public bool draggableOnArrival = true;
-    
+
+    public void Init(List<Card> cards, Vector3 targetWorldPosition, Vector3 targetWorldRotation) {
+        this.cards = cards;
+        this.targetWorldPosition = targetWorldPosition;
+        this.targetWorldRotation = targetWorldRotation;
+        initialized = true;
+    }
+
+    public void Init(List<Card> cards, Transform destinationObject) {
+        this.cards = cards;
+        this.destinationObject = destinationObject;
+        initialized = true;
+    }
+
+    public void Options(float moveTime = 0.1f, float offsetTime = 0, bool disableOnArrival = false, bool draggableOnArrival = true) {
+        this.moveTime = moveTime;
+        this.offsetTime = offsetTime;
+        this.disableOnArrival = disableOnArrival;
+        this.draggableOnArrival = draggableOnArrival;
+    }
 
     protected override IEnumerator PlaySpecificAnimation() {
         if (destinationObject != null) {
@@ -40,7 +59,7 @@ public class MoveCardAnim : Animation
         }
     }
 
-    public IEnumerator MoveCard(Card card, Vector3 endingPos, Quaternion endingRotation) {
+    protected IEnumerator MoveCard(Card card, Vector3 endingPos, Quaternion endingRotation) {
         Vector3 startingPos  = card.transform.position;
         Quaternion startingRotation = card.transform.rotation;
         float elapsedTime = 0;
@@ -58,7 +77,7 @@ public class MoveCardAnim : Animation
         card.gameObject.SetActive(!disableOnArrival);
         card.EnableDrag(draggableOnArrival);
 
-        /* TODO (Copied from Card, so this = card, not CardAnimator)
+        /* TODO Audio: (Copied from Card, so this = card, not CardAnimator)
         if(this.symbol != "support") {
             var audios = this.GetComponents<AudioSource>();
             foreach (var audio in audios) {
