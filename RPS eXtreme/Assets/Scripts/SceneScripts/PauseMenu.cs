@@ -32,7 +32,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Restart()
     {
-        SceneManager.LoadScene("Main Game");
+        SceneManager.LoadScene("AtTheTable");
     }
 
     public void Resume()

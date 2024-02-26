@@ -20,7 +20,7 @@ public class WinLoseScreen : MonoBehaviour
 
     public void PlayAgain()
     {
-        SceneManager.LoadScene("Main Game");
+        SceneManager.LoadScene("AtTheTable");
     }
 
     public void MainMenu()

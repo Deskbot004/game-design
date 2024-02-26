@@ -29,12 +29,14 @@ public class TableUI : MonoBehaviour
     [Serializable]
     public class HealthbarDict : UDictionary<DictKeys, GameObject> { }
 
+    private Table table;
     private TablePlayer player;
     private NormalCard attachModeFocusCard;
     private List<Button> allButtons;
     private List<Card> cardsInOpenedPile;
 
     public void Init(Table table) {
+        this.table = table;
         player = table.player;
         allButtons = GetType().GetFields().Where(f => f.FieldType == typeof(Button)).Select(p => (Button) p.GetValue(this)).ToList();
     }
@@ -175,6 +177,10 @@ public class TableUI : MonoBehaviour
     #endregion
 
     #region Other ----------------------------------------------------------------------------------------------------
+    public void ResolveTurn() {
+        table.logic.ResolveTurn();
+    }
+    
     public void ShowWinScreen(bool playerWon) {
         winLoseScreen.showWinner(playerWon);
     }

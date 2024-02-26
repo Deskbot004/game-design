@@ -72,7 +72,7 @@ public class MainMenu : MonoBehaviour
         {
             opponentDeck.SaveDeck();
             playerDeck.SaveDeck();
-            SceneManager.LoadSceneAsync("Main Game");
+            SceneManager.LoadSceneAsync("AtTheTable");
         }
     }
 
