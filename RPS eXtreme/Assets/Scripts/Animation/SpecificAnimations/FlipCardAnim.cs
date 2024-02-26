@@ -6,9 +6,13 @@ using UnityEngine;
 // Plays flip animation for given cards
 public class FlipCardAnim : Animation
 {
-    List<Card> cardsToFlip;
-    bool startFront = false;
-    float offsetTime = 0; // -1 if card should only start flipping, once previous card is done
+    // Required
+    private List<Card> cardsToFlip;
+
+    // Options
+    private bool startFront = false;
+    private float offsetTime = 0; // -1 if card should only start flipping, once previous card is done
+
 
     public void Init(List<Card> cardsToFlip) {
         this.cardsToFlip = cardsToFlip;

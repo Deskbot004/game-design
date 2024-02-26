@@ -6,19 +6,20 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+// Plays the Resolve Animation when pressing the End Turn Button
 public class ResolveAnim : Animation
 {
     // Main stuff
-    TableUI ui;
-    Animator resolveTurnAnimator;
+    private TableUI ui;
+    private Animator resolveTurnAnimator;
 
-    // Player Result
-    SlotResult[] results;
-    NormalCard[] normalCards;
-    List<SupportCard>[] supportCards;
+    // Player Results
+    private SlotResult[] results;
+    private NormalCard[] normalCards;
+    private List<SupportCard>[] supportCards;
 
     // Options
-    bool closeAfterAnim = false;
+    private bool closeAfterAnim = false;
 
 
     #region Main Functions -------------------------------------------------------------------------------------------
@@ -46,7 +47,6 @@ public class ResolveAnim : Animation
         }
     }
 
-    // TODO Later: Handle case that both slots are empty -> PlayClashAnimation & rest shouldn't wait for coroutines in that case
     protected override IEnumerator PlaySpecificAnimation() {
         yield return SetupAnimation();
         yield return PlayClashAnimation();
@@ -72,7 +72,7 @@ public class ResolveAnim : Animation
             normalCards[i].SetSortingLayer("Cards in Focus");
             foreach(SupportCard suppCard in supportCards[i]) {
                 suppCard.transform.SetParent(newParent);
-                suppCard.SetSortingLayer("Attached Cards in Focus"); // TODO Later: As this layer is above Attached Cards, the mask of the Normal Card doesn't work on it
+                suppCard.SetSortingLayer("Attached Cards in Focus");
             }
         }
         yield return new WaitForSeconds(0.5f);
@@ -109,7 +109,7 @@ public class ResolveAnim : Animation
             healthbar.GetComponent<Animator>().SetBool("isDamaged", true);
             animationLength = healthbar.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;
         } else if(result.WasHealed()) {
-            // TODO Later: Create Animation
+            // TODO: Healing Animation
         }
 
         yield return new WaitForSecondsRealtime(animationLength + 1);

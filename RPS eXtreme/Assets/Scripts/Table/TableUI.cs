@@ -11,7 +11,7 @@ public class TableUI : MonoBehaviour
 {
     [Header("Buttons")]
     public Button endTurnButton;
-    public Button closeCardpileButton; // TODO Later: Create better button in the scene
+    public Button closeCardpileButton;
     public Button attachDoneButton;
     public Button detachButton;
     public Button drawpile;
@@ -39,10 +39,6 @@ public class TableUI : MonoBehaviour
         allButtons = GetType().GetFields().Where(f => f.FieldType == typeof(Button)).Select(p => (Button) p.GetValue(this)).ToList();
     }
 
-    bool IsButton(MemberInfo info) {
-        return info.MemberType == MemberTypes.Field && ((FieldInfo)info).FieldType == typeof(Button);
-    }
-
     public void EnableInteractions(bool enabled) {
         foreach (Card card in player.GetAllCards()) {
             card.EnableDrag(enabled);
@@ -55,7 +51,6 @@ public class TableUI : MonoBehaviour
     }
 
     #region Cardpiles --------------------------------------------------------------------------------------------
-    // TODO: Create animation for opening/closing pile?
     // This function can access the Cardpile directly, because the parameter is set in the Unity Editor
     public void OpenPile(Cardpile pile) {
         EnableInteractions(false);
@@ -83,7 +78,7 @@ public class TableUI : MonoBehaviour
         cardpileScrollview.SetActive(false);
         foreach (Card card in cardsInOpenedPile) {
             card.transform.SetParent(card.GetDeck().transform); // TODO Trainwreck: Card -> Deck Transform
-            card.SetSortingLayer("Cards on Table"); // TODO Kein Bock: Replace all Sorting Layer calls to an Enum
+            card.SetSortingLayer("Cards on Table");
             card.gameObject.SetActive(false);
         }
     }
@@ -180,7 +175,7 @@ public class TableUI : MonoBehaviour
     #endregion
 
     #region Other ----------------------------------------------------------------------------------------------------
-    public void ShowWinScreen(bool playerWon) { // TODO Later: Maybe create animation for that?
+    public void ShowWinScreen(bool playerWon) {
         winLoseScreen.showWinner(playerWon);
     }
     #endregion

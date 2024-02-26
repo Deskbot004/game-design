@@ -6,17 +6,20 @@ using UnityEngine;
 // Arranges cards on a semi-circle in the hand
 public class ArrangeHandAnim : Animation 
 {
-    Hand hand;
-    List<Card> cardsInHand;
+    // Required
+    private Hand hand;
+    private List<Card> cardsInHand;
 
-    float marginBetweenCards = -0.2f;
+    // Options
+    private float marginBetweenCards = -0.2f;
 
     // Internal Calculations
-    float cardWidth;
-    Vector3 handExtents;
-    Transform handTransform;
-    Vector3 circleCenter = Vector3.zero;
-    float circleRadius;
+    private float cardWidth;
+    private Vector3 handExtents;
+    private Transform handTransform;
+    private Vector3 circleCenter = Vector3.zero;
+    private float circleRadius;
+
 
     #region Main Functions -------------------------------------------------------------------------------------------
     public void Init(Hand hand, List<Card> cardsInHand) {
@@ -32,7 +35,7 @@ public class ArrangeHandAnim : Animation
     protected override IEnumerator PlaySpecificAnimation() {
         if (cardsInHand.Count > 0) {
             SetupCircle();
-            MoveMultipleCardsAnim moveAnim = SetupAnim();
+            MoveMultipleCardsAnim moveAnim = CreateMoveAnim();
             yield return moveAnim.Play();
         }
         yield return null;
@@ -67,7 +70,7 @@ public class ArrangeHandAnim : Animation
         circleRadius = -circleCenter.y;
     }
 
-    MoveMultipleCardsAnim SetupAnim() {
+    MoveMultipleCardsAnim CreateMoveAnim() {
         (List<Vector3> targetPositions, List<Vector3> targetRotations) = ArrangeHand();
 
         MoveMultipleCardsAnim moveAnim = AnimationHandler.CreateAnim<MoveMultipleCardsAnim>();

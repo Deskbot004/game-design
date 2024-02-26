@@ -9,6 +9,7 @@ public class AttachModeAnim : Animation
     private GameObject dim;
     private bool open;
 
+
     public void Init(GameObject dim, bool open) {
         this.dim = dim;
         this.open = open;

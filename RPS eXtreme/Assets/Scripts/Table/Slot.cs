@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-// TODO Bug: Right clicking on card in slot doesn't remove it from slot
 public class Slot : MonoBehaviour, Droppable
 {
     public int slotPosition;

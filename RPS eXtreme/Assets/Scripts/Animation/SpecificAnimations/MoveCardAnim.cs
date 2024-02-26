@@ -2,14 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Moves all cards to the same destination Object, or to the same targetWorldPosition/Rotation if there isn't an Object
+// Moves all cards to the same destination Object or to the same targetWorldPosition/Rotation if there isn't an Object
 public class MoveCardAnim : Animation
 {
+    // Required
     protected List<Card> cards = new();
     private Transform destinationObject;
-    private Vector3 targetWorldPosition;
-    private Vector3 targetWorldRotation;
+    private Vector3 targetWorldPosition; // Only used, when destinationObjet == null
+    private Vector3 targetWorldRotation; // Only used, when destinationObjet == null
 
+    // Options
     protected float moveTime = 0.1f; // Time it takes the card to arrive
     protected float offsetTime = 0; // Time between two cards staring to move
     protected bool disableOnArrival = false;

@@ -36,7 +36,6 @@ public class TablePlayer : MonoBehaviour, Droppable
         }
     }
 
-    // TODO Later: When dropping a card (for example into a slot) while this animation plays, it looks like lag, because the ondrop animation is queued after this one
     public virtual void DrawCards(int amount) {
         List<Card> cardsToFlip = new();
         for(int i=0; i<amount; i++) {
@@ -69,7 +68,7 @@ public class TablePlayer : MonoBehaviour, Droppable
         foreach (Card card in shuffledCards) { // TODO Kein Bock: This might not be needed, as all discarded cards were brought there by Clear Slot function. But better safe than sorry?
             card.transform.SetPositionAndRotation(discardpile.transform.position, discardpile.transform.rotation);
         }
-        AnimationHandler.QueueAnimation(anim); // TODO Later: This animation sucks! (But it works, so I'll leave it for now)
+        AnimationHandler.QueueAnimation(anim);
     }
 
     public void ClearSlots() {
