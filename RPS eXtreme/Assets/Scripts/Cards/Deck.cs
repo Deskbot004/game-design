@@ -16,7 +16,7 @@ public class Deck : MonoBehaviour
 
     [TextArea(3,20)]
     public string flavor;
-    private TablePlayer tablePlayer;
+    private PlayerSide tablePlayer;
     [Header("[resourcing,right,rock,paper,scissors,random,support]")]
     public List<float> preferences;
 
@@ -32,7 +32,7 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void init(TablePlayer tablePlayer, AnimationHandlerComp animHandler)
+    public void init(PlayerSide tablePlayer, AnimationHandlerComp animHandler)
     {
         this.tablePlayer = tablePlayer;
         this.LoadDeck(this.deckName);
@@ -231,7 +231,7 @@ public class Deck : MonoBehaviour
 
     public void SetDeckName(string name){this.deckName = name;}
 
-    public TablePlayer GetTablePlayer() {return tablePlayer;}
+    public PlayerSide GetTablePlayer() {return tablePlayer;}
 
     // ---------- For Debugging --------------------------------------------------------------------------------
 

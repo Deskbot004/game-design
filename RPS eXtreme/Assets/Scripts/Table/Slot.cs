@@ -15,7 +15,7 @@ public class Slot : MonoBehaviour, Droppable
     private int priority = (int) DroppablePriorities.SLOT;
 
     #region Main Functions --------------------------------------------------------------------------------------------
-    public void Init(TablePlayer tablePlayer, AnimationHandlerComp animHandler) {
+    public void Init(PlayerSide tablePlayer, AnimationHandlerComp animHandler) {
         isPlayer = tablePlayer.isPlayer;
         dropActive = tablePlayer.isPlayer;
     }
@@ -55,7 +55,7 @@ public class Slot : MonoBehaviour, Droppable
         if(isPlayer) {
             AnimationHandler.QueueAnimation(anim);
         } else {
-            AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+            AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
         }
 
         return true;

@@ -12,7 +12,7 @@ public class Table : MonoBehaviour
 {
     [Header("Main Connections")]
     public Gamelogic logic;
-    public TablePlayer player;
+    public PlayerSide player;
     public Opponent enemy;
     public TableUI ui;
     public AnimationHandlerComp animHandler;
@@ -32,7 +32,7 @@ public class Table : MonoBehaviour
     }
 
     public void DrawCards(int amount, bool forPlayer) { // TODO Later: Maybe replace bool with DictKey enum?
-        TablePlayer cardDrawer = forPlayer? player : enemy;
+        PlayerSide cardDrawer = forPlayer? player : enemy;
         cardDrawer.DrawCards(amount);
     }
 
@@ -40,7 +40,7 @@ public class Table : MonoBehaviour
         ResolveAnim anim = AnimationHandler.CreateAnim<ResolveAnim>();
         anim.Init(this, playerResult, enemyResult);
         anim.Options(closeAfterAnim: lastSlot);
-        AnimationHandler.QueueAfterOffQueues(anim);
+        AnimationHandler.QueueAnimationExclusively(anim);
     }
 
     public void ClearSlots() {
@@ -57,7 +57,7 @@ public class Table : MonoBehaviour
     #endregion
 
     #region Shorthands ----------------------------------------------------------------------------------------------
-    public List<(Slot, Slot)> GetSlotsForResolving() { // TODO Naming: Rename?
+    public List<(Slot, Slot)> GetMatchingSlots() {
         List<(Slot, Slot)> slotCombinations = new();
         foreach (Slot slot in player.slots) {
             slotCombinations.Add((slot, enemy.GetSlotByNr(slot.slotPosition)));

@@ -9,65 +9,63 @@ public class AnimationHandlerComp : MonoBehaviour
     private AnimationQueue mainQueue = new();
     private Dictionary<AnimationQueueName, AnimationQueue> offQueues = new();
 
-    public T CreateAnim<T>() where T:Animation {
+    public T CreateAnim<T>() where T:GameAnimation {
         return gameObject.AddComponent<T>();
     }
 
     #region Queueing -------------------------------------------------------------------------------------------------
-    public void QueueAnimation(Animation anim) {
+    public void QueueAnimation(GameAnimation anim) {
         mainQueue.QueueAnimation(anim);
     }
 
-    public void QueueAnimation(Animation anim, AnimationQueueName queueName) {
+    public void QueueAnimation(GameAnimation anim, AnimationQueueName queueName) {
         if (!offQueues.ContainsKey(queueName)) {
             offQueues[queueName] = new();
         }
         offQueues[queueName].QueueAnimation(anim);
     }
 
-    public void QueueAfterOffQueues(Animation anim) {
-        QueuePauseForOffQueues();
-        QueueWaitForOffQueues();
+    public void QueueAnimationExclusively(GameAnimation anim) {
+        Queue_PauseInOffQueues();
+        Queue_WaitForOffQueues();
         QueueAnimation(anim);
-        QueueResumeForOffQueues();
+        Queue_ResumeOffQueues();
     }
     #endregion
 
     #region Parallel -------------------------------------------------------------------------------------------------
-    public void PlayParallelToLastQueuedAnim(Animation anim) {
+    public void PlayParallelToLastQueuedAnim(GameAnimation anim) {
         mainQueue.PlayParallelToLastQueuedAnim(anim);
     }
 
-    public void PlayParallelToLastQueuedAnim(Animation anim, AnimationQueueName queueName) {
+    public void PlayParallelToLastQueuedAnim(GameAnimation anim, AnimationQueueName queueName) {
         offQueues[queueName].PlayParallelToLastQueuedAnim(anim);
     }
     #endregion
 
-    #region Other -----------------------------------------------------------------------------------------------------
-    // TODO Naming: Better names for all those functions
-    void QueuePauseForOffQueues() {
+    #region Util -----------------------------------------------------------------------------------------------------
+    void Queue_PauseInOffQueues() {
         foreach(AnimationQueueName queueName in Enum.GetValues(typeof(AnimationQueueName))) {
-            QueuePause(queueName);
+            Queue_Pause(queueName);
         }
     }
     
-    void QueuePause(AnimationQueueName queueName) {
+    void Queue_Pause(AnimationQueueName queueName) {
         Pause anim = CreateAnim<Pause>();
         anim.SetPause(offQueues[queueName], true);
         offQueues[queueName].QueueAnimation(anim);
     }
 
-    void QueueWaitForOffQueues() {
+    void Queue_WaitForOffQueues() {
         WaitForQueues anim = CreateAnim<WaitForQueues>();
         anim.offQueues = offQueues;
         QueueAnimation(anim);
     }
 
-    void QueueResumeForOffQueues() {
+    void Queue_ResumeOffQueues() {
         Resume anim = CreateAnim<Resume>();
         anim.offQueues = offQueues;
         QueueAnimation(anim);
     }
     #endregion
 }
-

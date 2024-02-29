@@ -4,7 +4,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 
 // Arranges cards on a semi-circle in the hand
-public class ArrangeHandAnim : Animation 
+public class ArrangeHandAnim : GameAnimation 
 {
     // Required
     private Hand hand;

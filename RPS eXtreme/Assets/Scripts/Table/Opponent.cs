@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Opponent : TablePlayer
+public class Opponent : PlayerSide
 {
     [Header("Opponent Specific")]
     public float speed;
@@ -225,7 +225,7 @@ public class Opponent : TablePlayer
         //yield return new WaitForSeconds(0.5f); TODO
         FlipCardAnim anim = AnimationHandler.CreateAnim<FlipCardAnim>();
         anim.Init(playedCards);
-        AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+        AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
     }
 
 

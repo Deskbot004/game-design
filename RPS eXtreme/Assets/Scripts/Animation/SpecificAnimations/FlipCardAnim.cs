@@ -4,13 +4,13 @@ using System.Linq;
 using UnityEngine;
 
 // Plays flip animation for given cards
-public class FlipCardAnim : Animation
+public class FlipCardAnim : GameAnimation
 {
     // Required
     private List<Card> cardsToFlip;
 
     // Options
-    private bool startFront = false;
+    private bool startFacingFront = false;
     private float offsetTime = 0; // -1 if card should only start flipping, once previous card is done
 
 
@@ -20,14 +20,14 @@ public class FlipCardAnim : Animation
     }
 
     public void Options(bool startFront = false, float offsetTime = 0) {
-        this.startFront = startFront;
+        this.startFacingFront = startFront;
         this.offsetTime = offsetTime;
     }
 
     protected override IEnumerator PlaySpecificAnimation() {
         foreach (Card card in cardsToFlip) {
             card.gameObject.SetActive(true);
-            card.GetComponent<Animator>().SetBool("faceFront", startFront);
+            card.GetComponent<Animator>().SetBool("faceFront", startFacingFront);
             card.GetComponent<Animator>().SetBool("flip", true);
             if (offsetTime < 0) {
                 float animationLength = card.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length;

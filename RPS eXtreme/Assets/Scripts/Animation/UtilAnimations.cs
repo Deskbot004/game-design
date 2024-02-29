@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Pause : Animation 
+public class Pause : GameAnimation 
 {
     AnimationQueue animQueue;
     bool pause;
@@ -29,7 +29,7 @@ public class Pause : Animation
     }
 }
 
-public class WaitForQueues : Animation
+public class WaitForQueues : GameAnimation
 {
     public Dictionary<AnimationQueueName, AnimationQueue> offQueues;
 
@@ -48,7 +48,7 @@ public class WaitForQueues : Animation
     }
 }
 
-public class Resume : Animation
+public class Resume : GameAnimation
 {
     public Dictionary<AnimationQueueName, AnimationQueue> offQueues;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 // Moves all cards to the same destination Object or to the same targetWorldPosition/Rotation if there isn't an Object
-public class MoveCardAnim : Animation
+public class MoveCardAnim : GameAnimation
 {
     // Required
     protected List<Card> cards = new();

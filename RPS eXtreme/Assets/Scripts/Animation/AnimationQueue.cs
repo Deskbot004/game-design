@@ -10,11 +10,11 @@ public class AnimationQueue
     private List<Task> parallelAnimations = new();
     private List<GameObject> animatedObjects = new();
 
-    private List<List<Animation>> upcomingAnimations = new();
+    private List<List<GameAnimation>> upcomingAnimations = new();
     private bool paused = false;
 
     #region Queueing -------------------------------------------------------------------------------------------------
-    public void QueueAnimation(Animation anim) {
+    public void QueueAnimation(GameAnimation anim) {
         // Put the animation into the queue
         // If there is no current animation running play it
 
@@ -35,10 +35,10 @@ public class AnimationQueue
         } else if (upcomingAnimations.Count > 0) {
             animatedObjects.Clear();
 
-            List<Animation> animations = upcomingAnimations[0];
+            List<GameAnimation> animations = upcomingAnimations[0];
             upcomingAnimations.RemoveAt(0);
 
-            Animation nextAnimation = animations[0];
+            GameAnimation nextAnimation = animations[0];
             animations.RemoveAt(0);
             animatedObjects.AddRange(nextAnimation.animatedObjects);
             currentAnimation = new Task(nextAnimation.Play());
@@ -46,7 +46,7 @@ public class AnimationQueue
                 PlayNextAnimation();
             };
 
-            foreach (Animation anim in animations) {
+            foreach (GameAnimation anim in animations) {
                 PlayParallelToCurrentAnimation(anim);
             }
         }
@@ -54,7 +54,7 @@ public class AnimationQueue
     #endregion
 
     #region Parallel -------------------------------------------------------------------------------------------------
-    public void PlayParallelToLastQueuedAnim(Animation anim) {
+    public void PlayParallelToLastQueuedAnim(GameAnimation anim) {
         if (upcomingAnimations.Count > 0) {
             upcomingAnimations.Last().Add(anim);
         } else { // Case that the last queued animation is already playing
@@ -62,8 +62,8 @@ public class AnimationQueue
         }
     }
 
-    void PlayParallelToCurrentAnimation(Animation anim) {
-        Debug.AssertFormat(IsOverlapZero(animatedObjects, anim.animatedObjects), "Animation {0} is trying to animation same objects as {1} ({2})", anim, currentAnimation, animatedObjects);
+    void PlayParallelToCurrentAnimation(GameAnimation anim) {
+        Debug.AssertFormat(!AreIntersecting(animatedObjects, anim.animatedObjects), "Animation {0} is trying to animation same objects as {1} ({2})", anim, currentAnimation, animatedObjects);
         animatedObjects.AddRange(anim.animatedObjects);
         Task parallelAnim = new Task(anim.Play());
         parallelAnimations.Add(parallelAnim);
@@ -73,8 +73,8 @@ public class AnimationQueue
         };
     }
 
-    bool IsOverlapZero(List<GameObject> firstList, List<GameObject> secondList) {
-        return firstList.Intersect(secondList).ToList().Count == 0;
+    bool AreIntersecting(List<GameObject> firstList, List<GameObject> secondList) {
+        return firstList.Intersect(secondList).ToList().Count > 0;
     }
     #endregion
 

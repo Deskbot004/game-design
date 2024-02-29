@@ -4,20 +4,21 @@ using System.Linq;
 using UnityEngine;
 
 // Opens and Closes the Attach Mode
-public class AttachModeAnim : Animation
+public class AttachModeAnim : GameAnimation
 {
-    private GameObject dim;
-    private bool open;
+    // Required
+    private GameObject dim; // TODO: dim -> screenDim (everywhere not just here)
+    private bool playOpenAnim;
 
 
-    public void Init(GameObject dim, bool open) {
+    public void Init(GameObject dim, bool playOpenAnim) {
         this.dim = dim;
-        this.open = open;
+        this.playOpenAnim = playOpenAnim;
         initialized = true;
     }
 
     protected override IEnumerator PlaySpecificAnimation() {
-        dim.SetActive(open);
+        dim.SetActive(playOpenAnim);
         yield return null;
     }
 

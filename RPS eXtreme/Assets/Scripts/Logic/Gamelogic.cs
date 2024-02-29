@@ -13,7 +13,7 @@ public class Gamelogic : MonoBehaviour
     public int dmgOnLoss = 1;
 
 
-    private TablePlayer[] players;
+    private PlayerSide[] players;
     private IDictionary<string, int> currentLifepoints = new Dictionary<string, int>();
     // [Non serialized]
     public LibAR libAR;
@@ -62,7 +62,7 @@ public class Gamelogic : MonoBehaviour
         currentLifepoints.Add("enemy", lifepointMax);
         table.ui.SetHealth(lifepointMax, DictKeys.PLAYER);
         table.ui.SetHealth(lifepointMax, DictKeys.ENEMY);
-        this.players = table.GetComponentsInChildren<TablePlayer>();
+        this.players = table.GetComponentsInChildren<PlayerSide>();
 
         EnemyDraw(startDraw + turnDraw);
         UserDraw(startDraw + turnDraw);
@@ -75,7 +75,7 @@ public class Gamelogic : MonoBehaviour
     */
     void StartTurn()
     {
-        foreach (TablePlayer p in players)
+        foreach (PlayerSide p in players)
         {
             if(p.GetCardsInHand().Count == 0) table.DrawCards(startDraw, p.isPlayer);
             else table.DrawCards(turnDraw, p.isPlayer);
@@ -89,7 +89,7 @@ public class Gamelogic : MonoBehaviour
     */
     public void ResolveTurn()
     {
-        foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetSlotsForResolving()) {
+        foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetMatchingSlots()) {
             int[] prevHealth = {currentLifepoints["user"], currentLifepoints["enemy"]};
             string winner = EvaluateCards(slotPlayer.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
             SlotResult playerResult = new(slotPlayer, winner=="user" || winner=="none", prevHealth[0], currentLifepoints["user"]);

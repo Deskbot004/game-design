@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class TablePlayer : MonoBehaviour, Droppable
+public class PlayerSide : MonoBehaviour, Droppable
 {
     [Header("Main Connections")]
     public Deck deck;
@@ -88,7 +88,7 @@ public class TablePlayer : MonoBehaviour, Droppable
         if(isPlayer) {
             AnimationHandler.QueueAnimation(anim);
         } else {
-            AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+            AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
         } 
     }
     #endregion
@@ -132,7 +132,7 @@ public class TablePlayer : MonoBehaviour, Droppable
             slot.DropActive = enabled;
     }
 
-    public List<Card> GetAllCards() {
+    public List<Card> GetCardsInDeck() {
         return new(deck.cards);
     }
     
@@ -159,7 +159,7 @@ public class TablePlayer : MonoBehaviour, Droppable
         if(isPlayer) {
             AnimationHandler.QueueAnimation(anim);
         } else {
-            AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+            AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
         }
     }
 

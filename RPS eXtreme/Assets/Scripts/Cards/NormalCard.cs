@@ -139,7 +139,7 @@ public class NormalCard : Card, Droppable
     public override void OnRightClickInHand()
     {
         base.OnRightClickInHand();
-        deck.GetTablePlayer().GetTable().ui.BeginAttaching(this); //TODO: TrainWreck Card -> TableUI
+        deck.GetTablePlayer().GetTable().ui.HandleStartAttaching(this); //TODO: TrainWreck Card -> TableUI
         
             /*
             foreach (Slot slot in deck.GetTablePlayer().GetSlots()) // TODO: Move this to SetFocusOn
@@ -270,7 +270,7 @@ public class NormalCard : Card, Droppable
             if(BelongsToPlayer())
                 AnimationHandler.QueueAnimation(anim);
             else
-                AnimationHandler.QueueAnimation(anim, AnimationQueueName.OPPONENT);
+                AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
 
             //if(deck.GetTablePlayer().isPlayer) deck.GetTablePlayer().detachButton.SetActive(true); // TODO
             return true;

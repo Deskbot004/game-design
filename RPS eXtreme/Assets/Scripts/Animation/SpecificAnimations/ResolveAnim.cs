@@ -7,19 +7,19 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 // Plays the Resolve Animation when pressing the End Turn Button
-public class ResolveAnim : Animation
+public class ResolveAnim : GameAnimation
 {
-    // Main stuff
+    // Required
     private TableUI ui;
     private Animator resolveTurnAnimator;
+    private SlotResult[] slotResults;
+    
+    // Options
+    private bool lastResolve = false;
 
-    // Player Results
-    private SlotResult[] results;
+    // Internal
     private NormalCard[] normalCards;
     private List<SupportCard>[] supportCards;
-
-    // Options
-    private bool closeAfterAnim = false;
 
 
     #region Main Functions -------------------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ public class ResolveAnim : Animation
         ui = table.ui;
         resolveTurnAnimator = table.resolveTurnAnimator;
 
-        results = new[] {playerResult, enemyResult};
+        slotResults = new[] {playerResult, enemyResult};
         normalCards = new[] {playerResult.slot.GetCard(), enemyResult.slot.GetCard()};
         supportCards = new[] {normalCards[0].GetAttachedSupportCards(), normalCards[1].GetAttachedSupportCards()};
 
@@ -35,7 +35,7 @@ public class ResolveAnim : Animation
     }
 
     public void Options(bool closeAfterAnim = false) {
-        this.closeAfterAnim = closeAfterAnim;
+        this.lastResolve = closeAfterAnim;
     }
 
     protected override void SetAnimatedObjects() {
@@ -67,7 +67,7 @@ public class ResolveAnim : Animation
             }
 
             Transform newParent = resolveTurnAnimator.transform.Find(playerName[i] + "Card/Rotation");
-            newParent.position = results[i].slot.transform.position;
+            newParent.position = slotResults[i].slot.transform.position;
             normalCards[i].transform.SetParent(newParent);
             normalCards[i].SetSortingLayer("Cards in Focus");
             foreach(SupportCard suppCard in supportCards[i]) {
@@ -79,8 +79,8 @@ public class ResolveAnim : Animation
     }
 
     IEnumerator PlayClashAnimation() {
-        resolveTurnAnimator.SetBool("playerWon", results[0].slotWon);
-        resolveTurnAnimator.SetBool("enemyWon", results[1].slotWon);
+        resolveTurnAnimator.SetBool("playerWon", slotResults[0].slotWon);
+        resolveTurnAnimator.SetBool("enemyWon", slotResults[1].slotWon);
         resolveTurnAnimator.SetBool("playAnim", true);
         float animationLength = Mathf.Max(resolveTurnAnimator.GetCurrentAnimatorStateInfo(0).length, resolveTurnAnimator.GetCurrentAnimatorStateInfo(1).length);
         yield return new WaitForSecondsRealtime(animationLength + 0.5f);
@@ -92,7 +92,7 @@ public class ResolveAnim : Animation
 
         for(int i=0; i<2; i++) {
             GameObject healthbar = ui.healthbars[healthbarKeys[i]];
-            playingAnims[i] = StartCoroutine(PlayHealthAnimationFor(healthbar, results[i]));
+            playingAnims[i] = StartCoroutine(PlayHealthAnimationFor(healthbar, slotResults[i]));
         }
 
         for(int i=0; i<2; i++) {
@@ -134,7 +134,7 @@ public class ResolveAnim : Animation
         resolveTurnAnimator.SetBool("playAnim", false);
         yield return new WaitForSeconds(0.5f);
         
-        if(closeAfterAnim) {
+        if(lastResolve) {
             ui.EnableInteractions(true);
             ui.dim.SetActive(false);
         }

@@ -30,7 +30,7 @@ public class TableUI : MonoBehaviour
     public class HealthbarDict : UDictionary<DictKeys, GameObject> { }
 
     private Table table;
-    private TablePlayer player;
+    private PlayerSide player;
     private NormalCard attachModeFocusCard;
     private List<Button> allButtons;
     private List<Card> cardsInOpenedPile;
@@ -42,7 +42,7 @@ public class TableUI : MonoBehaviour
     }
 
     public void EnableInteractions(bool enabled) {
-        foreach (Card card in player.GetAllCards()) {
+        foreach (Card card in player.GetCardsInDeck()) {
             card.EnableDrag(enabled);
             card.EnableRightClick(enabled);
         }
@@ -54,7 +54,7 @@ public class TableUI : MonoBehaviour
 
     #region Cardpiles --------------------------------------------------------------------------------------------
     // This function can access the Cardpile directly, because the parameter is set in the Unity Editor
-    public void OpenPile(Cardpile pile) {
+    public void OpenCardpile(Cardpile pile) {
         EnableInteractions(false);
         closeCardpileButton.gameObject.SetActive(true);
         closeCardpileButton.interactable = true;
@@ -72,7 +72,7 @@ public class TableUI : MonoBehaviour
         }
     }
 
-    public void ClosePile() {
+    public void CloseCardpile() {
         EnableInteractions(true);
         closeCardpileButton.gameObject.SetActive(false);
         dim.SetActive(false);
@@ -87,10 +87,10 @@ public class TableUI : MonoBehaviour
     #endregion
 
     #region AttachMode ------------------------------------------------------------------------------------------------
-    public void BeginAttaching(NormalCard baseCard) {
+    public void HandleStartAttaching(NormalCard baseCard) {
         OpenAttachMode();
         if (baseCard == attachModeFocusCard) {
-            EndAttaching();
+            HandleFinishAttaching();
         } else if (attachModeFocusCard != null) {
             RemoveFocus(withAnimation: false);
             SetFocusOn(baseCard);
@@ -99,12 +99,12 @@ public class TableUI : MonoBehaviour
         }
     }
 
-    public void EndAttaching() {
+    public void HandleFinishAttaching() {
         RemoveFocus(withAnimation: true);
         CloseAttachMode();
     }
 
-    public void OpenAttachMode() {
+    void OpenAttachMode() {
         player.EnableSlots(false);
         endTurnButton.gameObject.SetActive(false);
         attachDoneButton.gameObject.SetActive(true);
@@ -117,7 +117,7 @@ public class TableUI : MonoBehaviour
         AnimationHandler.QueueAnimation(anim);
     }
 
-    public void CloseAttachMode() {
+    void CloseAttachMode() {
         player.EnableSlots(true);
         endTurnButton.gameObject.SetActive(true);
         attachDoneButton.gameObject.SetActive(false);        
@@ -131,7 +131,7 @@ public class TableUI : MonoBehaviour
         AnimationHandler.QueueAnimation(anim);
     }
 
-    public void SetFocusOn(NormalCard baseCard) {
+    void SetFocusOn(NormalCard baseCard) {
         attachModeFocusCard = baseCard;
         baseCard.DropActive = true;
         detachButton.gameObject.SetActive(baseCard.HasAttachedCards());
@@ -152,7 +152,7 @@ public class TableUI : MonoBehaviour
         AnimationHandler.PlayParallelToLastQueuedAnim(anim);
     }
 
-    public void RemoveFocus(bool withAnimation) {
+    void RemoveFocus(bool withAnimation) {
         if (withAnimation)
             player.AddToHandWithAnimation(attachModeFocusCard);
         else
@@ -161,7 +161,7 @@ public class TableUI : MonoBehaviour
         attachModeFocusCard = null;
     }
     
-    void DetachAllCards() {
+    public void DetachAllCards() {
         List<SupportCard> supCards = attachModeFocusCard.DetachAllCards();
         foreach (SupportCard supCard in supCards) {
             bool dropSuccess = supCard.GetComponent<Draggable>().DropInto(player);

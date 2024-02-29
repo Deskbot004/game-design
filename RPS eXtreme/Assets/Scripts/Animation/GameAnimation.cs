@@ -4,8 +4,7 @@ using System.Linq;
 using Unity.Services.Analytics;
 using UnityEngine;
 
-// TODO Naming: Find better name, this one overshadows Unity's build in Script Animation
-public class Animation : MonoBehaviour
+public class GameAnimation : MonoBehaviour
 {
     public bool initialized = false;
     public List<GameObject> animatedObjects = new();

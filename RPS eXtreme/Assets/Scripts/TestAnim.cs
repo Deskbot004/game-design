@@ -13,7 +13,7 @@ public class TestAnim : MonoBehaviour
     }
 }
 
-public class Countdown : Animation
+public class Countdown : GameAnimation
 {
     public int total;
     public int count;
