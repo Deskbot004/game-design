@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-/*
-* A DeckManager is used to save a Deck into a Jsonfile.
-*/
-[Serializable]
+// Bridge between Objects and JSON file
 public class DeckManager 
 {
+    public int cardAmount;
+    public List<CardSymbol> cardSymbols = new();
+    public List<(bool, bool)> slotPositions = new();
+    public List<(FunctionID, List<string>)> functions = new();
+    public List<(EnemyPrefs, float)> preferences = new();
+    
+    public void AddCardToSave(Card card) {
+        cardAmount++;
+        cardSymbols.Add(card.GetSymbol());
+        slotPositions.Add((card.topSlot, card.bottomSlot));
+        functions.Add(card.GetFunctionsForSave());
+    }
 
-    public List<string> cardSymbols = new List<string>();
-    public List<int> cardTypes = new List<int>();
-    public List<int> slotTypes = new List<int>();
-    public List<string> functions = new List<string>();
-    public List<float> preferences = new List<float>();
-
+    public bool AreListsSameLength() {
+        return cardSymbols.Count == cardAmount && slotPositions.Count == cardAmount && functions.Count == cardAmount;
+    }
 }

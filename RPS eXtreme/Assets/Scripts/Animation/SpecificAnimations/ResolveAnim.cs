@@ -29,7 +29,7 @@ public class ResolveAnim : GameAnimation
 
         slotResults = new[] {playerResult, enemyResult};
         normalCards = new[] {playerResult.slot.GetCard(), enemyResult.slot.GetCard()};
-        supportCards = new[] {normalCards[0].GetAttachedSupportCards(), normalCards[1].GetAttachedSupportCards()};
+        supportCards = new[] {normalCards[0] != null? normalCards[0].GetAttachedSupportCards() : new(), normalCards[1] != null? normalCards[1].GetAttachedSupportCards() : new()};
 
         initialized = true;
     }
@@ -124,10 +124,10 @@ public class ResolveAnim : GameAnimation
             }
 
             normalCards[i].SetSortingLayer("Cards on Table");
-            normalCards[i].transform.SetParent(normalCards[i].GetDeck().transform); // TODO: Trainwreck Card -> Deck transform
+            normalCards[i].transform.SetParent(normalCards[i].GetDeckTransform());
             foreach(SupportCard suppCard in supportCards[i]) {
                 suppCard.SetSortingLayer("Attached Cards");
-                suppCard.transform.SetParent(suppCard.GetDeck().transform); // TODO: Trainwreck Card -> Deck transform
+                suppCard.transform.SetParent(suppCard.GetDeckTransform());
                 
             }
         }

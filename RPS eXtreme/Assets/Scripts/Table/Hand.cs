@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Hand : MonoBehaviour
@@ -16,5 +17,9 @@ public class Hand : MonoBehaviour
 
     public void RemoveCard(Card cardToBeRemoved) {
         cards.Remove(cardToBeRemoved);
+    }
+
+    public List<Card> GetCardsBySymbol(CardSymbol symbol) {
+        return cards.Where(c => c.GetSymbol() == symbol).ToList();
     }
 }

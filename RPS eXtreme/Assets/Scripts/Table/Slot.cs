@@ -15,7 +15,7 @@ public class Slot : MonoBehaviour, Droppable
     private int priority = (int) DroppablePriorities.SLOT;
 
     #region Main Functions --------------------------------------------------------------------------------------------
-    public void Init(PlayerSide tablePlayer, AnimationHandlerComp animHandler) {
+    public void Init(TableSide tablePlayer, AnimationHandlerComp animHandler) {
         isPlayer = tablePlayer.isPlayer;
         dropActive = tablePlayer.isPlayer;
     }

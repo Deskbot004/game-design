@@ -347,7 +347,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 255852566089318144}
         m_TargetAssemblyTypeName: TableUI, Assembly-CSharp
-        m_MethodName: OpenPile
+        m_MethodName: OpenCardpile
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -738,7 +738,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 255852566089318144}
         m_TargetAssemblyTypeName: TableUI, Assembly-CSharp
-        m_MethodName: ClosePile
+        m_MethodName: CloseCardpile
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1381,7 +1381,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 255852566089318144}
         m_TargetAssemblyTypeName: TableUI, Assembly-CSharp
-        m_MethodName: EndAttaching
+        m_MethodName: HandleFinishAttaching
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1643,7 +1643,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 255852566089318144}
         m_TargetAssemblyTypeName: TableUI, Assembly-CSharp
-        m_MethodName: OpenPile
+        m_MethodName: OpenCardpile
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -5,7 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerSide : MonoBehaviour, Droppable
+public class TableSide : MonoBehaviour, Droppable
 {
     [Header("Main Connections")]
     public Deck deck;
@@ -24,11 +24,8 @@ public class PlayerSide : MonoBehaviour, Droppable
     #region Main Functions -------------------------------------------------------------------------------------------
     public virtual void Init(Table table) {
         this.table = table;
-
         dropActive = isPlayer;
-        
-        deck.init(this, table.animHandler); // TODO Deck: Cleanup the deck functions
-        deck.transform.localPosition = drawpile.transform.localPosition; // TODO Deck: Move to Deck Init?
+        deck.InitAndReloadCards(this);
         drawpile.AddCards(deck.GetCards());
         drawpile.Shuffle();
         foreach (Slot slot in slots) {
@@ -90,6 +87,26 @@ public class PlayerSide : MonoBehaviour, Droppable
         } else {
             AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
         } 
+    }
+    
+    public void HandleStartAttaching(NormalCard card) {
+        /* TODO: Change Dragggable so that OnLeave is called on pickup. Then call that function here for the normalcard (or in NormalCard Script)
+        foreach (Slot slot in slots)
+            {
+                if(slot.GetCard() == card)
+                {
+                    slot.OnLeave(card.GetComponent<Draggable>());
+                    GetComponent<Draggable>().SetCurrentDroppable(deck.GetTablePlayer());
+                }
+            }
+        */
+        table.ui.HandleStartAttaching(card);
+    }
+
+    public void ShowDetachButton() {
+        if(isPlayer) {
+            table.ui.detachButton.interactable = true;
+        }
     }
     #endregion
 

@@ -96,11 +96,15 @@ public class Draggable : MonoBehaviour
         return dropSuccess;
     }
 
+    public void RemoveFromDroppable() {
+        currentDroppable.OnLeave(this);
+    }
+
     #endregion
 
     #region Getter und Setter ---------------------------------------------------------------------------------------------
     public void FindStartingDroppable() {
-        currentDroppable = GetComponent<Card>().GetDeck().GetTablePlayer(); // TODO: Trainwreck Card -> TablePlayer
+        currentDroppable = GetComponent<Card>().GetPlayerSide(); // TODO: Trainwreck Card -> TablePlayer
         return;
 
 

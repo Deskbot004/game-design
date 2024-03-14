@@ -16,7 +16,7 @@ public class Cardpile : MonoBehaviour
     }
 
     public List<Card> GetSortedCards() {
-        return cardsInside.OrderBy(c => c.symbol).ToList();
+        return cardsInside.OrderBy(c => c.GetSymbol()).ToList();
     }
     #endregion
 

@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &4162913929820909735
 Transform:
   m_ObjectHideFlags: 0
@@ -109,7 +109,7 @@ SpriteRenderer:
   m_SortingLayerID: 2033895861
   m_SortingLayer: 2
   m_SortingOrder: 4
-  m_Sprite: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9472853b323a97408395ca0d3489ee5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -193,7 +193,7 @@ SpriteRenderer:
   m_SortingLayerID: 2033895861
   m_SortingLayer: 2
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9472853b323a97408395ca0d3489ee5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -278,7 +278,7 @@ SpriteRenderer:
   m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ecdd0a24f9badc649a821551dd8e5ab2, type: 3}
-  m_Color: {r: 0.70980394, g: 1, b: 0.5254902, a: 1}
+  m_Color: {r: 0.70980394, g: 1, b: 0.5254902, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -301,10 +301,8 @@ GameObject:
   - component: {fileID: 675823393230207305}
   - component: {fileID: 5130926723020224501}
   - component: {fileID: 1151190523531407510}
-  - component: {fileID: 3374979779170171523}
+  - component: {fileID: 998374605130492465}
   - component: {fileID: 2342303444682531793}
-  - component: {fileID: 423892341968216935}
-  - component: {fileID: 265407236035238019}
   m_Layer: 0
   m_Name: SupportCard
   m_TagString: Untagged
@@ -413,14 +411,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e449268103ff74190a1112368fe9a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  symbol: support
-  slotType: 0
-  playWhenMoved: {fileID: 0}
-  effectType: lifesteal
-  effectValue: 2
-  description: Lifesteal 2
-  functionNames: []
---- !u!114 &3374979779170171523
+  symbol: 5
+  topSlot: 1
+  bottomSlot: 1
+  functionList:
+    keys: 
+    values: []
+--- !u!114 &998374605130492465
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -429,55 +426,37 @@ MonoBehaviour:
   m_GameObject: {fileID: 1726437772995218731}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d6600aa5ebdfeb43b8e3c5c2bea4311, type: 3}
+  m_Script: {fileID: 11500000, guid: 7393a63c83876fd4e8b95e3916868e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  symbolSprites:
-    keys:
-    - rock
-    - paper
-    - scissors
+  backgroundColor:
+    keys: 05000000
     values:
-    - {fileID: 21300000, guid: 01ed7339b0401914a9e4cd3adcc2cff0, type: 3}
-    - {fileID: 21300000, guid: 5895837e033689b478699b09c0f72ca1, type: 3}
-    - {fileID: 21300000, guid: 258440a53dcece74682e636a54da56bc, type: 3}
+    - {r: 0.70980394, g: 1, b: 0.5254902, a: 1}
+  windowColor:
+    keys: 05000000
+    values:
+    - {r: 0.2, g: 0.32156864, b: 0.12156863, a: 1}
   supportWindowSprites:
-    keys:
-    - draw
-    - extra damage
-    - lifesteal
-    - win on draw
-    - win against paper
-    - win against scissors
-    - win against rock
+    keys: 00000000010000000200000003000000040000000500000006000000
     values:
     - {fileID: 21300000, guid: d9472853b323a97408395ca0d3489ee5, type: 3}
     - {fileID: 21300000, guid: a6558a011f527174fad3a3187ba5944f, type: 3}
     - {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
     - {fileID: 21300000, guid: e6c0a8465b6d8354c8a02972857c541d, type: 3}
+    - {fileID: 21300000, guid: ea15e53b26dfd964183f7f9a31509ecc, type: 3}
     - {fileID: 21300000, guid: cb5635e5ce6fb6d4f84a78debab56c4a, type: 3}
     - {fileID: 21300000, guid: 0c85a889353bcca4180267c6ac494960, type: 3}
-    - {fileID: 21300000, guid: ea15e53b26dfd964183f7f9a31509ecc, type: 3}
   supportIconSprites:
-    keys:
-    - draw
-    - extra damage
-    - lifesteal
-    - win on draw
-    - win agains
+    keys: 00000000010000000200000003000000040000000500000006000000
     values:
-    - {fileID: 21300000, guid: 2e283aac12952c346b683c95b89180d9, type: 3}
-    - {fileID: 21300000, guid: 81b0976c963beb34997f6f8244e9bdeb, type: 3}
-    - {fileID: 21300000, guid: ea3215d39cd2fb24bbd3701f4e04073a, type: 3}
-    - {fileID: 21300000, guid: 37e2dafd057a292418cb0c0cf30aba3c, type: 3}
-    - {fileID: 21300000, guid: 065502ec6bbbaec47a5e9615419299ba, type: 3}
-  colors:
-    keys:
-    - support
-    - support window
-    values:
-    - {r: 0.70980394, g: 1, b: 0.5254902, a: 1}
-    - {r: 0.2, g: 0.32156864, b: 0.12156863, a: 1}
+    - {fileID: 21300000, guid: d9472853b323a97408395ca0d3489ee5, type: 3}
+    - {fileID: 21300000, guid: a6558a011f527174fad3a3187ba5944f, type: 3}
+    - {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+    - {fileID: 21300000, guid: e6c0a8465b6d8354c8a02972857c541d, type: 3}
+    - {fileID: 21300000, guid: ea15e53b26dfd964183f7f9a31509ecc, type: 3}
+    - {fileID: 21300000, guid: cb5635e5ce6fb6d4f84a78debab56c4a, type: 3}
+    - {fileID: 21300000, guid: 0c85a889353bcca4180267c6ac494960, type: 3}
 --- !u!95 &2342303444682531793
 Animator:
   serializedVersion: 5
@@ -499,30 +478,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &423892341968216935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1726437772995218731}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc8123cc31a751a4ab86e0da774c4ad0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &265407236035238019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1726437772995218731}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 071308c802a3e1443a88fe89609e758e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2793255778902471628
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,7 +578,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lifesteal 2
+  m_text: No Effect
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -843,7 +798,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lifesteal
+  m_text: Support Card
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1111,7 +1066,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lifesteal 2
+  m_text: No Effect
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1656,7 +1611,7 @@ SpriteRenderer:
   m_SortingLayerID: 2033895861
   m_SortingLayer: 2
   m_SortingOrder: 4
-  m_Sprite: {fileID: 21300000, guid: 71a63c37961b7de4985c0027ffa44d25, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d9472853b323a97408395ca0d3489ee5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

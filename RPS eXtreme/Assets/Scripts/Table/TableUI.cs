@@ -30,7 +30,7 @@ public class TableUI : MonoBehaviour
     public class HealthbarDict : UDictionary<DictKeys, GameObject> { }
 
     private Table table;
-    private PlayerSide player;
+    private TableSide player;
     private NormalCard attachModeFocusCard;
     private List<Button> allButtons;
     private List<Card> cardsInOpenedPile;
@@ -79,7 +79,7 @@ public class TableUI : MonoBehaviour
 
         cardpileScrollview.SetActive(false);
         foreach (Card card in cardsInOpenedPile) {
-            card.transform.SetParent(card.GetDeck().transform); // TODO Trainwreck: Card -> Deck Transform
+            card.transform.SetParent(card.GetDeckTransform());
             card.SetSortingLayer("Cards on Table");
             card.gameObject.SetActive(false);
         }
@@ -108,6 +108,7 @@ public class TableUI : MonoBehaviour
         player.EnableSlots(false);
         endTurnButton.gameObject.SetActive(false);
         attachDoneButton.gameObject.SetActive(true);
+        detachButton.gameObject.SetActive(true);
         foreach (Card card in player.GetCardsInHand()) {
             card.EnableDrag(false);
         }
@@ -134,7 +135,7 @@ public class TableUI : MonoBehaviour
     void SetFocusOn(NormalCard baseCard) {
         attachModeFocusCard = baseCard;
         baseCard.DropActive = true;
-        detachButton.gameObject.SetActive(baseCard.HasAttachedCards());
+        detachButton.interactable = baseCard.HasAttachedCards();
         
         List<Card> viableSupportCards = player.GetMatchingSupportCards(baseCard);
         foreach(Card card in player.GetCardsInHand()) {
@@ -181,7 +182,8 @@ public class TableUI : MonoBehaviour
         table.logic.ResolveTurn();
     }
     
-    public void ShowWinScreen(bool playerWon) {
+    public void ShowWinScreen(DictKeys winner) {
+        bool playerWon = winner == DictKeys.PLAYER;
         winLoseScreen.showWinner(playerWon);
     }
     #endregion

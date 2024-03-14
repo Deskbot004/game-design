@@ -5,159 +5,118 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-/*
-* A class to generate new cards and decks using the prefabs
-*/
+// A class to generate new cards and decks using the prefabs
 public class Constructor : MonoBehaviour
 {
     public GameObject NormalCard;
     public GameObject SupportCard;
     public GameObject Deck;
-    private Gamelogic logic;
+
+    [Header("Setup CreateDeck")]
+    public string deckName;
+    [UDictionary.Split(30, 70)]
+    public CardAmountDict cardAmounts;
+    [Serializable]
+    public class CardAmountDict : UDictionary<CardSymbol, int> { }
 
     private int counter;
-    public int rockAmount;
-    public int paperAmount;
-    public int scissorsAmount;
-    public int spockAmount;
-    public int lizardAmount;
-    public int supportAmount;
-    public string deckName;
-    public List<string> possibleSupportFunctions; // List of possible SupportFunctions
-    public List<string> deckSupportFunctions; // SupportFunctions actually in the deck
 
-    public void Awake()
-    {
-        this.logic = GameObject.Find("Gamelogic").GetComponent<Gamelogic>();
-    }
-    
-    /*
-    *  Creates a NormalCard but doesn't initialize it
-    */
-    public NormalCard CreateEmptyNormalCard()
-    {
-        GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
-        cardObject.SetActive(false);
-        return cardObject.GetComponent<NormalCard>();
-
-    }
-
-    /*
-    *  Creates a NormalCard and initializes it
-    */
-    public NormalCard CreateNormalCard(string symbol, int type)
-    {
+    public NormalCard CreateNormalCard(CardSymbol symbol, (bool,bool) slotPositions) {
         GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
         cardObject.name = "Normal Card " + this.counter;
-        this.counter++;
         cardObject.SetActive(false);
         NormalCard card = cardObject.GetComponent<NormalCard>();
-        card.SetSymbol(symbol);
-        card.SetSlotType(type);
-        card.SetSprite();
+        card.SetCardValues(symbol, slotPositions.Item1, slotPositions.Item2);
+
+        this.counter++;
         return card;
     }
 
-    /*
-    *  Creates a SupportCard but doesn't initialize it,except for its symbol
-    */
-    public SupportCard CreateEmptySupportCard()
-    {
-        GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
-        cardObject.SetActive(false);
-        SupportCard card = cardObject.GetComponent<SupportCard>();
-        card.SetSymbol("support");
-        card.populateDictionaries();
-        card.SetSprite();
-        return card;
-    }
-
-    /*
-    *  Creates a SupportCard and initializes it
-    */
-    public SupportCard CreateSupportCard(int type, List<string> names)
-    {
+    public SupportCard CreateSupportCard((FunctionID, List<string>) function, (bool, bool) slotPositions, bool isPlayer) {
         GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
         cardObject.name = "Support Card " + this.counter;
-        this.counter++;
         cardObject.SetActive(false);
         SupportCard card = cardObject.GetComponent<SupportCard>();
-        card.SetSymbol("support");
-        card.populateDictionaries();
-        card.SetSlotType(type);
-        card.SetFunctionNames(names);
-        card.SetSprite();
+        card.SetCardValues(CardSymbol.SUPPORT, slotPositions.Item1, slotPositions.Item2, function, isPlayer);
+
+        this.counter++;
         return card;
     }
 
-    /*
-    *  Creates a Deck but doesn't initialize it
-    */
-    public Deck CreateEmptyDeck()
-    {
-        GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
-        deckObject.GetComponent<Deck>().SetConstructor(this);
-        return deckObject.GetComponent<Deck>();
-    }
-
-    /*
-    *  Creates a Deck and initializes it
-    */
-    public Deck CreateDeck(List<Card> cards, string deckname)
-    {
+    public Deck CreateDeck(List<Card> cards, string deckname) {
         GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
         Deck deck = deckObject.GetComponent<Deck>();
-        deck.SetConstructor(this);
-        deck.AddCardDeck(cards);
+        deck.AddCards(cards);
         deck.SetDeckName(deckname);
+        deck.gameObject.name = deckname;
         return deck;
     }
 
-    // ---------- For Deck Creation in Editor --------------------------------------------------------------------------------
-
-    [ContextMenu("Create Deck")]
-    void Creation()
-    {
+    #region Editor ------------------------------------------------------------------------------------------
+    [ContextMenu("Create Deck for Player")]
+    void CreateDeckPlayer() {
         this.counter = 0;
         List<Card> cards = new List<Card>();
-        
-        for (int i = 0; i < this.supportAmount; i++) 
-        {
-            List<string> functionnames = new List<string>();
-            functionnames.Add(this.deckSupportFunctions[i % this.deckSupportFunctions.Count]);
-            SupportCard card5 = CreateSupportCard(i % 2, functionnames);
-            cards.Add(card5);
-        }
-        for (int i = 0; i < this.scissorsAmount; i++)
-        {
-            NormalCard card0 = CreateNormalCard("scissors", i % 4);
-            cards.Add(card0);
-        }
-        for (int i = 0; i < this.rockAmount; i++)
-        {
-            NormalCard card1 = CreateNormalCard("rock", i % 4);
-            cards.Add(card1);
-        }
-        for (int i = 0; i < this.paperAmount; i++)
-        {
-            NormalCard card2 = CreateNormalCard("paper", i % 4);
-            cards.Add(card2);
-        }
-        for (int i = 0; i < this.lizardAmount; i++)
-        {
-            NormalCard card3 = CreateNormalCard("lizard", i % 4);
-            cards.Add(card3);
-        }
-        for (int i = 0; i < this.spockAmount; i++)
-        {
-            NormalCard card4 = CreateNormalCard("spock", i % 4);
-            cards.Add(card4);
-        }
-        
-        
-        Deck deck = CreateDeck(cards, this.deckName);
 
-        List<Card> deckCards = deck.GetCards();
-
+        List<(bool,bool)> slotPositions = new() {(true, false), (false, true), (false, false), (true, true)};
+        for (int i = 0; i < cardAmounts[CardSymbol.SUPPORT]; i++) {
+            SupportCard card = CreateSupportCard((FunctionID.DRAW, new(){"2"}), slotPositions[i % 2], true);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.ROCK]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.ROCK, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.PAPER]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.PAPER, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.SCISSORS]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.SCISSORS, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.LIZARD]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.LIZARD, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.SPOCK]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.SPOCK, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        CreateDeck(cards, "Player Deck: " + this.deckName);
     }
+
+    [ContextMenu("Create Deck for Enemy")]
+    void CreateDeckEnemy() {
+        this.counter = 0;
+        List<Card> cards = new List<Card>();
+
+        List<(bool,bool)> slotPositions = new() {(true, false), (false, true), (false, false), (true, true)};
+        for (int i = 0; i < cardAmounts[CardSymbol.SUPPORT]; i++) {
+            SupportCard card = CreateSupportCard((FunctionID.DRAW, new(){"2"}), slotPositions[i % 2], false);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.ROCK]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.ROCK, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.PAPER]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.PAPER, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.SCISSORS]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.SCISSORS, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.LIZARD]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.LIZARD, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        for (int i = 0; i < cardAmounts[CardSymbol.SPOCK]; i++) {
+            NormalCard card = CreateNormalCard(CardSymbol.SPOCK, slotPositions[i % 4]);
+            cards.Add(card);
+        }
+        CreateDeck(cards, "Enemy Deck: " + this.deckName);
+    }
+    #endregion
 }

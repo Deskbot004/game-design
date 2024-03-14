@@ -13,13 +13,13 @@ GameObject:
   - component: {fileID: 3954539545758581877}
   - component: {fileID: 2784101924343999038}
   - component: {fileID: 3251097903975639861}
-  - component: {fileID: 7394685142577548252}
+  - component: {fileID: 2284370362083266837}
   - component: {fileID: 522243372035755438}
   - component: {fileID: 8255534738892508380}
   - component: {fileID: 3779401116912012697}
   - component: {fileID: -4816380780313014659}
   m_Layer: 0
-  m_Name: BasicCard
+  m_Name: NormalCard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -126,10 +126,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f143db7f3c6f6549be3370ed72674da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  symbol: scissors
-  slotType: 3
-  playWhenMoved: {fileID: 8300000, guid: 8c96b9f6bf8a98749b45d92edcee6648, type: 3}
---- !u!114 &7394685142577548252
+  symbol: 0
+  topSlot: 0
+  bottomSlot: 0
+--- !u!114 &2284370362083266837
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -138,63 +138,33 @@ MonoBehaviour:
   m_GameObject: {fileID: 1003988081768242810}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d6600aa5ebdfeb43b8e3c5c2bea4311, type: 3}
+  m_Script: {fileID: 11500000, guid: 64c8818783671f744ae9ea658ee830fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  backgroundColor:
+    keys: 0000000001000000020000000300000004000000
+    values:
+    - {r: 0.40392157, g: 0.8156863, b: 1, a: 1}
+    - {r: 1, g: 0.8745098, b: 0.38039216, a: 1}
+    - {r: 1, g: 0.49411765, b: 0.4862745, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+  windowColor:
+    keys: 0000000001000000020000000300000004000000
+    values:
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
+    - {r: 1, g: 1, b: 1, a: 1}
   symbolSprites:
-    keys:
-    - rock
-    - paper
-    - scissors
+    keys: 0000000001000000020000000300000004000000
     values:
     - {fileID: 21300000, guid: 8eaaadf7d4fcaf24ea394ad3e82c98da, type: 3}
     - {fileID: 21300000, guid: 1592c94a550115141b786e27ac6ad4aa, type: 3}
     - {fileID: 21300000, guid: a971766a14b0d334d9ebe1b5a0a30ed8, type: 3}
-  supportWindowSprites:
-    keys:
-    - support
-    - saki
-    - airi
-    - an
-    - rui
-    - mizuki
-    values:
-    - {fileID: 21300000, guid: d2d405e662276d840bc48690bde128fd, type: 3}
-    - {fileID: 21300000, guid: 04f9254e430872942972aaf6f7695740, type: 3}
-    - {fileID: 21300000, guid: 8bbeaf8857aecac49a3ca0570e85a75a, type: 3}
-    - {fileID: 21300000, guid: b5825b89d00b10040a6eb6135ce7cb9e, type: 3}
-    - {fileID: 21300000, guid: 09b332a0627aefa41a722be9ac046e5c, type: 3}
-    - {fileID: 21300000, guid: 1eefc8f83d9a2fa478364537bea20fa2, type: 3}
-  supportIconSprites:
-    keys:
-    - support_icon
-    - saki_icon
-    - airi_icon
-    - an_icon
-    - rui_icon
-    - mizuki_icon
-    values:
-    - {fileID: 21300000, guid: 2e283aac12952c346b683c95b89180d9, type: 3}
-    - {fileID: 21300000, guid: 81b0976c963beb34997f6f8244e9bdeb, type: 3}
-    - {fileID: 21300000, guid: ea3215d39cd2fb24bbd3701f4e04073a, type: 3}
-    - {fileID: 21300000, guid: 37e2dafd057a292418cb0c0cf30aba3c, type: 3}
-    - {fileID: 21300000, guid: 065502ec6bbbaec47a5e9615419299ba, type: 3}
-    - {fileID: 21300000, guid: 53127397d738dc642a404ef766e9beab, type: 3}
-  colors:
-    keys:
-    - rock
-    - paper
-    - scissors
-    - lizard
-    - spock
-    - support
-    values:
-    - {r: 0.40392157, g: 0.8156863, b: 1, a: 1}
-    - {r: 1, g: 0.87641513, b: 0.3820755, a: 1}
-    - {r: 1, g: 0.49411765, b: 0.4862745, a: 1}
-    - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 1, g: 1, b: 1, a: 1}
-    - {r: 0, g: 0, b: 0, a: 1}
+    - {fileID: 21300000, guid: c56150690205ac24c9517351dcc8bb98, type: 3}
+    - {fileID: 21300000, guid: c56150690205ac24c9517351dcc8bb98, type: 3}
 --- !u!95 &522243372035755438
 Animator:
   serializedVersion: 5

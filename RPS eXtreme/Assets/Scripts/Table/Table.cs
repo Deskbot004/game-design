@@ -12,8 +12,8 @@ public class Table : MonoBehaviour
 {
     [Header("Main Connections")]
     public Gamelogic logic;
-    public PlayerSide player;
-    public Opponent enemy;
+    public TableSide player;
+    public Enemy enemy;
     public TableUI ui;
     public AnimationHandlerComp animHandler;
 
@@ -31,8 +31,8 @@ public class Table : MonoBehaviour
         logic.Init(this);
     }
 
-    public void DrawCards(int amount, bool forPlayer) { // TODO Later: Maybe replace bool with DictKey enum?
-        PlayerSide cardDrawer = forPlayer? player : enemy;
+    public void DrawCards(int amount, DictKeys forPlayer) {
+        TableSide cardDrawer = (forPlayer == DictKeys.PLAYER)? player : enemy;
         cardDrawer.DrawCards(amount);
     }
 
@@ -48,10 +48,8 @@ public class Table : MonoBehaviour
         enemy.ClearSlots();
     }
 
-    public void SetWinner(string winner) {
-        // TODO Later: Change it to a bool
-        bool playerWon = winner == "user";
-        ui.ShowWinScreen(playerWon);
+    public void SetWinner(DictKeys winner) {
+        ui.ShowWinScreen(winner);
     }
 
     #endregion
