@@ -31,6 +31,7 @@ public enum FunctionID {
 
 public static class SupportLibrary
 {
+    /*
     public static Dictionary<FunctionType, Function> functionLibrary = new() {
         [FunctionType.DRAW] = new DrawCards(),
         [FunctionType.ADDDMG] = new AdditionalDamage(),
@@ -38,30 +39,80 @@ public static class SupportLibrary
         [FunctionType.WINDRAW] = new WinOnDraw(),
         [FunctionType.WINAGAINST] = new AdditionalWin(),
     };
+     */
+
     //Rock Paper Scissors Lizard Spock
-    public static Dictionary<FunctionID, CardInfo> supportLibrary = new() {
-        [FunctionID.DRAW] = new CardInfo(new(){FunctionType.DRAW},"Draw", "Draw /x/ on win or loss"),
-        [FunctionID.ADDDMG] = new CardInfo(new(){FunctionType.ADDDMG}, "Additional damage", "Do /x/ extra damage on win"),
-        [FunctionID.LIFESTEAL] = new CardInfo(new(){FunctionType.LIFESTEAL}, "Lifesteal", "Lifesteal /x/% of dmg dealt"),
-        [FunctionID.WINDRAW] = new CardInfo(new(){FunctionType.WINDRAW}, "Win a draw", "Win on draw"),
-        [FunctionID.WINAGAINST_ROCK] = new CardInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against rock"),
-        [FunctionID.WINAGAINST_PAPER] = new CardInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against paper"),
-        [FunctionID.WINAGAINST_SCISSORS] = new CardInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against scissors"),
-        [FunctionID.WINAGAINST_LIZARD] = new CardInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against lizard"),
-        [FunctionID.WINAGAINST_SPOCK] = new CardInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against spock"),
+    /*
+    public static Dictionary<FunctionID, FunctionInfo> supportLibrary = new() {
+        [FunctionID.DRAW] = new FunctionInfo(new(){FunctionType.DRAW},"Draw", "Draw /x/ on win or loss"),
+        [FunctionID.ADDDMG] = new FunctionInfo(new(){FunctionType.ADDDMG}, "Additional damage", "Do /x/ extra damage on win"),
+        [FunctionID.LIFESTEAL] = new FunctionInfo(new(){FunctionType.LIFESTEAL}, "Lifesteal", "Lifesteal /x/% of dmg dealt"),
+        [FunctionID.WINDRAW] = new FunctionInfo(new(){FunctionType.WINDRAW}, "Win a draw", "Win on draw"),
+        [FunctionID.WINAGAINST_ROCK] = new FunctionInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against rock"),
+        [FunctionID.WINAGAINST_PAPER] = new FunctionInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against paper"),
+        [FunctionID.WINAGAINST_SCISSORS] = new FunctionInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against scissors"),
+        [FunctionID.WINAGAINST_LIZARD] = new FunctionInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against lizard"),
+        [FunctionID.WINAGAINST_SPOCK] = new FunctionInfo(new(){FunctionType.WINAGAINST}, "Additional win", "Win against spock"),
         //[FunctionID.DMGANDHEAL] = new CardInfo(new(){FunctionID.ADDDMG, FunctionID.LIFESTEAL},"Deal /x/ extra damage and heal for it"),
+    };
+     */
+
+    public static readonly Dictionary<FunctionID, FunctionInfo> supportLibrary = new() {
+        [FunctionID.DRAW] = new FunctionInfo( FunctionID.DRAW,
+            new(){new DrawCards()},
+            "Draw Cards",
+            "Draw /x/ on win or loss"),
+        [FunctionID.ADDDMG] = new FunctionInfo( FunctionID.ADDDMG,
+            new(){new AdditionalDamage()},
+            "Strength",
+            "Do /x/ extra damage on win"),
+        [FunctionID.LIFESTEAL] = new FunctionInfo( FunctionID.LIFESTEAL,
+            new(){new Lifesteal()},
+            "Lifesteal",
+            "Heal /x/% of damage dealt"),
+        [FunctionID.WINDRAW] = new FunctionInfo( FunctionID.WINDRAW,
+            new(){new WinOnDraw()},
+            "Win on draw",
+            "Win on draw"),
+        [FunctionID.WINAGAINST_ROCK] = new FunctionInfo( FunctionID.WINAGAINST_ROCK,
+            new(){new AdditionalWin(CardSymbol.ROCK)},
+            "Additional win",
+            "Win against rock"),
+        [FunctionID.WINAGAINST_PAPER] = new FunctionInfo( FunctionID.WINAGAINST_PAPER,
+            new(){new AdditionalWin(CardSymbol.PAPER)},
+            "Additional win",
+            "Win against paper"),
+        [FunctionID.WINAGAINST_SCISSORS] = new FunctionInfo( FunctionID.WINAGAINST_SCISSORS,
+            new(){new AdditionalWin(CardSymbol.SCISSORS)},
+            "Additional win",
+            "Win against scissors"),
+        [FunctionID.WINAGAINST_LIZARD] = new FunctionInfo( FunctionID.WINAGAINST_LIZARD,
+            new(){new AdditionalWin(CardSymbol.LIZARD)},
+            "Additional win",
+            "Win against lizard"),
+        [FunctionID.WINAGAINST_SPOCK] = new FunctionInfo( FunctionID.WINAGAINST_SPOCK,
+            new(){new AdditionalWin(CardSymbol.SPOCK)},
+            "Additional win",
+            "Win against spock"),
+        [FunctionID.DMGANDHEAL] = new FunctionInfo( FunctionID.DMGANDHEAL,
+            new(){new AdditionalDamage(), new Lifesteal()},
+            "Empowered Healing",
+            "Do /x/ extra damage and heal /x/% of damage dealt"
+        )
     };
     
 
+    /*
     public static Function CreateFunction(FunctionType functionType, bool isPlayer, string stringParam) {
         Function oldFunction = functionLibrary[functionType];
         Function newFunction = oldFunction.Copy();
         if (isPlayer) {
-            newFunction.Init(DictKeys.PLAYER, stringParam);
+            newFunction.Init(TableSideName.PLAYER, stringParam);
         } else {
-            newFunction.Init(DictKeys.ENEMY, stringParam);
+            newFunction.Init(TableSideName.ENEMY, stringParam);
         }
         return newFunction;
     }
+     */
 
 }

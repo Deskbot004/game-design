@@ -5,26 +5,11 @@ using System.Linq;
 using Unity.Services.Analytics;
 using UnityEngine;
 
-// Everytime you add a Function, add an enum here and also in SupportLibrary -> FunctionID
-//TODO
-public enum FunctionType {
-    DRAW,
-    ADDDMG,
-    LIFESTEAL,
-    WINDRAW,
-    WINAGAINST,
-}
-
 public class Function
 {
-    public DictKeys caller;
-    public string description;
+    public TableSideName caller;
 
-    public virtual Function Copy() {
-        return null;
-    }
-
-    public virtual void Init(DictKeys caller, string stringParam) {
+    public virtual void Init(TableSideName caller, string stringParam) {
         Debug.Log("Function didn't override Init! " + this);
     }
 

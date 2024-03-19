@@ -23,7 +23,7 @@ public class FunctionHandler
         HandleFunctions(brFunctions);
     }
 
-    public void HandleARFunctions(DictKeys caller) {
+    public void HandleARFunctions(TableSideName caller) {
         List<Function> arFunctions = allFunctions.Where(f => f is ARFunction && f.caller == caller).ToList();
         HandleFunctions(arFunctions);
     }

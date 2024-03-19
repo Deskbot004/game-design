@@ -11,10 +11,10 @@ public enum EnemyPrefs {
     SCISSORS,
     LIZARD,
     SPOCK,
+    SUPPORT,
     RESOURCING,
     RIGHT,
-    RANDOM,
-    SUPPORT
+    RANDOM
 }
 
 enum AmountOf {
@@ -28,17 +28,13 @@ enum AmountOf {
     NORMALCARDS,
     SUPPORTCARDS
 }
+[Serializable] public class PrefDict : UDictionary<EnemyPrefs, float> { }
 
 public class Enemy : TableSide
 {
     [Header("Enemy Specific")]
-    public float speed;
     [UDictionary.Split(50, 50)] public PrefDict preferences;
-
-    // Defining Dicts
-    [Serializable] public class PrefDict : UDictionary<EnemyPrefs, float> { }
-
-    // Private stuff
+    
     private List<EnemyPrefs> normalCardPrefs = new() {
         EnemyPrefs.ROCK, 
         EnemyPrefs.PAPER, 
@@ -47,19 +43,20 @@ public class Enemy : TableSide
         EnemyPrefs.SPOCK, 
         EnemyPrefs.RANDOM
     };
-    
-    public override void Init(Table table) {
-        SupplementPrefs();
+
+    #region Setup -------------------------------------------------------------------------------------------
+        public override void Init(Table table) {
+        AddMissingPrefs();
         NormalizePrefs();
         SetMinValues();
         base.Init(table);
         isPlayer = false;
     }
 
-    void SupplementPrefs() {
+    void AddMissingPrefs() {
         foreach(EnemyPrefs pref in Enum.GetValues(typeof(EnemyPrefs))) {
             if(!preferences.ContainsKey(pref)) {
-                preferences[pref] = 0;
+                preferences.Add(pref, 0);
             }
         }
     } 
@@ -83,47 +80,10 @@ public class Enemy : TableSide
         }
         this.NormalizePrefs();
     }
+    #endregion
 
-    Dictionary<AmountOf, int> AnalyzeHand(List<Card> cardsInHand) {
-        Dictionary<AmountOf, int> stats = new();
-        foreach(AmountOf thing in Enum.GetValues(typeof(AmountOf))) {
-            stats.Add(thing, 0);
-        }
-        stats[AmountOf.SLOTS] = this.slots.Count;
-        stats[AmountOf.ALLCARDS] = cardsInHand.Count;
-
-        foreach(Card card in cardsInHand){
-            if(!card.IsNormal()){
-                stats[AmountOf.SUPPORTCARDS] += 1;
-            } else {
-                stats[AmountOf.NORMALCARDS] += 1;
-                switch (card.GetSymbol()) {
-                    case CardSymbol.ROCK:
-                        stats[AmountOf.ROCK] += 1;
-                        break;
-                    case CardSymbol.PAPER:
-                        stats[AmountOf.PAPER] += 1;
-                        break;
-                    case CardSymbol.SCISSORS:
-                        stats[AmountOf.SCISSORS] += 1;
-                        break;
-                    case CardSymbol.LIZARD:
-                        stats[AmountOf.LIZARD] += 1;
-                        break;
-                    case CardSymbol.SPOCK:
-                        stats[AmountOf.SPOCK] += 1;
-                        break;
-                    default:
-                        Debug.Log("AnalyzeHand: Unexpected card symbol: " + card.GetSymbol());
-                        break;
-                }
-            }
-        }
-        // TODO Rework expected Cards
-        // The opponent ressource decisions depend on the expected card amount on next turn. (Always Draw, Support Draw etc...)
-        return stats;
-    }
-
+    #region Playing during the Game -------------------------------------------------------------------------
+    // Not yet refactored, because the whole thing will change
     public void PlayCards() {
         List<Card> cardsInHand = GetCardsInHand();
         Dictionary<AmountOf, int> stats = AnalyzeHand(cardsInHand);
@@ -202,7 +162,47 @@ public class Enemy : TableSide
         anim.Init(playedCards);
         AnimationHandler.QueueAnimation(anim, AnimationQueueName.ENEMY);
     }
-    
+
+    Dictionary<AmountOf, int> AnalyzeHand(List<Card> cardsInHand) {
+        Dictionary<AmountOf, int> stats = new();
+        foreach(AmountOf thing in Enum.GetValues(typeof(AmountOf))) {
+            stats.Add(thing, 0);
+        }
+        stats[AmountOf.SLOTS] = this.slots.Count;
+        stats[AmountOf.ALLCARDS] = cardsInHand.Count;
+
+        foreach(Card card in cardsInHand){
+            if(!card.IsNormal()){
+                stats[AmountOf.SUPPORTCARDS] += 1;
+            } else {
+                stats[AmountOf.NORMALCARDS] += 1;
+                switch (card.GetSymbol()) {
+                    case CardSymbol.ROCK:
+                        stats[AmountOf.ROCK] += 1;
+                        break;
+                    case CardSymbol.PAPER:
+                        stats[AmountOf.PAPER] += 1;
+                        break;
+                    case CardSymbol.SCISSORS:
+                        stats[AmountOf.SCISSORS] += 1;
+                        break;
+                    case CardSymbol.LIZARD:
+                        stats[AmountOf.LIZARD] += 1;
+                        break;
+                    case CardSymbol.SPOCK:
+                        stats[AmountOf.SPOCK] += 1;
+                        break;
+                    default:
+                        Debug.Log("AnalyzeHand: Unexpected card symbol: " + card.GetSymbol());
+                        break;
+                }
+            }
+        }
+        // TODO Rework expected Cards
+        // The opponent ressource decisions depend on the expected card amount on next turn. (Always Draw, Support Draw etc...)
+        return stats;
+    }
+
     CardSymbol SelectCardToPlay(Dictionary<AmountOf, int> stats) {
         float prefSum = preferences.Where(p => normalCardPrefs.Contains(p.Key)).Select(p => p.Value).ToList().Sum();
         float randomCardFloat = UnityEngine.Random.Range(0.0f, prefSum);
@@ -253,6 +253,7 @@ public class Enemy : TableSide
             return 1;
         }
     }
+    #endregion
 
     public override void DrawCards(int amount) {
         base.DrawCards(amount);
@@ -264,7 +265,7 @@ public class Enemy : TableSide
         foreach((EnemyPrefs, float) prefEntry in preferences) {
             this.preferences[prefEntry.Item1] = prefEntry.Item2;
         }
-        SupplementPrefs();
+        AddMissingPrefs();
         NormalizePrefs();
         SetMinValues();
     }

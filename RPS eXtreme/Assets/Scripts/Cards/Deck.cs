@@ -11,23 +11,16 @@ using Newtonsoft.Json;
 public class Deck : MonoBehaviour
 {
     public string deckName;
-    [TextArea(3,20)] public string flavor;
+    [TextArea(3,20)] public string description;
     public List<Card> cards = new List<Card>();
 
-    private Constructor constructor; // TODO: Change constructor to Component on Deck
     private TableSide tableSide;
 
     [Header("[rock,paper,scissors,lizard,spock,resourcing,right,random,support]")] // TODO: Nein :(
     public List<(EnemyPrefs, float)> preferences;
 
-    public void Awake() { //TODO Constructor: Remove?
-        if(GameObject.Find("Constructor") != null) {
-            this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
-        }
-    }
-
     #region Main Functions ----------------------------------------------------------------------------------
-    public void InitAndReloadCards(TableSide tableSide) {
+    public void InitAndReloadCards(TableSide tableSide) { // TODO: Refactor
         this.tableSide = tableSide;
         transform.position = tableSide.drawpile.transform.position;
         ResetCardPositions();
@@ -38,7 +31,7 @@ public class Deck : MonoBehaviour
         }
         if(!this.tableSide.isPlayer) {
             Enemy enemy = (Enemy) this.tableSide;
-            enemy.SetPreferences(this.preferences); // TODO: Change
+            //enemy.SetPreferences(this.preferences); // TODO: Change
         }
     }
     #endregion
@@ -49,29 +42,27 @@ public class Deck : MonoBehaviour
         Regex invalidSymbols = new("[/\\:*?\"<>|]");
         deckName = invalidSymbols.Replace(deckName, "");
         string filepath = Path.Combine(Application.persistentDataPath, deckName + ".json");
-        DeckManager deckToSave = new();
+        DeckSavingConverter deckSave = new();
         foreach (Card card in cards) {
-            deckToSave.AddCardToSave(card);
+            deckSave.AddCardToSave(card);
         }
-        deckToSave.preferences = this.preferences;
-        string deckJson = JsonConvert.SerializeObject(deckToSave, Formatting.Indented);
-        //string deckJson = JsonUtility.ToJson(deckToSave);
+        deckSave.preferences = this.preferences;
+        string deckJson = JsonConvert.SerializeObject(deckSave, Formatting.Indented);
         File.WriteAllText(filepath, deckJson);
         Debug.Log("Saved successfully to " + filepath);
     }
 
     [ContextMenu("Load Deck")]
     public void LoadDeckFromEditor() {
-        this.constructor = GameObject.Find("Constructor").GetComponent<Constructor>();
         Regex invalidSymbols = new("[/\\:*?\"<>|]");
         deckName = invalidSymbols.Replace(deckName, "");
         LoadDeck(deckName, true);
         Debug.Log("Loaded Deck: " + deckName);
     }
 
-    public void LoadDeck(string filename, bool fromEditor = false) {
+    void LoadDeck(string filename, bool fromEditor = false) {
         string filepath = Path.Combine(Application.persistentDataPath, filename + ".json");
-        DeckManager loadedDeck = LoadDeckManager(filepath);
+        DeckSavingConverter loadedDeck = LoadDeckSave(filepath);
 
         this.preferences = loadedDeck.preferences;
         this.deckName = filename;
@@ -82,15 +73,14 @@ public class Deck : MonoBehaviour
         CreateCards(loadedDeck);
     }
 
-    public DeckManager LoadDeckManager(string filepath) {
+    DeckSavingConverter LoadDeckSave(string filepath) {
         Debug.Assert(File.Exists(filepath), "Error loading deck: file (" + filepath + ") doesn't exist", this);
-        //DeckManager loadedDeck = JsonUtility.FromJson<DeckManager>(File.ReadAllText(filepath));
-        DeckManager loadedDeck = JsonConvert.DeserializeObject<DeckManager>(File.ReadAllText(filepath));
+        DeckSavingConverter loadedDeck = JsonConvert.DeserializeObject<DeckSavingConverter>(File.ReadAllText(filepath));
         Debug.Assert(loadedDeck.AreListsSameLength(), "Error loading deck: lists in DeckManager have wrong sizes", this);
         return loadedDeck;
     }
 
-    public void DeleteCardObjects() {
+    void DeleteCardObjects() {
         for (int i = this.cards.Count; i > 0; i--) {
             Card card = this.cards[i - 1];
             this.cards.RemoveAt(i - 1);
@@ -98,7 +88,7 @@ public class Deck : MonoBehaviour
         }
     }
     
-    public void DeleteCardObjectsfromEditor() {
+    void DeleteCardObjectsfromEditor() {
         for (int i = this.cards.Count; i > 0; i--) {
             Card card = this.cards[i - 1];
             this.cards.RemoveAt(i - 1);
@@ -106,13 +96,13 @@ public class Deck : MonoBehaviour
         }
     }
 
-    public void CreateCards(DeckManager loadedDeck) {
+    void CreateCards(DeckSavingConverter loadedDeck) {
         for (int i = 0; i < loadedDeck.cardAmount; i++) {
             if (loadedDeck.cardSymbols[i] == CardSymbol.SUPPORT) {
-                SupportCard card = this.constructor.CreateSupportCard(loadedDeck.functions[i], loadedDeck.slotPositions[i], tableSide.isPlayer);
+                SupportCard card = GetComponent<Constructor>().CreateSupportCard(loadedDeck.functions[i], loadedDeck.slotPositions[i], tableSide.isPlayer);
                 this.AddCard(card);
             } else {
-                NormalCard card = this.constructor.CreateNormalCard(loadedDeck.cardSymbols[i], loadedDeck.slotPositions[i]);
+                NormalCard card = GetComponent<Constructor>().CreateNormalCard(loadedDeck.cardSymbols[i], loadedDeck.slotPositions[i]);
                 this.AddCard(card);
             }  
         }
@@ -121,7 +111,7 @@ public class Deck : MonoBehaviour
 
     #region Shorthands --------------------------------------------------------------------------------------
     public void AddCard(Card card) {
-        this.cards.Add(card);
+        cards.Add(card);
         card.gameObject.transform.SetParent(gameObject.transform);
     }
 
@@ -132,7 +122,7 @@ public class Deck : MonoBehaviour
     }
 
     public List<Card> GetCards() {
-        return this.cards;
+        return cards;
     }
 
     public TableSide GetTableSide() {
@@ -140,15 +130,13 @@ public class Deck : MonoBehaviour
     }
 
     public void SetDeckName(string name) {
-        this.deckName = name;
-    } // TODO Constructor: Needed?
-
-    
+        deckName = name;
+    }
     #endregion
     
     #region Debugging ---------------------------------------------------------------------------------------
-    [ContextMenu("Add Cards")]
-    void AddCards() {
+    [ContextMenu("Add Children to Deck")]
+    void AddChildrenToDeck() {
         this.cards = new List<Card>(GetComponentsInChildren<Card>());
     }
 

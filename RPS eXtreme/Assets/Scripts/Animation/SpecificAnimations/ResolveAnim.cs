@@ -69,10 +69,10 @@ public class ResolveAnim : GameAnimation
             Transform newParent = resolveTurnAnimator.transform.Find(playerName[i] + "Card/Rotation");
             newParent.position = slotResults[i].slot.transform.position;
             normalCards[i].transform.SetParent(newParent);
-            normalCards[i].SetSortingLayer("Cards in Focus");
+            normalCards[i].SetSortingLayer(SortingLayer.CARDS_IN_FOCUS);
             foreach(SupportCard suppCard in supportCards[i]) {
                 suppCard.transform.SetParent(newParent);
-                suppCard.SetSortingLayer("Attached Cards in Focus");
+                suppCard.SetSortingLayer(SortingLayer.ATTACHED_CARDS_IN_FOCUS);
             }
         }
         yield return new WaitForSeconds(0.5f);
@@ -87,7 +87,7 @@ public class ResolveAnim : GameAnimation
     }
 
     IEnumerator PlayHealthAnimation() {
-        DictKeys[] healthbarKeys = {DictKeys.PLAYER, DictKeys.ENEMY};
+        TableSideName[] healthbarKeys = {TableSideName.PLAYER, TableSideName.ENEMY};
         Coroutine[] playingAnims = new Coroutine[2];
 
         for(int i=0; i<2; i++) {
@@ -102,7 +102,8 @@ public class ResolveAnim : GameAnimation
 
     IEnumerator PlayHealthAnimationFor(GameObject healthbar, SlotResult result) {
         float animationLength = 0;
-        healthbar.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
+        healthbar.GetComponent<SortingGroup>().sortingLayerName = EnumUtils.SortingLayerName(SortingLayer.CARDS_IN_FOCUS);
+        //healthbar.GetComponent<SortingGroup>().sortingLayerName = "Cards in Focus";
         healthbar.GetComponentInChildren<TextMeshPro>().text = result.healthAfterResolution.ToString(); // TODO Later: Integrate this part into the Unity-animation with SetInt("newhealth", 10);
 
         if(result.TookDamage()) {
@@ -113,7 +114,8 @@ public class ResolveAnim : GameAnimation
         }
 
         yield return new WaitForSecondsRealtime(animationLength + 1);
-        healthbar.GetComponent<SortingGroup>().sortingLayerName = "Default";
+        healthbar.GetComponent<SortingGroup>().sortingLayerName = EnumUtils.SortingLayerName(SortingLayer.DEFAULT);
+        //healthbar.GetComponent<SortingGroup>().sortingLayerName = "Default";
         healthbar.GetComponent<Animator>().SetBool("isDamaged", false);
     }
 
@@ -123,11 +125,11 @@ public class ResolveAnim : GameAnimation
                 continue;
             }
 
-            normalCards[i].SetSortingLayer("Cards on Table");
-            normalCards[i].transform.SetParent(normalCards[i].GetDeckTransform());
+            normalCards[i].SetSortingLayer(SortingLayer.CARDS_ON_TABLE);
+            normalCards[i].SetDeckAsParent();
             foreach(SupportCard suppCard in supportCards[i]) {
-                suppCard.SetSortingLayer("Attached Cards");
-                suppCard.transform.SetParent(suppCard.GetDeckTransform());
+                suppCard.SetSortingLayer(SortingLayer.ATTACHED_CARDS);
+                suppCard.SetDeckAsParent();
                 
             }
         }

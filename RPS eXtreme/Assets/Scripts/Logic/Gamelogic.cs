@@ -10,7 +10,7 @@ public class Gamelogic : MonoBehaviour
     public int dmgOnLoss = 1;
 
     private TableSide[] players;
-    private IDictionary<DictKeys, int> currentHealth = new Dictionary<DictKeys, int>();
+    private IDictionary<TableSideName, int> currentHealth = new Dictionary<TableSideName, int>();
     // [Non serialized]
     private Table table;
     private FunctionHandler functionHandler;
@@ -28,19 +28,19 @@ public class Gamelogic : MonoBehaviour
     public void Init(Table table) {
         functionHandler = new(this);
         this.table = table;
-        currentHealth.Add(DictKeys.PLAYER, maxHealth);
-        currentHealth.Add(DictKeys.ENEMY, maxHealth);
-        table.ui.SetHealth(maxHealth, DictKeys.PLAYER);
-        table.ui.SetHealth(maxHealth, DictKeys.ENEMY);
+        currentHealth.Add(TableSideName.PLAYER, maxHealth);
+        currentHealth.Add(TableSideName.ENEMY, maxHealth);
+        table.ui.SetHealth(maxHealth, TableSideName.PLAYER);
+        table.ui.SetHealth(maxHealth, TableSideName.ENEMY);
         this.players = table.GetComponentsInChildren<TableSide>();
 
-        DrawCards(startDraw + turnDraw, DictKeys.PLAYER);
-        DrawCards(startDraw + turnDraw, DictKeys.ENEMY);
+        DrawCards(startDraw + turnDraw, TableSideName.PLAYER);
+        DrawCards(startDraw + turnDraw, TableSideName.ENEMY);
     }
     
     void StartTurn() {
         foreach (TableSide p in players) {
-            DictKeys cardDrawer = p.isPlayer? DictKeys.PLAYER : DictKeys.ENEMY;
+            TableSideName cardDrawer = p.isPlayer? TableSideName.PLAYER : TableSideName.ENEMY;
             if(p.GetCardsInHand().Count == 0)
                 table.DrawCards(startDraw, cardDrawer);
             else
@@ -50,19 +50,19 @@ public class Gamelogic : MonoBehaviour
 
     public void ResolveTurn() {
         foreach ((Slot slotPlayer, Slot slotEnemy) in table.GetMatchingSlots()) {
-            int[] prevHealth = {currentHealth[DictKeys.PLAYER], currentHealth[DictKeys.ENEMY]};
+            int[] prevHealth = {currentHealth[TableSideName.PLAYER], currentHealth[TableSideName.ENEMY]};
             bool[] winner = EvaluateCards(slotPlayer.GetNormalAndSuppCards(), slotEnemy.GetNormalAndSuppCards());
-            SlotResult playerResult = new(slotPlayer, winner[0], prevHealth[0], currentHealth[DictKeys.PLAYER]);
-            SlotResult enemyResult = new(slotEnemy, winner[1], prevHealth[1], currentHealth[DictKeys.ENEMY]);
+            SlotResult playerResult = new(slotPlayer, winner[0], prevHealth[0], currentHealth[TableSideName.PLAYER]);
+            SlotResult enemyResult = new(slotEnemy, winner[1], prevHealth[1], currentHealth[TableSideName.ENEMY]);
             table.PlaySlotResolveAnim(playerResult, enemyResult, slotPlayer.slotPosition == table.player.slots.Count - 1);
             functionHandler.ResetEverything();
         }
         table.ClearSlots();
 
-        if (currentHealth[DictKeys.PLAYER] <= 0) {
-            EndGame(DictKeys.ENEMY);
-        } else if (currentHealth[DictKeys.ENEMY] <= 0) {
-            EndGame(DictKeys.PLAYER);
+        if (currentHealth[TableSideName.PLAYER] <= 0) {
+            EndGame(TableSideName.ENEMY);
+        } else if (currentHealth[TableSideName.ENEMY] <= 0) {
+            EndGame(TableSideName.PLAYER);
         } else {
             StartTurn();
         }
@@ -71,7 +71,7 @@ public class Gamelogic : MonoBehaviour
     public void ExtractFunctions(List<Card> cards) {
         foreach (Card card in cards) {
             if (!card.IsNormal()) {
-                functionHandler.AddFunctions(card.GetFunctionsForResolve());
+                functionHandler.AddFunctions(((SupportCard) card).GetFunctionsForResolve());
             }
         }
     }
@@ -110,18 +110,19 @@ public class Gamelogic : MonoBehaviour
             winValue = winMatrix[SymbolToInt(symbolPlayer),SymbolToInt(symbolEnemy)];
         }
 
+        functionHandler.HandleDCFunctions();
         if (winValue == 0) {
             bool[] result = {true, true};
             return result;
         } else if (winValue > 0) { // player won
             bool[] result = {true, false};
-            functionHandler.HandleARFunctions(DictKeys.PLAYER);
-            Damage(dmgOnLoss, DictKeys.ENEMY);
+            functionHandler.HandleARFunctions(TableSideName.PLAYER);
+            Damage(dmgOnLoss, TableSideName.ENEMY);
             return result;
         } else if (winValue < 0) {
             bool[] result = {false, true};
-            functionHandler.HandleARFunctions(DictKeys.ENEMY);
-            Damage(dmgOnLoss, DictKeys.PLAYER);
+            functionHandler.HandleARFunctions(TableSideName.ENEMY);
+            Damage(dmgOnLoss, TableSideName.PLAYER);
             return result;
         } else {
             bool[] result = {false, false};
@@ -131,21 +132,21 @@ public class Gamelogic : MonoBehaviour
     }
 
 
-    void EndGame(DictKeys winner) {
+    void EndGame(TableSideName winner) {
         table.SetWinner(winner);
     }
 
-    public void Damage(int dmg, DictKeys damagee) {
+    public void Damage(int dmg, TableSideName damagee) {
         currentHealth[damagee] -= dmg;
     }
 
-    public void DrawCards(int amount, DictKeys caller){
+    public void DrawCards(int amount, TableSideName caller){
         table.DrawCards(amount, caller);
     }
 
     // Start of various setter stuff -------------------------------------------------------------------------------------------------
 
-    public void SetdmgOnLoss(int dmgOnLoss) {
+    public void SetDmgOnLoss(int dmgOnLoss) {
         this.dmgOnLoss = dmgOnLoss;
     }
 
@@ -155,7 +156,7 @@ public class Gamelogic : MonoBehaviour
 
     // Start of various getter stuff -------------------------------------------------------------------------------------------------
 
-    public int GetdmgOnLoss() {
+    public int GetDmgOnLoss() {
         return this.dmgOnLoss;
     }
 

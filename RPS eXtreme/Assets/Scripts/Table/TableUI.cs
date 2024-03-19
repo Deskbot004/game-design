@@ -27,7 +27,7 @@ public class TableUI : MonoBehaviour
     [UDictionary.Split(30, 70)]
     public HealthbarDict healthbars;
     [Serializable]
-    public class HealthbarDict : UDictionary<DictKeys, GameObject> { }
+    public class HealthbarDict : UDictionary<TableSideName, GameObject> { }
 
     private Table table;
     private TableSide player;
@@ -66,7 +66,7 @@ public class TableUI : MonoBehaviour
         cardpileScrollviewContent.GetComponent<RectTransform>().sizeDelta = new Vector2(0f, cardRows * 90);
         foreach (Card card in cardsInOpenedPile) {
             card.transform.SetParent(cardpileScrollviewContent);
-            card.SetSortingLayer("UI");
+            card.SetSortingLayer(SortingLayer.UI);
             card.gameObject.SetActive(true);
             card.GetComponent<Animator>().SetBool("faceFront", true);
         }
@@ -79,8 +79,8 @@ public class TableUI : MonoBehaviour
 
         cardpileScrollview.SetActive(false);
         foreach (Card card in cardsInOpenedPile) {
-            card.transform.SetParent(card.GetDeckTransform());
-            card.SetSortingLayer("Cards on Table");
+            card.SetDeckAsParent();
+            card.SetSortingLayer(SortingLayer.CARDS_ON_TABLE);
             card.gameObject.SetActive(false);
         }
     }
@@ -140,9 +140,9 @@ public class TableUI : MonoBehaviour
         List<Card> viableSupportCards = player.GetMatchingSupportCards(baseCard);
         foreach(Card card in player.GetCardsInHand()) {
             if (viableSupportCards.Contains(card) || card == baseCard)
-                card.SetSortingLayer("Cards in Focus");
+                card.SetSortingLayer(SortingLayer.CARDS_IN_FOCUS);
             else
-                card.SetSortingLayer("Cards on Table");
+                card.SetSortingLayer(SortingLayer.CARDS_ON_TABLE);
         }
 
         MoveCardAnim anim = AnimationHandler.CreateAnim<MoveCardAnim>();
@@ -172,7 +172,7 @@ public class TableUI : MonoBehaviour
     #endregion
 
     #region Health ----------------------------------------------------------------------------------------------------
-    public void SetHealth(int health, DictKeys healthbarKey) {
+    public void SetHealth(int health, TableSideName healthbarKey) {
         healthbars[healthbarKey].GetComponentInChildren<TextMeshPro>().text = health.ToString();
     }
     #endregion
@@ -182,8 +182,8 @@ public class TableUI : MonoBehaviour
         table.logic.ResolveTurn();
     }
     
-    public void ShowWinScreen(DictKeys winner) {
-        bool playerWon = winner == DictKeys.PLAYER;
+    public void ShowWinScreen(TableSideName winner) {
+        bool playerWon = winner == TableSideName.PLAYER;
         winLoseScreen.showWinner(playerWon);
     }
     #endregion

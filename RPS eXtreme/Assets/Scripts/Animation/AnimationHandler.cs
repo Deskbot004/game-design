@@ -8,6 +8,7 @@ public enum AnimationQueueName {
     ENEMY
 }
 
+// A static wrapper class for Animation Handling. Implementation is in AnimationHandlerComponent
 public static class AnimationHandler
 {
     static public AnimationHandlerComp animHandler;

@@ -4,7 +4,7 @@ using System;
 using UnityEngine;
 
 // Bridge between Objects and JSON file
-public class DeckManager 
+public class DeckSavingConverter 
 {
     public int cardAmount;
     public List<CardSymbol> cardSymbols = new();
@@ -16,7 +16,7 @@ public class DeckManager
         cardAmount++;
         cardSymbols.Add(card.GetSymbol());
         slotPositions.Add((card.topSlot, card.bottomSlot));
-        functions.Add(card.GetFunctionsForSave());
+        functions.Add(card.GetFunctionsForSaving());
     }
 
     public bool AreListsSameLength() {

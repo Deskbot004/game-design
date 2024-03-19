@@ -42,8 +42,8 @@ public class MainMenu : MonoBehaviour
         this.selectedPlayerDeckName = "rpsPlayerStandard";
         Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
         Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
-        this.playerSelectedText.text = playerDeck.flavor;
-        this.enemySelectedText.text = opponentDeck.flavor;
+        this.playerSelectedText.text = playerDeck.description;
+        this.enemySelectedText.text = opponentDeck.description;
         this.sprites = GetComponent<DeckSelectSprites>();
         this.fade = this.selection.transform.Find("SelectionPanel/Buttons/StartGame").GetComponent<FadeInOut>();
         HandleRPSOpponentSelection(0);
@@ -92,7 +92,7 @@ public class MainMenu : MonoBehaviour
 
         this.selectedOpponentDeckName = valueToDeckname[value];
         Deck opponentDeck = GameObject.Find(this.selectedOpponentDeckName).GetComponent<Deck>();
-        this.enemySelectedText.text = opponentDeck.flavor;
+        this.enemySelectedText.text = opponentDeck.description;
         enemySelectCard.transform.Find("Symbol Mask/Symbol Image").GetComponent<Image>().sprite = sprites.windowSprites[selectedOpponentDeckName.Substring(11)];
         enemySelectCard.transform.Find("Background").GetComponent<Image>().color = sprites.backgroundColors[selectedOpponentDeckName.Substring(11)];
     }
@@ -113,7 +113,7 @@ public class MainMenu : MonoBehaviour
 
         this.selectedPlayerDeckName = valueToDeckname[value];
         Deck playerDeck = GameObject.Find(this.selectedPlayerDeckName).GetComponent<Deck>();
-        this.playerSelectedText.text = playerDeck.flavor;
+        this.playerSelectedText.text = playerDeck.description;
         playerSelectCard.transform.Find("Symbol Mask/Symbol Image").GetComponent<Image>().sprite = sprites.windowSprites[selectedPlayerDeckName.Substring(9)];
         playerSelectCard.transform.Find("Background").GetComponent<Image>().color = sprites.backgroundColors[selectedPlayerDeckName.Substring(9)];
 

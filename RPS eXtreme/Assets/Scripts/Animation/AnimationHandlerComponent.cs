@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+// This is the implementation of Animation Handler. This Component should be attached to Table
 public class AnimationHandlerComp : MonoBehaviour
 {
     private AnimationQueue mainQueue = new();

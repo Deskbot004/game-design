@@ -5,46 +5,46 @@ using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
+[Serializable] public class CardAmountDict : UDictionary<CardSymbol, int> { }
+
 // A class to generate new cards and decks using the prefabs
 public class Constructor : MonoBehaviour
 {
-    public GameObject NormalCard;
-    public GameObject SupportCard;
-    public GameObject Deck;
+    public GameObject NormalCardPrefab;
+    public GameObject SupportCardPrefab;
+    public GameObject DeckPrefab;
 
     [Header("Setup CreateDeck")]
     public string deckName;
     [UDictionary.Split(30, 70)]
     public CardAmountDict cardAmounts;
-    [Serializable]
-    public class CardAmountDict : UDictionary<CardSymbol, int> { }
-
-    private int counter;
+    
+    private int nameCounter;
 
     public NormalCard CreateNormalCard(CardSymbol symbol, (bool,bool) slotPositions) {
-        GameObject cardObject = Instantiate(NormalCard, new Vector3(0, 0, 0), Quaternion.identity);
-        cardObject.name = "Normal Card " + this.counter;
+        GameObject cardObject = Instantiate(NormalCardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        cardObject.name = "Normal Card: " + symbol + " " + this.nameCounter;
         cardObject.SetActive(false);
         NormalCard card = cardObject.GetComponent<NormalCard>();
         card.SetCardValues(symbol, slotPositions.Item1, slotPositions.Item2);
 
-        this.counter++;
+        this.nameCounter++;
         return card;
     }
 
     public SupportCard CreateSupportCard((FunctionID, List<string>) function, (bool, bool) slotPositions, bool isPlayer) {
-        GameObject cardObject = Instantiate(SupportCard, new Vector3(0, 0, 0), Quaternion.identity);
-        cardObject.name = "Support Card " + this.counter;
+        GameObject cardObject = Instantiate(SupportCardPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        cardObject.name = "Support Card: " + function.Item1 + " " + this.nameCounter;
         cardObject.SetActive(false);
         SupportCard card = cardObject.GetComponent<SupportCard>();
         card.SetCardValues(CardSymbol.SUPPORT, slotPositions.Item1, slotPositions.Item2, function, isPlayer);
 
-        this.counter++;
+        this.nameCounter++;
         return card;
     }
 
     public Deck CreateDeck(List<Card> cards, string deckname) {
-        GameObject deckObject = Instantiate(Deck, new Vector3(0, 0, 0), Quaternion.identity);
+        GameObject deckObject = Instantiate(DeckPrefab, new Vector3(0, 0, 0), Quaternion.identity);
         Deck deck = deckObject.GetComponent<Deck>();
         deck.AddCards(cards);
         deck.SetDeckName(deckname);
@@ -55,7 +55,7 @@ public class Constructor : MonoBehaviour
     #region Editor ------------------------------------------------------------------------------------------
     [ContextMenu("Create Deck for Player")]
     void CreateDeckPlayer() {
-        this.counter = 0;
+        this.nameCounter = 0;
         List<Card> cards = new List<Card>();
 
         List<(bool,bool)> slotPositions = new() {(true, false), (false, true), (false, false), (true, true)};
@@ -88,7 +88,7 @@ public class Constructor : MonoBehaviour
 
     [ContextMenu("Create Deck for Enemy")]
     void CreateDeckEnemy() {
-        this.counter = 0;
+        this.nameCounter = 0;
         List<Card> cards = new List<Card>();
 
         List<(bool,bool)> slotPositions = new() {(true, false), (false, true), (false, false), (true, true)};

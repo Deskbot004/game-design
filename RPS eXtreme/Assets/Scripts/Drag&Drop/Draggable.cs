@@ -104,7 +104,7 @@ public class Draggable : MonoBehaviour
 
     #region Getter und Setter ---------------------------------------------------------------------------------------------
     public void FindStartingDroppable() {
-        currentDroppable = GetComponent<Card>().GetPlayerSide(); // TODO: Trainwreck Card -> TablePlayer
+        currentDroppable = GetComponent<Card>().GetTableSide(); // TODO: Trainwreck Card -> TablePlayer
         return;
 
 

@@ -7,14 +7,9 @@ using UnityEngine.Rendering;
 using System.Linq;
 using UnityEngine.Assertions;
 
-enum SlotPosition {
-    TOP,
-    BOTTOM
-}
-
 public class NormalCard : Card, Droppable
 {
-    private Dictionary<SlotPosition, SupportCard> supportCards = new();
+    private Dictionary<CardSlotPosition, SupportCard> attachedSupportCards = new();
     
     // Droppable
     private bool dropActive = false;
@@ -24,29 +19,31 @@ public class NormalCard : Card, Droppable
     public override void Init(Deck deck) {
         base.Init(deck);
         if (topSlot) {
-            supportCards.Add(SlotPosition.TOP, null);
+            attachedSupportCards.Add(CardSlotPosition.TOP, null);
         }
         if (bottomSlot) {
-            supportCards.Add(SlotPosition.BOTTOM, null);
+            attachedSupportCards.Add(CardSlotPosition.BOTTOM, null);
         }
     }
 
     public override void OnRightClick() {
         base.OnRightClick();
-        GetPlayerSide().HandleStartAttaching(this);
+        GetTableSide().HandleStartAttaching(this);
     }
 
     public override void SetSprite() {
         base.SetSprite();
+
+        // Init
         NormalCardSprites cardSprites = GetComponent<NormalCardSprites>();
         Debug.Assert(cardSprites.symbolSprites.ContainsKey(symbol), "symbolSprites is missing key " + symbol.ToString(), this);
 
         // Set Title
         string upperCaseSymbol = string.Concat(symbol.ToString()[0], symbol.ToString().ToLower().Substring(1)); // (:
-        this.transform.Find("Card Sprites/Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
+        transform.Find("Card Sprites/Title Text").GetComponent<TMP_Text>().text = upperCaseSymbol;
 
         // Set Window Icon
-        this.transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = cardSprites.symbolSprites[GetSymbol()];
+        transform.Find("Card Sprites/Symbol").GetComponent<SpriteRenderer>().sprite = cardSprites.symbolSprites[symbol];
 
         // Set slots
         transform.Find("Card Sprites/Upper Effect").gameObject.SetActive(topSlot);
@@ -55,73 +52,63 @@ public class NormalCard : Card, Droppable
     #endregion
 
     #region Attaching ---------------------------------------------------------------------------------------
-    public bool AttachSupportCard(SupportCard card) {
-        if(!IsCardCompatible(card)) return false;
+    public bool AttachSupportCard(SupportCard supportCard) {
+        if(!IsCardCompatible(supportCard)) return false;
         
         bool attachSuccess = true;
-        if(card.topSlot) {
-            attachSuccess = AttachToSlot(card, SlotPosition.TOP) && attachSuccess;
+        if(supportCard.topSlot) {
+            attachSuccess = AttachCardToSlot(supportCard, CardSlotPosition.TOP) && attachSuccess;
         }
-        if(card.bottomSlot) {
-            attachSuccess = AttachToSlot(card, SlotPosition.BOTTOM) && attachSuccess;
-            // TODO: Detach top slot if not successful
+        if(supportCard.bottomSlot) {
+            attachSuccess = AttachCardToSlot(supportCard, CardSlotPosition.BOTTOM) && attachSuccess;
+            // TODO: Detach top slot if not successful, but top attach was successful with this card
         }
         return attachSuccess;
     }
 
-    bool AttachToSlot(SupportCard card, SlotPosition slotPosition) {
-        if (supportCards[slotPosition] != null) return false;
-        supportCards[slotPosition] = card;
+    bool AttachCardToSlot(SupportCard card, CardSlotPosition slotPosition) {
+        if (attachedSupportCards[slotPosition] != null) return false;
+        attachedSupportCards[slotPosition] = card;
         return true;
     }
 
     public List<SupportCard> DetachAllCards() {
-        List<SupportCard> removedCards = new();
-        for(int i=0; i<supportCards.Count; i++) {
-            SupportCard card = supportCards.ElementAt(i).Value;
-            if(card != null) {
-                DetachSupportCard(card);
-                removedCards.Add(card);
+        List<SupportCard> detachedCards = new();
+        for(int i=0; i<attachedSupportCards.Count; i++) {
+            CardSlotPosition slotPosition = attachedSupportCards.ElementAt(i).Key;
+            SupportCard supportCard = DetachFromSlot(slotPosition);
+            if(supportCard != null && !detachedCards.Contains(supportCard)) {
+                detachedCards.Add(supportCard);
             }
         }
-        return removedCards;
-    }
-    
-    public void DetachSupportCard(SupportCard card) {
-        Debug.Assert(supportCards.Values.Contains(card), "SupportCard is not attached to this card", this);
-        List<SlotPosition> slotPositions = supportCards.Where(x => x.Value == card).Select(x => x.Key).ToList();
-        foreach (SlotPosition slotPos in slotPositions)
-            DetachSlot(slotPos);
-            // TODO: Attach again, if something goes wrong
-        return;
+        return detachedCards;
     }
 
-    void DetachSlot(SlotPosition slotPosition) {
-        if (supportCards[slotPosition] == null) return;
+    SupportCard DetachFromSlot(CardSlotPosition slotPosition) {
+        if (attachedSupportCards[slotPosition] == null) return null;
 
-        SupportCard detachedCard = supportCards[slotPosition];
-        detachedCard.transform.SetParent(detachedCard.GetDeckTransform());
-        detachedCard.SetSortingLayer("Cards in Focus"); //TODO Check: Might be wrong layer
+        SupportCard detachedCard = attachedSupportCards[slotPosition];
+        detachedCard.SetDeckAsParent();
+        detachedCard.SetSortingLayer(SortingLayer.CARDS_IN_FOCUS); //TODO Check: Might be wrong layer
         detachedCard.GetComponent<Draggable>().enabled = true;
-        
-        supportCards[slotPosition] = null;
-        return;
+        attachedSupportCards[slotPosition] = null;
+        return detachedCard;
     }
     #endregion
 
     #region Shorthands --------------------------------------------------------------------------------------
-    public bool IsCardCompatible(SupportCard card) {
-        return (this.topSlot && card.topSlot) || (this.bottomSlot && card.bottomSlot);
+    public bool IsCardCompatible(SupportCard supportCard) {
+        // (supCard.top => this.top) && (supCard.bot => this.bot)
+        return (!supportCard.topSlot || this.topSlot) && (!supportCard.bottomSlot || this.bottomSlot);
     }
     
     public List<SupportCard> GetAttachedSupportCards() {
-        return new(supportCards.Values.Where(c => c != null)); // TODO: Test, I'm not sure :x
+        return new(attachedSupportCards.Values.Where(c => c != null));
     }
     
     public bool HasAttachedCards() {
-        return supportCards.Values.Where(c => c != null).ToList().Count > 0;
+        return attachedSupportCards.Values.Where(c => c != null).ToList().Count > 0;
     }
-
     #endregion
 
     #region Droppable ---------------------------------------------------------------------------------------
@@ -147,12 +134,11 @@ public class NormalCard : Card, Droppable
     }
 
     public bool OnDrop(Draggable draggedObject) {
-        // TODO: Animation when replacing an already attached support card
         bool attachSuccess = AttachSupportCard(draggedObject.GetComponent<SupportCard>());
         if (attachSuccess) {
             draggedObject.transform.SetParent(transform);
-            SetSortingLayer("Attached Cards"); // TODO: Layering doesn't work :/
-            GetPlayerSide().ShowDetachButton();
+            SetSortingLayer(SortingLayer.ATTACHED_CARDS_IN_FOCUS);
+            GetTableSide().ShowDetachButton();
 
             MoveCardAnim anim = AnimationHandler.CreateAnim<MoveCardAnim>();
             anim.Init(new() {draggedObject.GetComponent<Card>()}, transform);
@@ -165,6 +151,8 @@ public class NormalCard : Card, Droppable
         return attachSuccess;
     }
 
+    // This Function is called, when picking up a Draggable (by left clicking) inside this Droppable
+    // Since you can't drag an Attached SupportCard, this function shouldn't be called
     public void OnLeave(Draggable draggedObject) {}
     #endregion
 

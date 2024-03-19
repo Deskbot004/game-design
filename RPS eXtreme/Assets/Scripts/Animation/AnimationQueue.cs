@@ -14,24 +14,16 @@ public class AnimationQueue
 
     #region Queueing -------------------------------------------------------------------------------------------------
     public void QueueAnimation(GameAnimation anim) {
-        // Put the animation into the queue
-        // If there is no current animation running play it
-
         upcomingAnimations.Add(new() {anim});
         PlayNextAnimation();
     }
 
     void PlayNextAnimation() {
-        // Check whether there is an animation in the list
-        // Create a Task for that animation and save it under current Animation
-        // Make it Call this Function when it's finished
-        // Remove animation from queue
-
         if(paused) return;
 
         if (currentAnimation != null && (currentAnimation.Running || parallelAnimations.Count > 0)) {
             return;
-        } else if (upcomingAnimations.Count > 0) {
+        } else if (upcomingAnimations.Count > 0) { // Check whether there is an animation in the list
             animatedObjects.Clear();
 
             List<GameAnimation> animations = upcomingAnimations[0];

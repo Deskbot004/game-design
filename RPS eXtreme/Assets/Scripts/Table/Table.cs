@@ -31,8 +31,8 @@ public class Table : MonoBehaviour
         logic.Init(this);
     }
 
-    public void DrawCards(int amount, DictKeys forPlayer) {
-        TableSide cardDrawer = (forPlayer == DictKeys.PLAYER)? player : enemy;
+    public void DrawCards(int amount, TableSideName forPlayer) {
+        TableSide cardDrawer = (forPlayer == TableSideName.PLAYER)? player : enemy;
         cardDrawer.DrawCards(amount);
     }
 
@@ -48,7 +48,7 @@ public class Table : MonoBehaviour
         enemy.ClearSlots();
     }
 
-    public void SetWinner(DictKeys winner) {
+    public void SetWinner(TableSideName winner) {
         ui.ShowWinScreen(winner);
     }
 

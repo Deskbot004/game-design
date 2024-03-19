@@ -5,22 +5,12 @@ using System;
 using UnityEditor;
 using UnityEngine.Rendering;
 
-public enum CardSymbol {
-    ROCK,
-    PAPER,
-    SCISSORS,
-    LIZARD,
-    SPOCK,
-    SUPPORT
-}
-
-[Serializable]
 public class Card : MonoBehaviour
 {
     [Header("General")]
     [SerializeField] protected CardSymbol symbol;
-    [SerializeField] public bool topSlot;
-    [SerializeField] public bool bottomSlot;
+    public bool topSlot;
+    public bool bottomSlot;
     
     protected Deck deck;
     protected bool rightClickEnabled = true;
@@ -71,19 +61,15 @@ public class Card : MonoBehaviour
         rightClickEnabled = enabled;
     }
 
-    public Transform GetDeckTransform() {
-        return deck.transform;
-    }
-
-    public virtual List<Function> GetFunctionsForResolve() {
-        return null;
-    }
-
-    public virtual (FunctionID, List<string>) GetFunctionsForSave() { // TODO
+    public virtual (FunctionID, List<string>) GetFunctionsForSaving() {
         return new();
     }
 
-    public TableSide GetPlayerSide() {
+    public CardSymbol GetSymbol() { 
+        return this.symbol;
+    }
+
+    public TableSide GetTableSide() {
         return deck.GetTableSide();
     }
 
@@ -98,33 +84,19 @@ public class Card : MonoBehaviour
         SetSprite();
     }
 
-    public void SetSortingLayer(string layerName) {
-        GetComponent<SortingGroup>().sortingLayerName = layerName;
+    public void SetDeckAsParent() {
+       transform.SetParent(deck.transform);
+    }
+
+    public void SetSortingLayer(SortingLayer sortingLayer) {
+        GetComponent<SortingGroup>().sortingLayerName = EnumUtils.SortingLayerName(sortingLayer);
     }
     #endregion
 
-    
-    #region Still here because other things use it, but might should be deleted later -----------------------
-    public CardSymbol GetSymbol() { 
-        return this.symbol;
-    }
-
-    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsAR() { return null; }
-
-    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsBR() { return null; }
-
-    public virtual List<(Action<Gamelogic, string, object>, object)> GetFunctionsDraw() { return null; }
-
-    #endregion
-
-    
     #region Editor Stuff ------------------------------------------------------------------------------------
-    //[ContextMenu("Init Card")]
-    // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
     #if UNITY_EDITOR
-    void OnValidate() { UnityEditor.EditorApplication.delayCall += _OnValidate; }
-    public void _OnValidate()
-    {
+    void OnValidate() { UnityEditor.EditorApplication.delayCall += _OnValidate; } // Workaround to avoid Console Spam on change, see #13: https://forum.unity.com/threads/sendmessage-cannot-be-called-during-awake-checkconsistency-or-onvalidate-can-we-suppress.537265/
+    public void _OnValidate() {
         if (this == null) return;
         else if (gameObject.scene.name == null) return;
         SetSprite();
